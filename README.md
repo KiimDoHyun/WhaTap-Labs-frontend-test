@@ -1,70 +1,37 @@
-# Getting Started with Create React App
+# 소개
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+와탭랩스는 클라우드 모니터링 플랫폼 서비스를 제공합니다. 프론트엔드 개발자는 모니터링 데이터를 시각화하여 위험 감지와 장애 분석을 돕는 화면을 만드는 일을 담당합니다. 
 
-## Available Scripts
+이 중 실시간 대시보드는 위험 감지를 위한 가장 기본적인 서비스로, 프론트엔드 개발자의 주 작업 대상입니다. 
 
-In the project directory, you can run:
+# 프로젝트
 
-### `yarn start`
+## Open API를 활용한 대시보드 구현
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+와탭 Open API를 활용하여 애플리케이션 모니터링을 위한 대시보드 화면을 제작합니다.
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+![https://s3-us-west-2.amazonaws.com/secure.notion-static.com/63ff3e9e-0c15-45ae-a583-171c5cc75377/_2021-01-11__6.41.58.png](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/63ff3e9e-0c15-45ae-a583-171c5cc75377/_2021-01-11__6.41.58.png)
 
-### `yarn test`
+데모 프로젝트 대시보드 [https://service.whatap.io/v2/project/apm/5490/dashboard](https://service.whatap.io/v2/project/apm/5490/dashboard) 
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+세부적인 과제 내용은 별도 제공합니다. 
 
-### `yarn build`
+### Open API에 대한 자세한 설명은 아래 문서를 참고하세요.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+[Open API GUIDE](https://docs.whatap.io/kr/appendix/open_api_application.html#empty)를 참고하세요. 
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+### 실제 서비스 화면을 둘러보시면, 과제를 이해하는데 도움이 될 수 있습니다.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+[Whatap](https://www.whatap.io/ko/)에서 이메일 입력 후 데모를 시작할 수 있습니다. 
 
-### `yarn eject`
+## 이슈 사항
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+### 브라우져 CORS 정책에 따라 WhaTap Open API 사용이 제한될 수 있습니다.
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+아래 링크를 따라 문제를 해결할 수 있습니다. 
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+[Run Chrome browser without CORS](https://alfilatov.com/posts/run-chrome-without-cors/)
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+---
 
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `yarn build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+이 프로젝트는 [Create React App](https://github.com/facebook/create-react-app)으로 만들었습니다. 
