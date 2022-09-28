@@ -1,11 +1,11 @@
-const DEMO_PROJECT_API_TOCKEN = 'XGJHUSQZTI2AVIENWA27HI5V'
-const DEMO_PROJECT_CODE = 5490
+const DEMO_PROJECT_API_TOCKEN = 'XGJHUSQZTI2AVIENWA27HI5V';
+const DEMO_PROJECT_CODE = 5490;
 const OPEN_API_HEADERS = {
   'x-whatap-pcode': DEMO_PROJECT_CODE,
   'x-whatap-token': DEMO_PROJECT_API_TOCKEN,
-}
+};
 
-const OPEN_API_ROOT = 'https://service.whatap.io/open/api'
+const OPEN_API_ROOT = 'https://api.whatap.io/open/api';
 
 const OPEN_API = {
   '': {
@@ -33,22 +33,22 @@ const OPEN_API = {
   json: {
     'exception/{stime}/{etime}': 'Exception 발생 ',
   },
-}
+};
 const getPath = (url, param = {}) => {
-  let path = url
+  let path = url;
   for (let key in param) {
-    path = path.replace(new RegExp('\\{' + key + '\\}', 'g'), param[key])
+    path = path.replace(new RegExp('\\{' + key + '\\}', 'g'), param[key]);
   }
 
-  return path
-}
+  return path;
+};
 
 const getOpenApi = (type) => (key, param) =>
   new Promise((resolve, reject) => {
     if (key in OPEN_API[type]) {
-      return resolve({ url: [OPEN_API_ROOT, type, key].join('/'), name: OPEN_API[type][key] })
+      return resolve({ url: [OPEN_API_ROOT, type, key].filter((path) => !!path).join('/'), name: OPEN_API[type][key] });
     } else {
-      reject('잘못된 API 정보')
+      reject('잘못된 API 정보');
     }
   }).then(({ url, name }) =>
     fetch(getPath(url, param), {
@@ -60,9 +60,9 @@ const getOpenApi = (type) => (key, param) =>
         name,
         data,
       })),
-  )
+  );
 
-const spot = getOpenApi('')
-const series = getOpenApi('json')
+const spot = getOpenApi('');
+const series = getOpenApi('json');
 
-export default { spot, series }
+export default { spot, series };

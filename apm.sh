@@ -1,6 +1,6 @@
 TOKEN=XGJHUSQZTI2AVIENWA27HI5V
 PCODE=5490
-ADDRESS=https://service.whatap.io
+ADDRESS=https://api.whatap.io
 
 echo "1. act_agent"
 curl -w "\n" -H "x-whatap-pcode: $PCODE" -H "x-whatap-token: $TOKEN" "$ADDRESS/open/api/act_agent"
