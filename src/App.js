@@ -6,10 +6,28 @@ function App() {
   const [httpcSeries, setHttpcSeries] = useState()
 
   useEffect(() => {
-    api.spot('act_agent').then((result) => setActAgent(result))
+
+    // api.spot('act_agent').then((result) => {console.log(result); setActAgent(result)})
+    // api.spot('inact_agent').then((result) => {console.log(result); setActAgent(result)})
+    // api.spot('host').then((result) => {console.log(result); setActAgent(result)})
+    // api.spot('cpucore').then((result) => {console.log(result); setActAgent(result)})
+    // api.spot('txcount').then((result) => {console.log(result); setActAgent(result)})
+    // api.spot('tps').then((result) => {console.log(result); setActAgent(result)})
+    // api.spot('actx').then((result) => {console.log(result); setActAgent(result)})
+    api.spot('rtime').then((result) => {console.log(result); setActAgent(result)})
+    // api.spot('cpu').then((result) => {console.log(result); setActAgent(result)})
+    // api.spot('threadpool_active').then((result) => {console.log(result); setActAgent(result)})
+    // api.spot('threadpool_queue').then((result) => {console.log(result); setActAgent(result)})
+    // api.spot('dbc_count').then((result) => {console.log(result); setActAgent(result)})
+    // api.spot('dbc_active').then((result) => {console.log(result); setActAgent(result)})
+    // api.spot('dbc_idle').then((result) => {console.log(result); setActAgent(result)})
+    // api.spot('act_method').then((result) => {console.log(result); setActAgent(result)})
     api
       .series('exception/{stime}/{etime}', { stime: Date.now() - HOUR, etime: Date.now() })
-      .then((result) => setHttpcSeries(result))
+      .then((result) => {console.log('result series:', result); setHttpcSeries(result)})
+      api
+      .series('sql/{stime}/{etime}', { stime: Date.now() - HOUR, etime: Date.now() })
+      .then((result) => {console.log('result series:', result); setHttpcSeries(result)})
   }, [])
 
   return (
