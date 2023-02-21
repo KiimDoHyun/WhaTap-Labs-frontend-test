@@ -32,22 +32,41 @@ function App() {
 
   const svgRef = useRef(null);
 
+  const [data, setData] = useState([
+    {x:'A', y:9}, 
+    {x:'B', y:19}, 
+    {x:'C', y:29}, 
+    {x:'D', y:39}, 
+    {x:'E', y:29}, 
+])
+
+    const onClick = () => {
+        const rand_0_9 = Math.floor(Math.random() * 5);
+        const rand_0_1 = Math.floor(Math.random() * 2);
+
+        setData((data) => data.map((item, idx) => (
+            idx === rand_0_9 ? {...item, y: rand_0_1 === 0 ? item.y += 10 : item.y -= 10} : item
+        )))
+    }
+
   useEffect(() => {
-    // 테스트 데이터
-    const data = [{x:'A', y:9}, {x:'B', y:19}, {x:'C', y:29}, {x:'D', y:39}, 
-    {x:'E', y:29}, {x:'F', y:19}, {x:'G', y:9}];
+
+    console.log('data: ', data);
+
 
     // bar 차트 생성
     const svg: any = select(svgRef.current);
 
-    const xScale = scaleBand()
+    const xScale = 
+    scaleBand() // x 축
     .domain(data.map((item) => item.x))
-    .range([20, 480])
-    .padding(0.5);
+    .range([50, 450])
+    // .padding(0.5);
 
-    const yscale = scaleLinear()
-    .domain([0, 200]).nice() //실제값의 범위
-    .range([480, 20]); //변환할 값의 범위(역으로 처리했음!), 위아래 패딩 20을 줬다!. 차트를 그리기 위해 높이를 지정한다.
+    const yscale = 
+    scaleLinear()  // y 축
+    .domain([0, 200]) // 실제값의 범위
+    .range([450, 50]); // 차트를 그리기 위해 크기를 지정.
     
     const xAxis = axisBottom(xScale).ticks(4);
     svg
@@ -67,27 +86,15 @@ function App() {
     .enter()
     .append("rect")
         .attr("class", "bar")
-        .attr("height", function(d:any, i:any) {console.log('d.y*5', d.y*5); return (d.y*5)})
-        .attr("width", 40)
-        .attr("x", function(d:any, i:any) {return (50 * i)})
-        .attr("y", function(d:any, i:any) {return (250-d.y*5)});
-
-      // 막대 그리기
-    //   svg
-    //   .selectAll(".bar")
-    //   .data(data) // 데이터 추가 (갱신이 아님)
-    //   .join("rect")
-    //   .attr("class", "bar")
-    //   .attr('x', (a: number, i: string) => xScale(String(a)))
-    //   .attr("y", yscale)
-    //   .attr('width', `${xScale.bandwidth()}px`)
-    //   .attr('height', (value: number) => `${170 - yscale(value)}px`);
-    //   .attr("width", xScale.bandwidth()) 
-    //   .attr("height", (value: any, index: any) => 150 - yscale(value));
-  }, [])
+        // 첫번째 인자에 배열의 요소가, 두번째 인자에 인덱스가 들어있음.
+        .attr("height", function(d:any, i:any) {return (d.y*5)}) // 높이는 각 값의 *5 만큼 크기로
+        .attr("width", 25) // 너비는 25로
+        .attr("x", function(d:any, i:string) {return (xScale(d.x) + 25)}) // x 위치는 해당 값의 x축의 위치로
+        .attr("y", function(d:any, i:any) {return (450-d.y*5)}); // y 는 원래 높이에서 해당 높이를 뺀 만큼
+  }, [data])
 
   return (
-    <div style={{ padding: 20 }}>
+      <div style={{ padding: 20 }}>
       {/* 인포메틱스 4개 */}
 
       {/* d3로 제작 */}
@@ -103,6 +110,8 @@ function App() {
           <g className='x-axis'/>
         </svg>
       </div>
+      <button onClick={onClick}>데이터 변경</button>
+
       <h1>Open API (Application)</h1>
       <a href='https://docs.whatap.io/kr/appendix/open_api_application.pdf' target='_blank'>
         가이드 문서
