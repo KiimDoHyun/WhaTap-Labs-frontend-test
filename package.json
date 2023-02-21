@@ -6,10 +6,18 @@
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/react": "^11.1.0",
     "@testing-library/user-event": "^12.1.10",
+    "d3": "^7.8.2",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "react-scripts": "4.0.1",
+    "typescript": "^4.9.5",
     "web-vitals": "^0.2.4"
+  },
+  "devDependencies": {
+    "@types/d3": "^7.4.0",
+    "@types/react": "^18.0.28",
+    "@types/react-dom": "^18.0.11",
+    "cross-env": "^7.0.3"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -34,8 +42,5 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  },
-  "devDependencies": {
-    "cross-env": "^7.0.3"
   }
 }
