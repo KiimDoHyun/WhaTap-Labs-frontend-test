@@ -34,18 +34,19 @@ function App() {
 
   useEffect(() => {
     // 테스트 데이터
-    const data = [10,30,50,130];
+    const data = [{x:'A', y:9}, {x:'B', y:19}, {x:'C', y:29}, {x:'D', y:39}, 
+    {x:'E', y:29}, {x:'F', y:19}, {x:'G', y:9}];
 
     // bar 차트 생성
     const svg: any = select(svgRef.current);
 
     const xScale = scaleBand()
-    .domain(['1번', '2번','3번','4번'])
+    .domain(data.map((item) => item.x))
     .range([20, 480])
-    // .padding(0.5);
+    .padding(0.5);
 
     const yscale = scaleLinear()
-    .domain([0, 200]) //실제값의 범위
+    .domain([0, 200]).nice() //실제값의 범위
     .range([480, 20]); //변환할 값의 범위(역으로 처리했음!), 위아래 패딩 20을 줬다!. 차트를 그리기 위해 높이를 지정한다.
     
     const xAxis = axisBottom(xScale).ticks(4);
@@ -61,16 +62,28 @@ function App() {
       .attr('transform', 'translate(50, 0)')
       .call(yAxis)
 
+    svg.selectAll(".bar")
+    .data(data)
+    .enter()
+    .append("rect")
+        .attr("class", "bar")
+        .attr("height", function(d:any, i:any) {console.log('d.y*5', d.y*5); return (d.y*5)})
+        .attr("width", 40)
+        .attr("x", function(d:any, i:any) {return (50 * i)})
+        .attr("y", function(d:any, i:any) {return (250-d.y*5)});
+
       // 막대 그리기
-      svg
-      .selectAll(".bar")
-      .data(data)
-      .join("rect")
-      .attr("class", "bar")
-      .attr("x", (value: any, index: any) => xScale(index))
-      .attr("y", yscale)
-      .attr("width", xScale.bandwidth()) 
-      .attr("height", (value: any, index: any) => 150 - yscale(value));
+    //   svg
+    //   .selectAll(".bar")
+    //   .data(data) // 데이터 추가 (갱신이 아님)
+    //   .join("rect")
+    //   .attr("class", "bar")
+    //   .attr('x', (a: number, i: string) => xScale(String(a)))
+    //   .attr("y", yscale)
+    //   .attr('width', `${xScale.bandwidth()}px`)
+    //   .attr('height', (value: number) => `${170 - yscale(value)}px`);
+    //   .attr("width", xScale.bandwidth()) 
+    //   .attr("height", (value: any, index: any) => 150 - yscale(value));
   }, [])
 
   return (
