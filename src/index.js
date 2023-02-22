@@ -6,16 +6,23 @@ import reportWebVitals from "./reportWebVitals";
 
 export const arr = [];
 
-// 체크: 0.01초 단위
+// 체크: 0.1초 단위
 const apiManager = () => {
-    setInterval(() => {
+    setInterval(async () => {
         if (arr.length > 0) {
             console.log("처리할 데이터가 존재합니다.", arr);
             console.log("대상: ", arr[0]);
-            arr.shift();
+            try {
+                const result = await arr[0].callApi();
+                arr[0].success(result.data);
+                arr.shift();
+            } catch (e) {
+                console.log(e);
+                arr[0].fail();
+            }
             console.log("처리완료", arr);
         }
-    }, 10);
+    }, 100);
 };
 
 apiManager();
