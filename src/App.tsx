@@ -8,6 +8,7 @@ import {
 } from "d3";
 import { useEffect, useRef, useState } from "react";
 import api from "./api";
+import TestChart1 from "./component/TestChart1";
 const HOUR = 1000 * 60 * 60;
 
 function App() {
@@ -53,17 +54,12 @@ function App() {
     ]);
 
     const onClick = () => {
-        const rand_0_9 = Math.floor(Math.random() * 5);
         const rand_0_1 = Math.floor(Math.random() * 2);
 
-        const newData = data.map((item, idx) =>
-            idx === rand_0_9
-                ? {
-                      ...item,
-                      y: rand_0_1 === 0 ? (item.y += 10) : (item.y -= 10),
-                  }
-                : item
-        );
+        const newData = data.map((item) => ({
+            ...item,
+            y: rand_0_1 === 0 ? (item.y += 10) : (item.y -= 10),
+        }));
 
         setData(newData);
         const svg: any = select(svgRef.current);
@@ -75,8 +71,11 @@ function App() {
 
         svg.selectAll(".bar")
             .data(newData)
+            // css: trasition: 500 과 동일함
             .transition()
-            .duration(500)
+            // .duration(500)
+            // 모든 데이터가 변경되는 경우 딜레이를 추가할 수 있음.
+            .delay((d: any, i: any) => i * 100)
             .attr("class", "bar")
             // 첫번째 인자에 배열의 요소가, 두번째 인자에 인덱스가 들어있음.
             .attr("height", function (d: any, i: any) {
@@ -117,10 +116,16 @@ function App() {
             .attr("transform", "translate(50, 0)")
             .call(yAxis);
 
+        // 데이터 수정 관련 transition, duration을 여기에 추가하면 작동하지 않음.
+        // 외부 이벤트에서 조작해야 한다?
+
         svg.selectAll(".bar")
             .data(data)
             .enter()
             .append("rect")
+            // 작동 X
+            // .transition()
+            // .duration(500)
             .attr("class", "bar")
             // 첫번째 인자에 배열의 요소가, 두번째 인자에 인덱스가 들어있음.
             .attr("height", function (d: any, i: any) {
@@ -146,6 +151,7 @@ function App() {
       x: 호출 시간
       y: 호출 값 전부
       */}
+            <TestChart1 />
             <div style={{ height: "500px", width: "500px" }}>
                 <svg ref={svgRef} style={{ height: "100%", width: "100%" }}>
                     <g className="y-axis" />
