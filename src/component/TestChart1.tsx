@@ -1,14 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
+import { arr } from "..";
 import api from "../api";
-
-const callApi = async (api: any, callback: any) => {
-    try {
-        await api();
-        callback();
-    } catch {
-        console.warn("api 호출 실패");
-    }
-};
 
 const TestChart1 = () => {
     const svgRef = useRef(null);
@@ -37,75 +29,27 @@ const TestChart1 = () => {
 
     // 필요데이터 조회: act (액티브 스테이터스)
     useEffect(() => {
-        // setInterval(() => {
-        //     api.spot("act_method").then((result) => {
-        //         console.log(result);
-        //         setData((prevState) =>
-        //             prevState.map((item) =>
-        //                 item.name === "act_method"
-        //                     ? { ...item, value: result.data }
-        //                     : item
-        //             )
-        //         );
-        //     });
-        // }, 0.1);
-        // setInterval(() => {
-        //     api.spot("act_sql").then((result) => {
-        //         console.log(result);
-        //         setData((prevState) =>
-        //             prevState.map((item) =>
-        //                 item.name === "act_sql"
-        //                     ? { ...item, value: result.data }
-        //                     : item
-        //             )
-        //         );
-        //     });
-        // }, 0.2);
-        // setInterval(() => {
-        //     api.spot("act_httpc").then((result) => {
-        //         console.log(result);
-        //         setData((prevState) =>
-        //             prevState.map((item) =>
-        //                 item.name === "act_httpc"
-        //                     ? { ...item, value: result.data }
-        //                     : item
-        //             )
-        //         );
-        //     });
-        // }, 0.3);
-        // setInterval(() => {
-        //     api.spot("act_dbc").then((result) => {
-        //         console.log(result);
-        //         setData((prevState) =>
-        //             prevState.map((item) =>
-        //                 item.name === "act_dbc"
-        //                     ? { ...item, value: result.data }
-        //                     : item
-        //             )
-        //         );
-        //     });
-        // }, 0.4);
-        // setInterval(() => {
-        //     api.spot("act_socket").then((result) => {
-        //         console.log(result);
-        //         setData((prevState) =>
-        //             prevState.map((item) =>
-        //                 item.name === "act_socket"
-        //                     ? { ...item, value: result.data }
-        //                     : item
-        //             )
-        //         );
-        //     });
-        // }, 0.5);
+        setInterval(() => {
+            arr.push(111);
+        }, 500);
+        setInterval(() => {
+            arr.push(222);
+        }, 500);
+        setInterval(() => {
+            arr.push(333);
+        }, 500);
+        setInterval(() => {
+            arr.push(444);
+        }, 500);
+        setInterval(() => {
+            arr.push(555);
+        }, 500);
     }, []);
 
     useEffect(() => {
         console.log("data: ", data);
     }, [data]);
 
-    const onClick = () => {
-        //
-    };
     /*
     크기
 
@@ -115,7 +59,6 @@ const TestChart1 = () => {
     */
     return (
         <div>
-            <button onClick={onClick}>추가</button>
             <div>
                 데이터베이스 <div className="infoIcon"></div>
             </div>
