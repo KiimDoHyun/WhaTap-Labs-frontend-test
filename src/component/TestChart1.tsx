@@ -1,4 +1,12 @@
-import { axisBottom, axisLeft, scaleBand, scaleLinear, select } from "d3";
+import {
+    axisBottom,
+    axisLeft,
+    axisTop,
+    max,
+    scaleBand,
+    scaleLinear,
+    select,
+} from "d3";
 import React, { useEffect, useRef, useState } from "react";
 import { arr } from "..";
 import api from "../api";
@@ -12,19 +20,19 @@ const TestChart1 = () => {
         },
         {
             name: "act_sql",
-            value: 1,
+            value: 0,
         },
         {
             name: "act_httpc",
-            value: 2,
+            value: 0,
         },
         {
             name: "act_dbc",
-            value: 3,
+            value: 0,
         },
         {
             name: "act_socket",
-            value: 4,
+            value: 0,
         },
     ]);
 
@@ -61,7 +69,21 @@ const TestChart1 = () => {
 
         const xScale = scaleBand() // x 축
             .domain(newData.map((item: any) => String(item.name)))
-            .range([50, 450]);
+            .range([20, 480]);
+
+        const yMax = max(newData, function (d: any) {
+            return d.value;
+        });
+
+        const yScale = scaleLinear()
+            .domain([0, Number(yMax)])
+            .range([70, 480]);
+
+        const yAxis = axisTop(yScale);
+        svg.select(".y-axis")
+            .attr("width", "100%")
+            .attr("opacity", 0)
+            .call(yAxis);
 
         svg.selectAll(".bar")
             .data(newData)
@@ -73,15 +95,14 @@ const TestChart1 = () => {
             .attr("class", "bar")
             // 첫번째 인자에 배열의 요소가, 두번째 인자에 인덱스가 들어있음.
             .attr("width", function (d: any, i: any) {
-                return d.value;
+                console.log(yScale(d.value), d.value);
+                return yScale(d.value) - 70;
+                // return d.value;
             }) // 높이는 각 값의 *5 만큼 크기로
             .attr("height", 25) // 너비는 25로
             .attr("y", function (d: any, i: any) {
-                return xScale(d.name) + 25;
-            }) // x 위치는 해당 값의 x축의 위치로
-            .attr("x", function (d: any, i: any) {
-                return 50;
-            }); // y 는 원래 높이에서 해당 높이를 뺀 만큼
+                return xScale(d.name) + 37;
+            }); // x 위치는 해당 값의 x축의 위치로
 
         svg.selectAll(".text")
             .data(newData)
@@ -94,6 +115,7 @@ const TestChart1 = () => {
     };
 
     // 필요데이터 조회: act (액티브 스테이터스)
+    // 최대값 기준
     useEffect(() => {
         setInterval(() => {
             arr.push(apiObj("act_method"));
@@ -115,27 +137,23 @@ const TestChart1 = () => {
         const svg: any = select(svgRef.current);
 
         const xScale = scaleBand() // x 축
-            // .domain(
-            //     data.map((item) => `${item.name}-${item.value}`.split("-")[1])
-            // )
             .domain(data.map((item) => `${item.name}`))
-            .range([50, 450]);
-
-        const yScale = scaleLinear() // y 축
-            .domain([0, 200]) // 실제값의 범위, // 최대값 찾아서 범위 지정?
-            .range([450, 50]); // 차트를 그리기 위해 크기를 지정.
+            .range([20, 480]);
 
         const xAxis = axisLeft(xScale).ticks(4);
         svg.select(".x-axis")
             // .style("transform", "translateY(450px)")
-            .attr("transform", "translate(50, 0)")
+            .attr("transform", "translate(70, 0)")
             .call(xAxis);
 
-        // const yAxis = axisLeft(yScale);
-        // svg.select(".y-axis")
-        //     .attr("height", "100%")
-        //     .attr("transform", "translate(50, 0)")
-        //     .call(yAxis);
+        const yScale = scaleLinear().domain([0, 10]).range([70, 480]);
+
+        const yAxis = axisTop(yScale);
+        svg.select(".y-axis")
+            .attr("width", "100%")
+            .attr("transform", "translate(0, 20)")
+            .attr("opacity", 0)
+            .call(yAxis);
 
         // 텍스트 추가해보기
 
@@ -154,14 +172,10 @@ const TestChart1 = () => {
             }) // 높이는 각 값의 *5 만큼 크기로
             .attr("height", 25) // 너비는 25로
             .attr("y", function (d: any, i: any) {
-                // return i * 25;
-                // console.log("? value", xScale(d.value)!);
-                // console.log("? name", xScale(d.name)!);
-                // return xScale(d.value);
-                return xScale(d.name) + 25;
+                return xScale(d.name) + 37;
             }) // x 위치는 해당 값의 x축의 위치로
             .attr("x", function (d: any, i: any) {
-                return 50;
+                return 70;
             }); // y 는 원래 높이에서 해당 높이를 뺀 만큼
 
         bar.append("text")
@@ -170,39 +184,10 @@ const TestChart1 = () => {
                 return d.value;
             })
             .attr("fill", "#919191")
-            .attr("x", 60)
+            .attr("x", 80)
             .attr("y", function (d: any, i: any) {
-                // return i * 25;
-                // console.log("? value", xScale(d.value)!);
-                // console.log("? name", xScale(d.name)!);
-                // return xScale(d.value);
-                return xScale(d.name) + 42;
+                return xScale(d.name) + 54;
             });
-
-        // 기존
-        // svg.selectAll(".bar")
-        //     .data(data)
-        //     .enter()
-        //     .append("rect")
-        //     // 작동 X
-        //     // .transition()
-        //     // .duration(500)
-        //     .attr("class", "bar")
-        //     // 첫번째 인자에 배열의 요소가, 두번째 인자에 인덱스가 들어있음.
-        //     .attr("width", function (d: any, i: any) {
-        //         return d.value;
-        //     }) // 높이는 각 값의 *5 만큼 크기로
-        //     .attr("height", 25) // 너비는 25로
-        //     .attr("y", function (d: any, i: any) {
-        //         // return i * 25;
-        //         // console.log("? value", xScale(d.value)!);
-        //         // console.log("? name", xScale(d.name)!);
-        //         // return xScale(d.value);
-        //         return xScale(d.name) + 25;
-        //     }) // x 위치는 해당 값의 x축의 위치로
-        //     .attr("x", function (d: any, i: any) {
-        //         return 50;
-        //     }); // y 는 원래 높이에서 해당 높이를 뺀 만큼
     }, []);
 
     /*
