@@ -7,6 +7,8 @@ import reportWebVitals from "./reportWebVitals";
 export const arr = [];
 
 // 체크: 0.1초 단위
+// 0.01초 단위로 하면 에러 발생
+// 이전 호출이 종료되고 호출 되어야 함.
 const apiManager = () => {
     setInterval(async () => {
         if (arr.length > 0) {
@@ -15,12 +17,12 @@ const apiManager = () => {
             try {
                 const result = await arr[0].callApi();
                 arr[0].success(result.data);
-                arr.shift();
             } catch (e) {
                 console.log(e);
                 arr[0].fail();
+            } finally {
+                arr.shift();
             }
-            console.log("처리완료", arr);
         }
     }, 100);
 };

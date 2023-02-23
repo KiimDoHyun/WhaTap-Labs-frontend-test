@@ -1,3 +1,4 @@
+import { axisBottom, axisLeft, scaleBand, scaleLinear, select } from "d3";
 import React, { useEffect, useRef, useState } from "react";
 import { arr } from "..";
 import api from "../api";
@@ -28,37 +29,111 @@ const TestChart1 = () => {
     ]);
 
     // 조회 에러 발생: 갱신 X
-
+    // api 호출 생성 함수
     const apiObj = (type: string) => {
         return {
             callApi: () => api.spot(type),
             success: (newValue: any) =>
-                setData((prevState) =>
-                    prevState.map((item) =>
+                setData((prevState) => {
+                    const newData = prevState.map((item) =>
                         item.name === type ? { ...item, value: newValue } : item
-                    )
-                ),
+                    );
+                    updateChart(newData);
+
+                    return newData;
+                }),
             fail: () => console.warn("api 호출에 실패했습니다."),
         };
+    };
+
+    const updateChart = (newData: any) => {
+        const svg: any = select(svgRef.current);
+
+        const xScale = scaleBand() // x 축
+            .domain(newData.map((item: any) => String(item.name)))
+            .range([50, 450]);
+        // .padding(0.5);
+
+        svg.selectAll(".bar")
+            .data(newData)
+            // css: trasition: 500 과 동일함
+            .transition()
+            // .duration(500)
+            // 모든 데이터가 변경되는 경우 딜레이를 추가할 수 있음.
+            .delay((d: any, i: any) => i * 100)
+            .attr("class", "bar")
+            // 첫번째 인자에 배열의 요소가, 두번째 인자에 인덱스가 들어있음.
+            .attr("height", function (d: any, i: any) {
+                return d.value * 5;
+            }) // 높이는 각 값의 *5 만큼 크기로
+            .attr("width", 25) // 너비는 25로
+            .attr("x", function (d: any, i: string) {
+                return xScale(d.name) + 25;
+            }) // x 위치는 해당 값의 x축의 위치로
+            .attr("y", function (d: any, i: any) {
+                return 450 - d.value * 5;
+            }); // y 는 원래 높이에서 해당 높이를 뺀 만큼
     };
 
     // 필요데이터 조회: act (액티브 스테이터스)
     useEffect(() => {
         setInterval(() => {
             arr.push(apiObj("act_method"));
-        }, 500);
+        }, 5000);
         setInterval(() => {
             arr.push(apiObj("act_sql"));
-        }, 500);
+        }, 5000);
         setInterval(() => {
             arr.push(apiObj("act_httpc"));
-        }, 500);
+        }, 5000);
         setInterval(() => {
             arr.push(apiObj("act_dbc"));
-        }, 500);
+        }, 5000);
         setInterval(() => {
             arr.push(apiObj("act_socket"));
-        }, 500);
+        }, 5000);
+
+        // 막대 차트
+        const svg: any = select(svgRef.current);
+
+        const xScale = scaleBand() // x 축
+            .domain(data.map((item) => String(item.name)))
+            .range([50, 450]);
+
+        const yScale = scaleLinear() // y 축
+            .domain([0, 200]) // 실제값의 범위, // 최대값 찾아서 범위 지정?
+            .range([450, 50]); // 차트를 그리기 위해 크기를 지정.
+
+        const xAxis = axisBottom(xScale).ticks(4);
+        svg.select(".x-axis")
+            .style("transform", "translateY(450px)")
+            .call(xAxis);
+
+        const yAxis = axisLeft(yScale);
+        svg.select(".y-axis")
+            .attr("height", "100%")
+            .attr("transform", "translate(50, 0)")
+            .call(yAxis);
+
+        svg.selectAll(".bar")
+            .data(data)
+            .enter()
+            .append("rect")
+            // 작동 X
+            // .transition()
+            // .duration(500)
+            .attr("class", "bar")
+            // 첫번째 인자에 배열의 요소가, 두번째 인자에 인덱스가 들어있음.
+            .attr("height", function (d: any, i: any) {
+                return d.value * 5;
+            }) // 높이는 각 값의 *5 만큼 크기로
+            .attr("width", 25) // 너비는 25로
+            .attr("x", function (d: any, i: string) {
+                return xScale(d.name) + 25;
+            }) // x 위치는 해당 값의 x축의 위치로
+            .attr("y", function (d: any, i: any) {
+                return 450 - d.value * 5;
+            }); // y 는 원래 높이에서 해당 높이를 뺀 만큼
     }, []);
 
     useEffect(() => {
@@ -75,7 +150,7 @@ const TestChart1 = () => {
     return (
         <div>
             <div>
-                데이터베이스 <div className="infoIcon"></div>
+                액티브 스테이터스 <div className="infoIcon"></div>
                 <div>
                     {data[0].name}: {data[0].value}
                 </div>
@@ -93,7 +168,7 @@ const TestChart1 = () => {
                 </div>
             </div>
             <div style={{ height: "500px", width: "500px" }}>
-                <svg ref={svgRef}>
+                <svg ref={svgRef} style={{ height: "100%", width: "100%" }}>
                     <g className="y-axis" />
                     <g className="x-axis" />
                 </svg>
