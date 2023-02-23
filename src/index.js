@@ -19,6 +19,7 @@ const apiManager = () => {
                 arr[0].success(result.data);
             } catch (e) {
                 console.log(e);
+                console.log("에러 발생", arr);
                 arr[0].fail();
             } finally {
                 arr.shift();

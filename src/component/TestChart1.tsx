@@ -12,19 +12,19 @@ const TestChart1 = () => {
         },
         {
             name: "act_sql",
-            value: 0,
+            value: 1,
         },
         {
             name: "act_httpc",
-            value: 0,
+            value: 2,
         },
         {
             name: "act_dbc",
-            value: 0,
+            value: 3,
         },
         {
             name: "act_socket",
-            value: 0,
+            value: 4,
         },
     ]);
 
@@ -50,28 +50,40 @@ const TestChart1 = () => {
         const svg: any = select(svgRef.current);
 
         const xScale = scaleBand() // x 축
-            .domain(newData.map((item: any) => String(item.name)))
+            .domain(newData.map((item: any) => String(item.value)))
             .range([50, 450]);
         // .padding(0.5);
+
+        const xAxis = axisBottom(xScale).ticks(4);
+        svg.select(".x-axis")
+            .style("transform", "translateY(450px)")
+            .call(xAxis);
 
         svg.selectAll(".bar")
             .data(newData)
             // css: trasition: 500 과 동일함
             .transition()
-            // .duration(500)
+            .duration(500)
             // 모든 데이터가 변경되는 경우 딜레이를 추가할 수 있음.
             .delay((d: any, i: any) => i * 100)
             .attr("class", "bar")
             // 첫번째 인자에 배열의 요소가, 두번째 인자에 인덱스가 들어있음.
             .attr("height", function (d: any, i: any) {
-                return d.value * 5;
+                return d.value;
             }) // 높이는 각 값의 *5 만큼 크기로
             .attr("width", 25) // 너비는 25로
-            .attr("x", function (d: any, i: string) {
+            .attr("x", function (d: any, i: any) {
+                console.log(i * 25);
+                console.log("? value22", xScale("0"));
+                // return i * 25;
+                return xScale(String(d.value));
+
+                console.log("? value22", xScale(d.value));
+                console.log("? name22", xScale(d.name));
                 return xScale(d.name) + 25;
             }) // x 위치는 해당 값의 x축의 위치로
             .attr("y", function (d: any, i: any) {
-                return 450 - d.value * 5;
+                return 450 - d.value;
             }); // y 는 원래 높이에서 해당 높이를 뺀 만큼
     };
 
@@ -97,7 +109,7 @@ const TestChart1 = () => {
         const svg: any = select(svgRef.current);
 
         const xScale = scaleBand() // x 축
-            .domain(data.map((item) => String(item.name)))
+            .domain(data.map((item) => String(item.value)))
             .range([50, 450]);
 
         const yScale = scaleLinear() // y 축
@@ -109,11 +121,11 @@ const TestChart1 = () => {
             .style("transform", "translateY(450px)")
             .call(xAxis);
 
-        const yAxis = axisLeft(yScale);
-        svg.select(".y-axis")
-            .attr("height", "100%")
-            .attr("transform", "translate(50, 0)")
-            .call(yAxis);
+        // const yAxis = axisLeft(yScale);
+        // svg.select(".y-axis")
+        //     .attr("height", "100%")
+        //     .attr("transform", "translate(50, 0)")
+        //     .call(yAxis);
 
         svg.selectAll(".bar")
             .data(data)
@@ -125,14 +137,18 @@ const TestChart1 = () => {
             .attr("class", "bar")
             // 첫번째 인자에 배열의 요소가, 두번째 인자에 인덱스가 들어있음.
             .attr("height", function (d: any, i: any) {
-                return d.value * 5;
+                return d.value;
             }) // 높이는 각 값의 *5 만큼 크기로
             .attr("width", 25) // 너비는 25로
-            .attr("x", function (d: any, i: string) {
-                return xScale(d.name) + 25;
+            .attr("x", function (d: any, i: any) {
+                return i * 25;
+                console.log("? value", xScale(d.value)!);
+                console.log("? name", xScale(d.name)!);
+                return xScale(d.value);
+                // return xScale(d.name) + 25;
             }) // x 위치는 해당 값의 x축의 위치로
             .attr("y", function (d: any, i: any) {
-                return 450 - d.value * 5;
+                return 450 - d.value;
             }); // y 는 원래 높이에서 해당 높이를 뺀 만큼
     }, []);
 
