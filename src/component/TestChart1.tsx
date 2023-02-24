@@ -2,6 +2,7 @@ import {
     axisBottom,
     axisLeft,
     axisTop,
+    line,
     max,
     scaleBand,
     scaleLinear,
@@ -95,7 +96,6 @@ const TestChart1 = () => {
             .attr("class", "bar")
             // 첫번째 인자에 배열의 요소가, 두번째 인자에 인덱스가 들어있음.
             .attr("width", function (d: any, i: any) {
-                console.log(yScale(d.value), d.value);
                 return yScale(d.value) - 70;
                 // return d.value;
             }) // 높이는 각 값의 *5 만큼 크기로
@@ -117,21 +117,21 @@ const TestChart1 = () => {
     // 필요데이터 조회: act (액티브 스테이터스)
     // 최대값 기준
     useEffect(() => {
-        setInterval(() => {
-            arr.push(apiObj("act_method"));
-        }, 5000);
-        setInterval(() => {
-            arr.push(apiObj("act_sql"));
-        }, 5000);
-        setInterval(() => {
-            arr.push(apiObj("act_httpc"));
-        }, 5000);
-        setInterval(() => {
-            arr.push(apiObj("act_dbc"));
-        }, 5000);
-        setInterval(() => {
-            arr.push(apiObj("act_socket"));
-        }, 5000);
+        // setInterval(() => {
+        //     arr.push(apiObj("act_method"));
+        // }, 5000);
+        // setInterval(() => {
+        //     arr.push(apiObj("act_sql"));
+        // }, 5000);
+        // setInterval(() => {
+        //     arr.push(apiObj("act_httpc"));
+        // }, 5000);
+        // setInterval(() => {
+        //     arr.push(apiObj("act_dbc"));
+        // }, 5000);
+        // setInterval(() => {
+        //     arr.push(apiObj("act_socket"));
+        // }, 5000);
 
         // 막대 차트
         const svg: any = select(svgRef.current);
@@ -190,43 +190,15 @@ const TestChart1 = () => {
             });
     }, []);
 
-    /*
-    크기
-
-    default
-    500 * 500
-
-    */
     return (
         <div>
             <div>
                 액티브 스테이터스 <div className="infoIcon"></div>
-                <div>
-                    {data[0].name}: {data[0].value}
-                </div>
-                <div>
-                    {data[1].name}: {data[1].value}
-                </div>
-                <div>
-                    {data[2].name}: {data[2].value}
-                </div>
-                <div>
-                    {data[3].name}: {data[3].value}
-                </div>
-                <div>
-                    {data[4].name}: {data[4].value}
-                </div>
             </div>
             <div style={{ height: "500px", width: "500px" }}>
                 <svg ref={svgRef} style={{ height: "100%", width: "100%" }}>
                     <g className="y-axis" />
                     <g className="x-axis" />
-                    {/* <g>
-                        <rect x={60} y={50} width={100} height={25}></rect>
-                        <text x={60} y={50} fill={"red"}>
-                            hihihihihi
-                        </text>
-                    </g> */}
                 </svg>
             </div>
         </div>

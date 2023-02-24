@@ -9,6 +9,7 @@ import {
 import { useEffect, useRef, useState } from "react";
 import api from "./api";
 import TestChart1 from "./component/TestChart1";
+import TestChart2 from "./component/TestChart2";
 const HOUR = 1000 * 60 * 60;
 
 function App() {
@@ -34,13 +35,14 @@ function App() {
     //     // api.spot('dbc_active').then((result) => {console.log(result); setActAgent(result)})
     //     // api.spot('dbc_idle').then((result) => {console.log(result); setActAgent(result)})
     //     // api.spot('act_method').then((result) => {console.log(result); setActAgent(result)})
-    //     api.series("transaction/{stime}/{etime}", {
-    //         stime: Date.now() - HOUR,
-    //         etime: Date.now(),
-    //     }).then((result) => {
-    //         console.log("result series:", result);
-    //         setHttpcSeries(result);
-    //     });
+
+    /*
+    현재시간 기준 5초 동안의 데이터 조회 테스트
+
+    transaction: 데이터 없음
+
+    */
+
     // }, []);
 
     const svgRef = useRef(null);
@@ -91,7 +93,15 @@ function App() {
     // };
 
     useEffect(() => {
-        console.log("data: ", data);
+        // 조회 가능한 최소 시간 범위가 5분?
+        /*
+        시각화 데이터
+        time_avg
+        time_max
+        time_min
+        time_std
+        time_sum
+         */
 
         // bar 차트 생성
         const svg: any = select(svgRef.current);
@@ -152,6 +162,7 @@ function App() {
       y: 호출 값 전부
       */}
             <TestChart1 />
+            <TestChart2 />
             <div style={{ height: "500px", width: "500px" }}>
                 <svg ref={svgRef} style={{ height: "100%", width: "100%" }}>
                     <g className="y-axis" />
