@@ -35,38 +35,55 @@ const TestChart2 = () => {
 
         const svg: any = select(svgRef.current);
 
-        let margin = { top: 50, right: 50, bottom: 50, left: 50 };
-        let width = (window.innerWidth = margin.left - margin.right);
-        let height = (window.innerHeight = margin.top - margin.bottom);
-
         let n = 10;
 
-        let xScale = scaleLinear().domain([0, 10]).range([0, 500]);
+        // Max값의 기준?
+        let xScale = scaleLinear().domain([0, 10]).range([50, 450]);
 
-        let yScale = scaleLinear().domain([0, 1]).range([500, 0]);
+        // y 축은 시간을 나타내야 한다.
+        let yScale = scaleLinear().domain([0, 1]).range([450, 50]);
 
         let myLine = line()
             .x(function (d, i) {
                 return xScale(i);
             })
             .y(function (d: any, i) {
-                return xScale(d.y);
-            })
-            .curve(curveMonotoneX);
+                return yScale(d.y);
+            });
+        // .curve(curveMonotoneX);
 
         let dataSet = range(n).map((d) => ({ y: randomUniform(1)() }));
 
+        console.log(dataSet);
         svg.select(".x-axis")
             .attr("transform", "translate(0, 450)")
             .call(axisBottom(xScale));
-        svg.select(".y-axis").call(axisLeft(yScale));
 
+        svg.select(".y-axis")
+            .attr("transform", "translate(50, 0)")
+            .call(axisLeft(yScale));
+
+        // 선 추가
         svg.append("path")
             .datum(dataSet)
             .attr("class", "line")
+            .attr("fill", "none")
+            .attr("stroke", "blue")
+            .attr("stroke-width", "1px")
             .attr("d", myLine);
 
-        console.log(dataSet);
+        // 점 추가
+        svg.selectAll(".dot")
+            .data(dataSet)
+            .enter()
+            .append("circle")
+            .attr("cx", function (d: any, i: any) {
+                return xScale(i);
+            })
+            .attr("cy", function (d: any, i: any) {
+                return yScale(d.y);
+            })
+            .attr("r", 5);
     }, []);
     return (
         <div>
