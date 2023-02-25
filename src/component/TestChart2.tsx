@@ -189,7 +189,7 @@ const TestChart2 = () => {
             .attr("stroke", "blue")
             .attr("stroke-width", "1px")
             .attr("d", myLine)
-            .attr("transform", `translate(${margin.left}, 0)`);
+            .attr("transform", `translate(${margin.left}, ${margin.bottom})`);
 
         // g.append("g")
         //     .attr("clip-path", "url(#clip)")
@@ -245,7 +245,7 @@ const TestChart2 = () => {
         console.log(data);
         svg.select(".line")
             .attr("d", myLine)
-            .attr("transform", `translate(${40}, 0)`);
+            .attr("transform", `translate(${margin.left}, ${margin.bottom})`);
         data.shift();
         console.log(data);
     };
