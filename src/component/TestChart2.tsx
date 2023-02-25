@@ -21,9 +21,10 @@ const n = 600;
 const duration = 750;
 const now: any = new Date(Date.now() - duration);
 const count = 0;
-const data = range(n).map(function () {
-    return 0.5;
-});
+const data: any = [];
+// const data = range(n).map(function () {
+//     return 0.5;
+// });
 
 /*
 라인 위치 조정 V
@@ -143,7 +144,8 @@ const TestChart2 = () => {
                 // 실제 보여지는 범위는 range에 의해 축소되어있음.
                 // 1. 단순히 0 ~ 600 px 로 변환
                 // 2. 해당 비율을 반영해서 좌표를 지정
-                const xPos = ((x(now - 1000 * 60 * 10) + i) * width) / 600;
+                const xPos =
+                    ((x(now - 1000 * 60 * 10) + 600 - i) * width) / 600;
 
                 // console.log(xPos);
                 return xPos;
@@ -226,7 +228,8 @@ const TestChart2 = () => {
 
         const myLine: any = line()
             .x(function (d, i: any) {
-                const xPos = ((x(now - 1000 * 60 * 10) + i) * width) / 600;
+                const xPos =
+                    ((x(now - 1000 * 60 * 10) + 600 - i) * width) / 600;
                 return xPos;
                 // return x(now - (n - 1 - i) * duration);
             })
@@ -246,17 +249,13 @@ const TestChart2 = () => {
         svg.select(".line")
             .attr("d", myLine)
             .attr("transform", `translate(${margin.left}, ${margin.bottom})`);
-        data.shift();
+
+        if (data.length === 600) {
+            data.shift();
+        }
         console.log(data);
     };
 
-    /*
-    1. 라인차트 최대값 기준?
-    */
-
-    // 라인차트 데이터
-    // 초기에 10분 단위를 조회해서 보여준다.
-    // 시간대를 어떻게 매칭하는지
     useEffect(() => {
         setInterval(() => {
             const start = Date.now() - 1000 * 60 * 10;
