@@ -21,10 +21,9 @@ const n = 600;
 const duration = 750;
 const now: any = new Date(Date.now() - duration);
 const count = 0;
-const data: any = [];
-// const data = range(n).map(function () {
-//     return 0.5;
-// });
+const data = range(n).map(function () {
+    return 0;
+});
 
 /*
 라인 위치 조정 V
@@ -36,6 +35,8 @@ const margin = { top: 20, right: 20, bottom: 20, left: 40 };
 
 const TestChart2 = () => {
     const svgRef = useRef(null);
+
+    const [dataSource, setDataSource] = useState([]);
 
     const draw1 = () => {
         const svg: any = select(svgRef.current);
@@ -133,10 +134,11 @@ const TestChart2 = () => {
             // .domain([now - (n - 2) * duration, now - duration])
             .range([0, width]);
 
-        const yScale = scaleLinear().range([height, 0]);
+        const yScale = scaleLinear().domain([0, 5000]).range([height, 0]);
 
-        var y = scaleLinear().range([height, 0]);
+        var y = scaleLinear().domain([0.5]).range([height, 0]);
 
+        // 왼쪽으로 생기는중....
         var myLine: any = line()
             .x(function (d, i: any) {
                 // 값 위치 지정
@@ -144,14 +146,14 @@ const TestChart2 = () => {
                 // 실제 보여지는 범위는 range에 의해 축소되어있음.
                 // 1. 단순히 0 ~ 600 px 로 변환
                 // 2. 해당 비율을 반영해서 좌표를 지정
-                const xPos =
-                    ((x(now - 1000 * 60 * 10) + 600 - i) * width) / 600;
+                const xPos = ((xScale(now - 1000 * 60 * 10) + i) * width) / 600;
 
                 // console.log(xPos);
                 return xPos;
             })
             .y(function (d: any, i) {
-                return y(d);
+                // console.log(yScale(d));
+                return yScale(d);
             });
 
         // g.append("defs")
@@ -166,8 +168,8 @@ const TestChart2 = () => {
                 "transform",
                 `translate(${margin.left}, ${height + margin.bottom})`
             )
-            .call((x.axis = axisBottom(x)));
-        // .call(axisBottom(xScale));
+            // .call((x.axis = axisBottom(x)));
+            .call(axisBottom(xScale));
 
         // var axis = g
         //     .append("g")
@@ -203,7 +205,7 @@ const TestChart2 = () => {
         //     .ease(easeLinear);
     };
 
-    const onClick = () => {
+    const onClick = (newData = 100) => {
         //xXcale.domain 을 수정한다. 뒤에 하나추가, 앞에서 하나 제거
         /*
         x axis 를 선택해서 transtion 적용
@@ -224,19 +226,21 @@ const TestChart2 = () => {
         // // .domain([now - (n - 2) * duration, now - duration])
         // .range([0, width]);
 
-        var y = scaleLinear().range([height, 0]);
+        const yScale = scaleLinear().domain([0, 5000]).range([height, 0]);
 
         const myLine: any = line()
             .x(function (d, i: any) {
-                const xPos =
-                    ((x(now - 1000 * 60 * 10) + 600 - i) * width) / 600;
+                const xPos = ((x(now - 1000 * 60 * 10) + i) * width) / 600;
+
                 return xPos;
                 // return x(now - (n - 1 - i) * duration);
             })
             .y(function (d: any, i) {
-                return y(d);
+                return yScale(d);
             });
-        data.push(1);
+
+        // 데이터 추가
+        data.push(newData);
         svg.select(".x-axis")
             .transition()
             .attr(
@@ -245,19 +249,23 @@ const TestChart2 = () => {
             )
             .call((x.axis = axisBottom(x)));
 
-        console.log(data);
         svg.select(".line")
             .attr("d", myLine)
             .attr("transform", `translate(${margin.left}, ${margin.bottom})`);
 
-        if (data.length === 600) {
-            data.shift();
-        }
-        console.log(data);
+        // 데이터 제거
+        // if (data.length === 600) {
+        // }
+        data.shift();
     };
 
     useEffect(() => {
+        // 동적 차트
+        draw2();
+
+        // 데이터 조회
         setInterval(() => {
+            // const start = Date.now() - 1000 * 60;
             const start = Date.now() - 1000 * 60 * 10;
             // const start = Date.now() - 1000 * 60 * 5;
             const end = Date.now();
@@ -275,35 +283,41 @@ const TestChart2 = () => {
                 //         item.service.includes("seoul")
                 //     )
                 // );
-                // // 중복 데이터가 없다?
-                // // 10분전 ~ 현재 를 조회하면 중복 데이터가 없다.
+                // 중복 데이터가 없다?
+                // 10분전 ~ 현재 를 조회하면 중복 데이터가 없다.
                 // console.log(
                 //     "result",
                 //     result.data.records.filter((item: any) =>
                 //         item.service.includes("/account/save/employee/seoul")
                 //     )
                 // );
-                // console.log(
-                //     "result",
+
+                // 테스트: "/account/save/employee/seoul";
+
+                const filterTarget = result.data.records.filter((item: any) =>
+                    item.service.includes("/product/write/dept/pusan")
+                );
+                // console.log("result", filterTarget);
+                // console.log("result", result.data.records);
+                // const testData =
                 //     result.data.records.filter((item: any) =>
-                //         item.service.includes("/order/delete/employee/kwangju")
-                //     )
-                // );
+                //         item.service.includes("/account/save/employee/seoul")
+                //     )[0].time_avg || 0;
+                // console.log("result", testData);
+
+                onClick(filterTarget.length < 1 ? 0 : filterTarget[0].time_min);
             });
         }, 5000);
 
         // 정적 차트
         // draw1();
 
-        // 동적 차트
-        draw2();
-
         // setInterval(onClick, 5000);
     }, []);
 
     return (
         <div>
-            <button onClick={onClick}>이동</button>
+            <button onClick={() => onClick()}>이동</button>
             <div>
                 Time <div className="infoIcon"></div>
             </div>
