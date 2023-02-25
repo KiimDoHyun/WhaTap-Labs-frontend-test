@@ -93,7 +93,7 @@ const TestChart2 = () => {
         const svg: any = select(svgRef.current);
 
         var n = 243,
-            duration = 750,
+            duration = 750, // x축 이동 속도 조절
             now: any = new Date(Date.now() - duration),
             count = 0,
             data = range(n).map(function () {
@@ -133,7 +133,7 @@ const TestChart2 = () => {
 
         var axis = g
             .append("g")
-            .attr("class", "x axis")
+            .attr("class", "x-axis")
             .attr("transform", "translate(0," + height + ")")
             .call((x.axis = axisBottom(x)));
 
@@ -148,10 +148,12 @@ const TestChart2 = () => {
             .attr("class", "line") // (CSS)
             .transition()
             .duration(750)
-            .ease(easeLinear)
-            .on("start", tick);
+            .ease(easeLinear);
+        // .on("start", tick);
 
         function tick(this: any) {
+            console.log("???", this);
+            // this: path
             now = new Date();
             x.domain([now - (n - 2) * duration, now - duration]);
             y.domain([0, max(data)]);
@@ -162,16 +164,43 @@ const TestChart2 = () => {
 
             axis.transition().duration(750).ease(easeLinear).call(x.axis);
 
+            // 현재 tracsition이 활성화된 노드 반환?
             active(this)
                 .attr(
                     "transform",
                     "translate(" + x(now - (n - 1) * duration) + ")"
                 )
                 .transition()
+
                 .on("start", tick);
 
             data.shift();
         }
+    };
+
+    const onClick = () => {
+        //xXcale.domain 을 수정한다. 뒤에 하나추가, 앞에서 하나 제거
+        /*
+        x axis 를 선택해서 transtion 적용
+        */
+
+        const now: any = new Date();
+        const duration = 750;
+        var n = 243;
+        const svg: any = select(svgRef.current);
+
+        var margin = { top: 20, right: 20, bottom: 20, left: 40 },
+            width = +svg.attr("width") - margin.left - margin.right;
+
+        var x: any = scaleTime()
+            .domain([now - (n - 2) * duration, now - duration])
+            .range([0, width]);
+
+        svg.select(".x-axis")
+            .transition()
+            .call((x.axis = axisBottom(x)));
+
+        // console.log(active(this));
     };
 
     /*
@@ -202,6 +231,7 @@ const TestChart2 = () => {
 
     return (
         <div>
+            <button onClick={onClick}>이동</button>
             <div>
                 Time <div className="infoIcon"></div>
             </div>
