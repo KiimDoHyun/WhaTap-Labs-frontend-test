@@ -1,6 +1,7 @@
 import api from "./api";
 import TestChart1 from "./component/TestChart1";
 import TestChart2 from "./component/TestChart2";
+import TestChart3 from "./component/TestChart3";
 const HOUR = 1000 * 60 * 60;
 /*
 Todo: 디자인 (전체 레이아웃, 반응형)
@@ -51,6 +52,7 @@ function App() {
       */}
             <TestChart1 />
             <TestChart2 />
+            <TestChart3 />
 
             <h1>Open API (Application)</h1>
             <a
