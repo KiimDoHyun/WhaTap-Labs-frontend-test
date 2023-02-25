@@ -14,12 +14,29 @@ import {
     select,
     timeParse,
 } from "d3";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import api from "../api";
+
+const n = 243;
+const duration = 750;
+const now: any = new Date(Date.now() - duration);
+const count = 0;
+const data = range(n).map(function () {
+    return 0;
+});
+
+const margin = { top: 20, right: 20, bottom: 20, left: 40 };
 
 const TestChart2 = () => {
     const svgRef = useRef(null);
-    const [data, setData] = useState(null);
+
+    const width = useMemo(() => {
+        return +svgRef.current?.attr("width") - margin.left - margin.right;
+    }, [svgRef.current]);
+
+    const height = useMemo(() => {
+        return +svgRef.current?.attr("height") - margin.left - margin.right;
+    }, [svgRef.current]);
 
     const draw1 = () => {
         const svg: any = select(svgRef.current);
@@ -110,7 +127,15 @@ const TestChart2 = () => {
                     "translate(" + margin.left + "," + margin.top + ")"
                 );
 
+        const xScale = scaleTime()
+            .domain([now - (n - 2) * duration, now - duration])
+            .range([0, width]);
+
         var x: any = scaleTime()
+            .domain([now - (n - 2) * duration, now - duration])
+            .range([0, width]);
+
+        const yScale = scaleTime()
             .domain([now - (n - 2) * duration, now - duration])
             .range([0, width]);
 
@@ -131,11 +156,15 @@ const TestChart2 = () => {
             .attr("width", width)
             .attr("height", height);
 
-        var axis = g
-            .append("g")
-            .attr("class", "x-axis")
+        svg.select(".x-axis")
             .attr("transform", "translate(0," + height + ")")
-            .call((x.axis = axisBottom(x)));
+            .call(axisBottom(xScale));
+
+        // var axis = g
+        //     .append("g")
+        //     .attr("class", "x-axis")
+        //     .attr("transform", "translate(0," + height + ")")
+        //     .call((x.axis = axisBottom(x)));
 
         g.append("g") // y
             .attr("class", "axis axis--y")
@@ -149,33 +178,6 @@ const TestChart2 = () => {
             .transition()
             .duration(750)
             .ease(easeLinear);
-        // .on("start", tick);
-
-        function tick(this: any) {
-            console.log("???", this);
-            // this: path
-            now = new Date();
-            x.domain([now - (n - 2) * duration, now - duration]);
-            y.domain([0, max(data)]);
-            data.push(Math.min(30, count));
-            count = 0;
-
-            select(this).attr("d", myLine).attr("transform", null);
-
-            axis.transition().duration(750).ease(easeLinear).call(x.axis);
-
-            // 현재 tracsition이 활성화된 노드 반환?
-            active(this)
-                .attr(
-                    "transform",
-                    "translate(" + x(now - (n - 1) * duration) + ")"
-                )
-                .transition()
-
-                .on("start", tick);
-
-            data.shift();
-        }
     };
 
     const onClick = () => {
@@ -190,7 +192,8 @@ const TestChart2 = () => {
         const svg: any = select(svgRef.current);
 
         var margin = { top: 20, right: 20, bottom: 20, left: 40 },
-            width = +svg.attr("width") - margin.left - margin.right;
+            width = +svg.attr("width") - margin.left - margin.right,
+            height = +svg.attr("height") - margin.top - margin.bottom;
 
         var x: any = scaleTime()
             .domain([now - (n - 2) * duration, now - duration])
@@ -198,9 +201,8 @@ const TestChart2 = () => {
 
         svg.select(".x-axis")
             .transition()
+            .attr("transform", "translate(0," + height + ")")
             .call((x.axis = axisBottom(x)));
-
-        // console.log(active(this));
     };
 
     /*
