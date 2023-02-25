@@ -135,9 +135,8 @@ const TestChart2 = () => {
             .domain([now - (n - 2) * duration, now - duration])
             .range([0, width]);
 
-        const yScale = scaleTime()
-            .domain([now - (n - 2) * duration, now - duration])
-            .range([0, width]);
+        console.log("height: ", height);
+        const yScale = scaleLinear().range([height, 0]);
 
         var y = scaleLinear().range([height, 0]);
 
@@ -157,7 +156,10 @@ const TestChart2 = () => {
             .attr("height", height);
 
         svg.select(".x-axis")
-            .attr("transform", "translate(0," + height + ")")
+            .attr(
+                "transform",
+                `translate(${margin.left}, ${height + margin.bottom})`
+            )
             .call(axisBottom(xScale));
 
         // var axis = g
@@ -166,18 +168,29 @@ const TestChart2 = () => {
         //     .attr("transform", "translate(0," + height + ")")
         //     .call((x.axis = axisBottom(x)));
 
-        g.append("g") // y
-            .attr("class", "axis axis--y")
-            .call(axisLeft(y));
+        svg.select(".y-axis")
+            .attr("transform", `translate(${margin.left}, ${margin.bottom})`)
+            // .attr("transform", "translate(0," + height + ")")
+            .call(axisLeft(yScale));
 
-        g.append("g")
-            .attr("clip-path", "url(#clip)")
-            .append("path")
+        // g.append("g") // y
+        //     .attr("class", "axis axis--y")
+        //     .call(axisLeft(y));
+        svg.append("path")
             .datum(data)
             .attr("class", "line") // (CSS)
             .transition()
             .duration(750)
             .ease(easeLinear);
+
+        // g.append("g")
+        //     .attr("clip-path", "url(#clip)")
+        //     .append("path")
+        //     .datum(data)
+        //     .attr("class", "line") // (CSS)
+        //     .transition()
+        //     .duration(750)
+        //     .ease(easeLinear);
     };
 
     const onClick = () => {
@@ -201,7 +214,10 @@ const TestChart2 = () => {
 
         svg.select(".x-axis")
             .transition()
-            .attr("transform", "translate(0," + height + ")")
+            .attr(
+                "transform",
+                `translate(${margin.left}, ${height + margin.bottom})`
+            )
             .call((x.axis = axisBottom(x)));
     };
 
