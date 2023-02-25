@@ -75,9 +75,6 @@ const TestChart2 = () => {
         const xScale: any = scaleTime()
             .domain([now - 1000 * 60 * 10, now])
             .range([0, width]);
-        // .domain([now - 1000 * 60 * 10, now])
-        // // .domain([now - (n - 2) * duration, now - duration])
-        // .range([0, width]);
 
         const yScale = scaleLinear().domain([0, 5000]).range([height, 0]);
 
@@ -131,18 +128,6 @@ const TestChart2 = () => {
                 },
                 fail: () => console.log("에러"),
             });
-            // api.series("transaction/{stime}/{etime}", {
-            //     stime: start,
-            //     etime: end,
-            // }).then((result) => {
-            //     // 테스트데이터 필터
-            //     const filterTarget = result.data.records.find((item: any) =>
-            //         item.service.includes("/product/write/dept/pusan")
-            //     );
-            //     console.log("result", filterTarget);
-
-            //     update(filterTarget ? filterTarget.time_min : 0);
-            // });
         }, 5000);
     }, []);
 
