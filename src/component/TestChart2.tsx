@@ -17,7 +17,7 @@ import {
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import api from "../api";
 
-const n = 243;
+const n = 600;
 const duration = 750;
 const now: any = new Date(Date.now() - duration);
 const count = 0;
@@ -25,18 +25,16 @@ const data = range(n).map(function () {
     return 0.5;
 });
 
+/*
+라인 위치 조정 V
+조회된 데이터 바인딩 
+x축 tick: 1분 단위로 조정 
+*/
+
 const margin = { top: 20, right: 20, bottom: 20, left: 40 };
 
 const TestChart2 = () => {
     const svgRef = useRef(null);
-
-    const width = useMemo(() => {
-        return +svgRef.current?.attr("width") - margin.left - margin.right;
-    }, [svgRef.current]);
-
-    const height = useMemo(() => {
-        return +svgRef.current?.attr("height") - margin.left - margin.right;
-    }, [svgRef.current]);
 
     const draw1 = () => {
         const svg: any = select(svgRef.current);
@@ -109,12 +107,10 @@ const TestChart2 = () => {
     const draw2 = () => {
         const svg: any = select(svgRef.current);
 
-        var n = 243,
+        var n = 600,
             duration = 750,
-            now: any = new Date(Date.now() - duration),
+            now: any = new Date(Date.now()),
             count = 0;
-
-        console.log("data: ", data);
 
         var margin = { top: 20, right: 20, bottom: 20, left: 40 },
             width = +svg.attr("width") - margin.left - margin.right,
@@ -127,14 +123,14 @@ const TestChart2 = () => {
         //     );
 
         const xScale = scaleTime()
-            .domain([now - (n - 2) * duration, now - duration])
+            .domain([now - 1000 * 60 * 10, now])
+            // .domain([now - (n - 2) * duration, now - duration])
             .range([0, width]);
 
         var x: any = scaleTime()
             .domain([now - (n - 2) * duration, now - duration])
             .range([0, width]);
 
-        console.log("height: ", height);
         const yScale = scaleLinear().range([height, 0]);
 
         var y = scaleLinear().range([height, 0]);
@@ -159,7 +155,8 @@ const TestChart2 = () => {
                 "transform",
                 `translate(${margin.left}, ${height + margin.bottom})`
             )
-            .call(axisBottom(xScale));
+            .call((x.axis = axisBottom(x)));
+        // .call(axisBottom(xScale));
 
         // var axis = g
         //     .append("g")
@@ -178,14 +175,12 @@ const TestChart2 = () => {
         svg.append("path")
             .datum(data)
             .attr("class", "line") // (CSS)
-            .transition()
-            .duration(750)
             .attr("fill", "none")
             .attr("x", "40")
             .attr("stroke", "blue")
             .attr("stroke-width", "1px")
-            .ease(easeLinear)
-            .attr("d", myLine);
+            .attr("d", myLine)
+            .attr("transform", `translate(${margin.left}, 0)`);
 
         // g.append("g")
         //     .attr("clip-path", "url(#clip)")
@@ -203,9 +198,8 @@ const TestChart2 = () => {
         x axis 를 선택해서 transtion 적용
         */
 
-        const now: any = new Date();
+        const now: any = new Date(Date.now());
         const duration = 750;
-        var n = 243;
         const svg: any = select(svgRef.current);
 
         var margin = { top: 20, right: 20, bottom: 20, left: 40 },
@@ -215,24 +209,20 @@ const TestChart2 = () => {
         var x: any = scaleTime()
             .domain([now - (n - 2) * duration, now - duration])
             .range([0, width]);
-
-        var myLine: any = line()
-            .x(function (d, i: any) {
-                return x(now - (n - 1 - i) * duration);
-            })
-            .y(function (d: any, i) {
-                return y(d);
-            });
+        // .domain([now - 1000 * 60 * 10, now])
+        // // .domain([now - (n - 2) * duration, now - duration])
+        // .range([0, width]);
 
         var y = scaleLinear().range([height, 0]);
 
-        var myLine: any = line()
+        const myLine: any = line()
             .x(function (d, i: any) {
                 return x(now - (n - 1 - i) * duration);
             })
             .y(function (d: any, i) {
                 return y(d);
             });
+        // data.push(1);
         svg.select(".x-axis")
             .transition()
             .attr(
@@ -241,9 +231,12 @@ const TestChart2 = () => {
             )
             .call((x.axis = axisBottom(x)));
 
-        data.push(1);
-        svg.select(".line").attr("d", myLine).attr("transform", null);
+        console.log(data);
+        svg.select(".line")
+            .attr("d", myLine)
+            .attr("transform", `translate(${40}, 0)`);
         data.shift();
+        console.log(data);
     };
 
     /*
@@ -252,24 +245,50 @@ const TestChart2 = () => {
 
     // 라인차트 데이터
     // 초기에 10분 단위를 조회해서 보여준다.
-    // 이후 5초 단위로 조회해서 차트를 갱신한다. -> 데이터가 없음. 어떻게?
+    // 시간대를 어떻게 매칭하는지
     useEffect(() => {
-        const start = Date.now() - 1000 * 5;
-        // const start = Date.now() - 1000 * 60 * 5;
-        const end = Date.now();
-        api.series("transaction/{stime}/{etime}", {
-            stime: start,
-            etime: end,
-        }).then((result) => {
-            // console.log(new Date(start), new Date(end));
-            console.log("result", result.data);
-        });
+        setInterval(() => {
+            const start = Date.now() - 1000 * 60 * 10;
+            // const start = Date.now() - 1000 * 60 * 5;
+            const end = Date.now();
+            api.series("transaction/{stime}/{etime}", {
+                stime: start,
+                etime: end,
+            }).then((result) => {
+                // console.log("start: ", new Date(start));
+                // console.log("end: ", new Date(end));
+                // // console.log(new Date(start), new Date(end));
+                // console.log("result", result.data);
+                // console.log(
+                //     "result",
+                //     result.data.records.filter((item: any) =>
+                //         item.service.includes("seoul")
+                //     )
+                // );
+                // // 중복 데이터가 없다?
+                // // 10분전 ~ 현재 를 조회하면 중복 데이터가 없다.
+                // console.log(
+                //     "result",
+                //     result.data.records.filter((item: any) =>
+                //         item.service.includes("/account/save/employee/seoul")
+                //     )
+                // );
+                // console.log(
+                //     "result",
+                //     result.data.records.filter((item: any) =>
+                //         item.service.includes("/order/delete/employee/kwangju")
+                //     )
+                // );
+            });
+        }, 5000);
 
         // 정적 차트
         // draw1();
 
         // 동적 차트
         draw2();
+
+        // setInterval(onClick, 5000);
     }, []);
 
     return (
