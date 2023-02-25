@@ -13,8 +13,10 @@ let isWorking = false;
 // 이전 호출이 종료되고 호출 되어야 함.
 const apiManager = () => {
     setInterval(async () => {
-        if (arr.length > 0) {
+        if (arr.length > 0 && isWorking === false) {
             try {
+                isWorking = true;
+                console.log(arr);
                 const result = await arr[0].callApi();
                 arr[0].success(result.data);
             } catch (e) {
@@ -24,10 +26,11 @@ const apiManager = () => {
                     arr[0].fail();
                 }
             } finally {
+                isWorking = false;
                 arr.shift();
             }
         }
-    }, 100);
+    }, 10);
 };
 
 apiManager();

@@ -117,21 +117,21 @@ const TestChart1 = () => {
     // 필요데이터 조회: act (액티브 스테이터스)
     // 최대값 기준
     useEffect(() => {
-        // setInterval(() => {
-        //     arr.push(apiObj("act_method"));
-        // }, 5000);
-        // setInterval(() => {
-        //     arr.push(apiObj("act_sql"));
-        // }, 5000);
-        // setInterval(() => {
-        //     arr.push(apiObj("act_httpc"));
-        // }, 5000);
-        // setInterval(() => {
-        //     arr.push(apiObj("act_dbc"));
-        // }, 5000);
-        // setInterval(() => {
-        //     arr.push(apiObj("act_socket"));
-        // }, 5000);
+        setInterval(() => {
+            arr.push(apiObj("act_method"));
+        }, 5000);
+        setInterval(() => {
+            arr.push(apiObj("act_sql"));
+        }, 5000);
+        setInterval(() => {
+            arr.push(apiObj("act_httpc"));
+        }, 5000);
+        setInterval(() => {
+            arr.push(apiObj("act_dbc"));
+        }, 5000);
+        setInterval(() => {
+            arr.push(apiObj("act_socket"));
+        }, 5000);
 
         // 막대 차트
         const svg: any = select(svgRef.current);

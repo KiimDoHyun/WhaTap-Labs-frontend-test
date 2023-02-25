@@ -1,5 +1,6 @@
 import { axisBottom, axisLeft, line, scaleLinear, scaleTime, select } from "d3";
 import { useEffect, useRef } from "react";
+import { arr } from "..";
 import api from "../api";
 
 const now: any = new Date(Date.now());
@@ -61,7 +62,7 @@ const TestChart2 = () => {
             .attr("transform", `translate(${margin.left}, ${margin.bottom})`);
     };
 
-    const onClick = (newData = 100) => {
+    const update = (newData = 100) => {
         //xXcale.domain 을 수정한다. 뒤에 하나추가, 앞에서 하나 제거
         /*
         x axis 를 선택해서 transtion 적용
@@ -116,24 +117,37 @@ const TestChart2 = () => {
         setInterval(() => {
             const start = Date.now() - 1000 * 60 * 10;
             const end = Date.now();
-            api.series("transaction/{stime}/{etime}", {
-                stime: start,
-                etime: end,
-            }).then((result) => {
-                // 테스트데이터 필터
-                const filterTarget = result.data.records.find((item: any) =>
-                    item.service.includes("/product/write/dept/pusan")
-                );
-                console.log("result", filterTarget);
-
-                onClick(filterTarget ? filterTarget.time_min : 0);
+            arr.push({
+                callApi: () =>
+                    api.series("transaction/{stime}/{etime}", {
+                        stime: start,
+                        etime: end,
+                    }),
+                success: (data: any) => {
+                    const filterTarget = data.records.find((item: any) =>
+                        item.service.includes("/product/write/dept/pusan")
+                    );
+                    update(filterTarget ? filterTarget.time_min : 0);
+                },
+                fail: () => console.log("에러"),
             });
+            // api.series("transaction/{stime}/{etime}", {
+            //     stime: start,
+            //     etime: end,
+            // }).then((result) => {
+            //     // 테스트데이터 필터
+            //     const filterTarget = result.data.records.find((item: any) =>
+            //         item.service.includes("/product/write/dept/pusan")
+            //     );
+            //     console.log("result", filterTarget);
+
+            //     update(filterTarget ? filterTarget.time_min : 0);
+            // });
         }, 5000);
     }, []);
 
     return (
         <div>
-            <button onClick={() => onClick()}>이동</button>
             <div>
                 Time <div className="infoIcon"></div>
             </div>
