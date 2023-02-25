@@ -123,12 +123,13 @@ const TestChart2 = () => {
         //     );
 
         const xScale = scaleTime()
-            .domain([now - 1000 * 60 * 10, now])
+            .domain([now - 1000 * 60 * 10, now]) // 현재로부터 10분 전 까지를 범위로 지정한다.
             // .domain([now - (n - 2) * duration, now - duration])
             .range([0, width]);
 
         var x: any = scaleTime()
-            .domain([now - (n - 2) * duration, now - duration])
+            .domain([now - 1000 * 60 * 10, now])
+            // .domain([now - (n - 2) * duration, now - duration])
             .range([0, width]);
 
         const yScale = scaleLinear().range([height, 0]);
@@ -137,7 +138,15 @@ const TestChart2 = () => {
 
         var myLine: any = line()
             .x(function (d, i: any) {
-                return x(now - (n - 1 - i) * duration);
+                // 값 위치 지정
+
+                // 실제 보여지는 범위는 range에 의해 축소되어있음.
+                // 1. 단순히 0 ~ 600 px 로 변환
+                // 2. 해당 비율을 반영해서 좌표를 지정
+                const xPos = ((x(now - 1000 * 60 * 10) + i) * width) / 600;
+
+                // console.log(xPos);
+                return xPos;
             })
             .y(function (d: any, i) {
                 return y(d);
@@ -207,7 +216,7 @@ const TestChart2 = () => {
             height = +svg.attr("height") - margin.top - margin.bottom;
 
         var x: any = scaleTime()
-            .domain([now - (n - 2) * duration, now - duration])
+            .domain([now - 1000 * 60 * 10, now])
             .range([0, width]);
         // .domain([now - 1000 * 60 * 10, now])
         // // .domain([now - (n - 2) * duration, now - duration])
@@ -217,12 +226,14 @@ const TestChart2 = () => {
 
         const myLine: any = line()
             .x(function (d, i: any) {
-                return x(now - (n - 1 - i) * duration);
+                const xPos = ((x(now - 1000 * 60 * 10) + i) * width) / 600;
+                return xPos;
+                // return x(now - (n - 1 - i) * duration);
             })
             .y(function (d: any, i) {
                 return y(d);
             });
-        // data.push(1);
+        data.push(1);
         svg.select(".x-axis")
             .transition()
             .attr(
