@@ -9,7 +9,7 @@ import {
     select,
 } from "d3";
 import React, { useEffect, useRef, useState } from "react";
-import { arr } from "..";
+import { queue } from "..";
 import api from "../api";
 
 const TestChart1 = () => {
@@ -118,19 +118,19 @@ const TestChart1 = () => {
     // 최대값 기준
     useEffect(() => {
         setInterval(() => {
-            arr.push(apiObj("act_method"));
+            queue.push(apiObj("act_method"));
         }, 5000);
         setInterval(() => {
-            arr.push(apiObj("act_sql"));
+            queue.push(apiObj("act_sql"));
         }, 5000);
         setInterval(() => {
-            arr.push(apiObj("act_httpc"));
+            queue.push(apiObj("act_httpc"));
         }, 5000);
         setInterval(() => {
-            arr.push(apiObj("act_dbc"));
+            queue.push(apiObj("act_dbc"));
         }, 5000);
         setInterval(() => {
-            arr.push(apiObj("act_socket"));
+            queue.push(apiObj("act_socket"));
         }, 5000);
 
         // 막대 차트

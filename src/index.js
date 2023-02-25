@@ -4,7 +4,7 @@ import "./index.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 
-export const arr = [];
+export const queue = [];
 
 let isWorking = false;
 
@@ -13,20 +13,20 @@ let isWorking = false;
 // 이전 호출이 종료되고 호출 되어야 함.
 const apiManager = () => {
     setInterval(async () => {
-        if (arr.length > 0 && isWorking === false) {
+        if (queue.length > 0 && isWorking === false) {
             try {
                 isWorking = true;
-                const result = await arr[0].callApi();
-                arr[0].success(result.data);
+                const result = await queue[0].callApi();
+                queue[0].success(result.data);
             } catch (e) {
                 console.log(e);
-                console.log("에러 발생", arr);
-                if (arr.length > 0) {
-                    arr[0].fail();
+                console.log("에러 발생", queue);
+                if (queue.length > 0) {
+                    queue[0].fail();
                 }
             } finally {
                 isWorking = false;
-                arr.shift();
+                queue.shift();
             }
         }
     }, 10);

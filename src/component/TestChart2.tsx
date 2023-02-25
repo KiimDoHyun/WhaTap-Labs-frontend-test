@@ -1,6 +1,6 @@
 import { axisBottom, axisLeft, line, scaleLinear, scaleTime, select } from "d3";
 import { useEffect, useRef } from "react";
-import { arr } from "..";
+import { queue } from "..";
 import api from "../api";
 
 const now: any = new Date(Date.now());
@@ -114,7 +114,7 @@ const TestChart2 = () => {
         setInterval(() => {
             const start = Date.now() - 1000 * 60 * 10;
             const end = Date.now();
-            arr.push({
+            queue.push({
                 callApi: () =>
                     api.series("transaction/{stime}/{etime}", {
                         stime: start,
