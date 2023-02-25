@@ -16,7 +16,6 @@ const apiManager = () => {
         if (arr.length > 0 && isWorking === false) {
             try {
                 isWorking = true;
-                console.log(arr);
                 const result = await arr[0].callApi();
                 arr[0].success(result.data);
             } catch (e) {
