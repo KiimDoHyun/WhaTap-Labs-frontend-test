@@ -22,7 +22,7 @@ const duration = 750;
 const now: any = new Date(Date.now() - duration);
 const count = 0;
 const data = range(n).map(function () {
-    return 0;
+    return 0.5;
 });
 
 const margin = { top: 20, right: 20, bottom: 20, left: 40 };
@@ -110,22 +110,21 @@ const TestChart2 = () => {
         const svg: any = select(svgRef.current);
 
         var n = 243,
-            duration = 750, // x축 이동 속도 조절
+            duration = 750,
             now: any = new Date(Date.now() - duration),
-            count = 0,
-            data = range(n).map(function () {
-                return 0;
-            });
+            count = 0;
+
+        console.log("data: ", data);
 
         var margin = { top: 20, right: 20, bottom: 20, left: 40 },
             width = +svg.attr("width") - margin.left - margin.right,
-            height = +svg.attr("height") - margin.top - margin.bottom,
-            g = svg
-                .append("g")
-                .attr(
-                    "transform",
-                    "translate(" + margin.left + "," + margin.top + ")"
-                );
+            height = +svg.attr("height") - margin.top - margin.bottom;
+        // g = svg
+        //     .append("g")
+        //     .attr(
+        //         "transform",
+        //         "translate(" + margin.left + "," + margin.top + ")"
+        //     );
 
         const xScale = scaleTime()
             .domain([now - (n - 2) * duration, now - duration])
@@ -148,12 +147,12 @@ const TestChart2 = () => {
                 return y(d);
             });
 
-        g.append("defs")
-            .append("clipPath")
-            .attr("id", "clip")
-            .append("rect")
-            .attr("width", width)
-            .attr("height", height);
+        // g.append("defs")
+        //     .append("clipPath")
+        //     .attr("id", "clip")
+        //     .append("rect")
+        //     .attr("width", width)
+        //     .attr("height", height);
 
         svg.select(".x-axis")
             .attr(
@@ -181,7 +180,12 @@ const TestChart2 = () => {
             .attr("class", "line") // (CSS)
             .transition()
             .duration(750)
-            .ease(easeLinear);
+            .attr("fill", "none")
+            .attr("x", "40")
+            .attr("stroke", "blue")
+            .attr("stroke-width", "1px")
+            .ease(easeLinear)
+            .attr("d", myLine);
 
         // g.append("g")
         //     .attr("clip-path", "url(#clip)")
@@ -212,6 +216,23 @@ const TestChart2 = () => {
             .domain([now - (n - 2) * duration, now - duration])
             .range([0, width]);
 
+        var myLine: any = line()
+            .x(function (d, i: any) {
+                return x(now - (n - 1 - i) * duration);
+            })
+            .y(function (d: any, i) {
+                return y(d);
+            });
+
+        var y = scaleLinear().range([height, 0]);
+
+        var myLine: any = line()
+            .x(function (d, i: any) {
+                return x(now - (n - 1 - i) * duration);
+            })
+            .y(function (d: any, i) {
+                return y(d);
+            });
         svg.select(".x-axis")
             .transition()
             .attr(
@@ -219,6 +240,10 @@ const TestChart2 = () => {
                 `translate(${margin.left}, ${height + margin.bottom})`
             )
             .call((x.axis = axisBottom(x)));
+
+        data.push(1);
+        svg.select(".line").attr("d", myLine).attr("transform", null);
+        data.shift();
     };
 
     /*
