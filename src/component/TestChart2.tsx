@@ -72,6 +72,7 @@ const TestChart2 = () => {
         var width = +svg.attr("width") - margin.left - margin.right,
             height = +svg.attr("height") - margin.top - margin.bottom;
 
+        const now: any = new Date(Date.now());
         const xScale: any = scaleTime()
             .domain([now - 1000 * 60 * 10, now])
             .range([0, width]);
@@ -87,6 +88,7 @@ const TestChart2 = () => {
             .y((d: any) => yScale(d));
 
         // 데이터 추가
+        // 실제 시간과 차이가 있음.
         data.push(newData);
         svg.select(".x-axis")
             .transition()
