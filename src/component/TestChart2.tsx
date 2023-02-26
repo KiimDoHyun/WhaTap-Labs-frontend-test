@@ -22,8 +22,8 @@ const TestChart2 = () => {
     const draw2 = (parentWidth: any, parentHeight: any) => {
         const svg: any = select(svgRef.current);
 
-        var width = parentWidth - margin.left - margin.right,
-            height = parentHeight - margin.top - margin.bottom;
+        const width = parentWidth - margin.left - margin.right;
+        const height = parentHeight - margin.top - margin.bottom;
 
         const xScale = scaleTime()
             .domain([now - 1000 * 60 * 10, now]) // 현재로부터 10분 전 까지를 범위로 지정한다.
@@ -55,9 +55,8 @@ const TestChart2 = () => {
             .attr("transform", `translate(${margin.left}, ${margin.bottom})`)
             .call(axisLeft(yScale));
 
-        svg.append("path")
+        svg.select(".line")
             .datum(data)
-            .attr("class", "line") // (CSS)
             .attr("fill", "none")
             .attr("x", "40")
             .attr("stroke", "blue")
@@ -66,17 +65,18 @@ const TestChart2 = () => {
             .attr("transform", `translate(${margin.left}, ${margin.bottom})`);
     };
 
+    // 업데이트하면 이전 차트위에 새로 그린 라인이 추가됨.
     const update = (newData = 100) => {
-        //xXcale.domain 을 수정한다. 뒤에 하나추가, 앞에서 하나 제거
-        /*
-        x axis 를 선택해서 transtion 적용
-        */
         const svg: any = select(svgRef.current);
 
-        var width = +svg.attr("width") - margin.left - margin.right,
-            height = +svg.attr("height") - margin.top - margin.bottom;
+        const parentWidth = svgParentBoxRef.current.offsetWidth;
+        const parentHeight = svgParentBoxRef.current.offsetHeight;
+
+        const width = parentWidth - margin.left - margin.right;
+        const height = parentHeight - margin.top - margin.bottom;
 
         const now: any = new Date(Date.now());
+
         const xScale: any = scaleTime()
             .domain([now - 1000 * 60 * 10, now])
             .range([0, width]);
@@ -92,7 +92,6 @@ const TestChart2 = () => {
             .y((d: any) => yScale(d));
 
         // 데이터 추가
-        // 실제 시간과 차이가 있음.
         data.push(newData);
         svg.select(".x-axis")
             .transition()
@@ -106,15 +105,11 @@ const TestChart2 = () => {
             .attr("d", myLine)
             .attr("transform", `translate(${margin.left}, ${margin.bottom})`);
 
-        // 데이터 제거
-        // if (data.length === 600) {
-        // }
         data.shift();
     };
 
     useEffect(() => {
-        return;
-
+        // return;
         // 데이터 조회
         setInterval(() => {
             const start = Date.now() - 1000 * 60 * 10;
@@ -138,10 +133,9 @@ const TestChart2 = () => {
 
     useEffect(() => {
         const { width, height } = size;
+
         // 차트 생성
         draw2(width, height);
-
-        return;
     }, [size]);
 
     return (
@@ -154,6 +148,7 @@ const TestChart2 = () => {
                     {/* <svg width={500} height={500} ref={svgRef}> */}
                     <g className="y-axis" />
                     <g className="x-axis" />
+                    <path className="line" />
                 </svg>
             </div>
         </TestChart2Box>
