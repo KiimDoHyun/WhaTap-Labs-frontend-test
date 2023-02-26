@@ -2,6 +2,8 @@ import { axisBottom, axisLeft, line, scaleLinear, scaleTime, select } from "d3";
 import { useEffect, useRef } from "react";
 import { queue } from "..";
 import api from "../api";
+import styled from "styled-components";
+import useResize from "../hook/useResize";
 
 const now: any = new Date(Date.now());
 const data = new Array(600).fill(0);
@@ -14,12 +16,14 @@ const margin = { top: 20, right: 20, bottom: 20, left: 40 };
 
 const TestChart2 = () => {
     const svgRef = useRef(null);
+    const svgParentBoxRef = useRef(null);
+    const size = useResize(svgParentBoxRef);
 
-    const draw2 = () => {
+    const draw2 = (parentWidth: any, parentHeight: any) => {
         const svg: any = select(svgRef.current);
 
-        var width = +svg.attr("width") - margin.left - margin.right,
-            height = +svg.attr("height") - margin.top - margin.bottom;
+        var width = parentWidth - margin.left - margin.right,
+            height = parentHeight - margin.top - margin.bottom;
 
         const xScale = scaleTime()
             .domain([now - 1000 * 60 * 10, now]) // 현재로부터 10분 전 까지를 범위로 지정한다.
@@ -109,8 +113,7 @@ const TestChart2 = () => {
     };
 
     useEffect(() => {
-        // 차트 생성
-        draw2();
+        return;
 
         // 데이터 조회
         setInterval(() => {
@@ -133,24 +136,47 @@ const TestChart2 = () => {
         }, 5000);
     }, []);
 
+    useEffect(() => {
+        const { width, height } = size;
+        // 차트 생성
+        draw2(width, height);
+
+        return;
+    }, [size]);
+
     return (
-        <div>
-            <div>
+        <TestChart2Box>
+            <div className="title">
                 Time <div className="infoIcon"></div>
             </div>
-            <div style={{ height: "500px", width: "500px" }}>
-                <svg
-                    width={500}
-                    height={500}
-                    ref={svgRef}
-                    style={{ height: "500px", width: "500px" }}
-                >
+            <div className="chart" ref={svgParentBoxRef}>
+                <svg ref={svgRef}>
+                    {/* <svg width={500} height={500} ref={svgRef}> */}
                     <g className="y-axis" />
                     <g className="x-axis" />
                 </svg>
             </div>
-        </div>
+        </TestChart2Box>
     );
 };
+
+const TestChart2Box = styled.div`
+    width: 100%;
+    height: 100%;
+
+    .title {
+        height: 20px;
+        margin-bottom: 10px;
+    }
+
+    .chart {
+        height: calc(100% - 30px);
+
+        svg {
+            width: 100%;
+            height: 100%;
+        }
+    }
+`;
 
 export default TestChart2;

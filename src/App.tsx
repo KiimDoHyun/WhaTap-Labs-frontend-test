@@ -2,6 +2,7 @@ import api from "./api";
 import TestChart1 from "./component/TestChart1";
 import TestChart2 from "./component/TestChart2";
 import TestChart3 from "./component/TestChart3";
+import styled from "styled-components";
 const HOUR = 1000 * 60 * 60;
 /*
 Todo: 디자인 (전체 레이아웃, 반응형)
@@ -51,10 +52,51 @@ function App() {
       y: 호출 값 전부
       */}
             <TestChart1 />
-            <TestChart2 />
-            <TestChart3 />
+            {/* <TestChart3 /> */}
 
-            <h1>Open API (Application)</h1>
+            {/* 
+            한줄에 모두 표시한다.
+
+            1. 12칸으로 나눈다.
+
+            1:5:6 으로 차지한다.
+
+            화면이 작아지면
+            1:11:12 로 변경된다.
+
+            더 작아지면
+
+            12:12:12 로
+            각 차트가 차지하는 칸 크기에 맞춰서 차트가 업데이트 된다.
+
+            2. wrap 을 고려하지 않는다.
+
+            한줄에 놓인 각 컴포넌트를 % 비율로 가지고 있도록한다.
+
+            전체 컨테이너의 최소 크기를 지정한다: 1024px
+
+
+            직접 구현할지 외부 라이브러리를 사용할지
+
+            차트를 직접 만드는데 스타일은 외부라이브러리로?
+            차트를 직접 만드는데 스타일도 직접?
+            */}
+
+            <TestArea>
+                <TestRow>
+                    <TestCol className="width10">
+                        <TestChart3 />
+                    </TestCol>
+                    <TestCol className="width40">
+                        <Box />
+                    </TestCol>
+                    <TestCol className="width50">
+                        <TestChart2 />
+                    </TestCol>
+                </TestRow>
+            </TestArea>
+
+            {/* <h1>Open API (Application)</h1>
             <a
                 href="https://docs.whatap.io/kr/appendix/open_api_application.pdf"
                 target="_blank"
@@ -63,12 +105,48 @@ function App() {
             </a>
             <h2>프로젝트 API 예시</h2>
             <h3>Spot 정보 조회 URL</h3>
-            {/* <pre>{JSON.stringify(actAgent, null, 4)}</pre> */}
+            <pre>{JSON.stringify(actAgent, null, 4)}</pre>
             <hr />
             <h3>통계 정보 조회 URL</h3>
-            {/* <pre>{JSON.stringify(httpcSeries, null, 4)}</pre> */}
+            <pre>{JSON.stringify(httpcSeries, null, 4)}</pre> */}
         </div>
     );
 }
+
+const TestArea = styled.div`
+    width: 100%;
+    border: 1px solid;
+    box-sizing: border-box;
+
+    min-width: 1024px;
+`;
+
+const TestRow = styled.div`
+    width: 100%;
+    height: 400px;
+    display: flex;
+    gap: 10px;
+    padding: 10px;
+    box-sizing: border-box;
+
+    .width10 {
+        width: 10%;
+    }
+
+    .width40 {
+        width: 40%;
+    }
+
+    .width50 {
+        width: 50%;
+    }
+`;
+const TestCol = styled.div`
+    height: 100%;
+    padding: 5px;
+    box-sizing: border-box;
+`;
+
+const Box = styled.div``;
 
 export default App;
