@@ -6,6 +6,11 @@ import styled from "styled-components";
 import useResize from "../hook/useResize";
 
 const now: any = new Date(Date.now());
+
+/*
+d3는 DOM을 직접 조작한다.
+차트를 그리는데 사용할 데이터가 외부에 일반 변수로존재한다.
+*/
 const data = new Array(600).fill(0);
 
 /*
@@ -162,6 +167,7 @@ const TestChart2Box = styled.div`
     .title {
         height: 20px;
         margin-bottom: 10px;
+        font-size: 14px;
     }
 
     .chart {

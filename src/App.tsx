@@ -51,7 +51,7 @@ function App() {
       x: 호출 시간
       y: 호출 값 전부
       */}
-            <TestChart1 />
+
             {/* <TestChart3 /> */}
 
             {/* 
@@ -88,7 +88,7 @@ function App() {
                         <TestChart3 />
                     </TestCol>
                     <TestCol className="width40">
-                        <Box />
+                        <TestChart1 />
                     </TestCol>
                     <TestCol className="width50">
                         <TestChart2 />
