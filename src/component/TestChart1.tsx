@@ -35,6 +35,7 @@ const TestChart1 = () => {
         },
     ]);
 
+    // resize
     const responseiveDraw = (parentWidth: any, parentHeight: any) => {
         const svg: any = select(svgRef.current);
 
@@ -65,14 +66,24 @@ const TestChart1 = () => {
             .call(yAxis);
 
         svg.selectAll(".bar")
+            .transition()
+            .duration(500)
             .attr("y", function (d: any) {
                 return xScale(d.name) + margin.top + margin.bottom;
             })
             .attr("width", function (d: any) {
                 return d.value ? yScale(d.value) + margin.left : 0;
             });
+
+        svg.selectAll(".text")
+            .transition()
+            .duration(500)
+            .attr("y", function (d: any, i: any) {
+                return xScale(d.name) + margin.top + margin.bottom + 17;
+            });
     };
 
+    // 초기화
     const drawChart = (parentWidth: any, parentHeight: any) => {
         // 막대 차트
         const svg: any = select(svgRef.current);
@@ -127,10 +138,11 @@ const TestChart1 = () => {
             .attr("fill", "#919191")
             .attr("x", 80)
             .attr("y", function (d: any, i: any) {
-                return xScale(d.name);
+                return xScale(d.name) + margin.top + margin.bottom;
             });
     };
 
+    // 데이터 바인딩
     const updateChart = (newData: any) => {
         const svg: any = select(svgRef.current);
 
