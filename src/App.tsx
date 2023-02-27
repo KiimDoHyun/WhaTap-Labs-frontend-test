@@ -1,6 +1,6 @@
 import api from "./api";
 import BarChart from "./component/BarChart";
-import TestChart2 from "./component/TestChart2";
+import LineChart from "./component/LineChart";
 import TestChart3 from "./component/TestChart3";
 import styled from "styled-components";
 const HOUR = 1000 * 60 * 60;
@@ -91,7 +91,7 @@ function App() {
                         <BarChart />
                     </TestCol>
                     <TestCol className="width50">
-                        <TestChart2 />
+                        <LineChart />
                     </TestCol>
                 </TestRow>
             </TestArea>

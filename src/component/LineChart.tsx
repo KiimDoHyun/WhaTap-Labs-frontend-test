@@ -19,7 +19,7 @@ Todo: 데이터 매칭을 어떻게 할지
 
 const margin = { top: 20, right: 20, bottom: 20, left: 40 };
 
-const TestChart2 = () => {
+const LineChart = () => {
     const svgRef = useRef(null);
     const svgParentBoxRef = useRef(null);
     const size = useResize(svgParentBoxRef);
@@ -144,7 +144,7 @@ const TestChart2 = () => {
     }, [size]);
 
     return (
-        <TestChart2Box>
+        <LineChartBox>
             <div className="title">
                 Time <div className="infoIcon"></div>
             </div>
@@ -156,11 +156,11 @@ const TestChart2 = () => {
                     <path className="line" />
                 </svg>
             </div>
-        </TestChart2Box>
+        </LineChartBox>
     );
 };
 
-const TestChart2Box = styled.div`
+const LineChartBox = styled.div`
     width: 100%;
     height: 100%;
 
@@ -180,4 +180,4 @@ const TestChart2Box = styled.div`
     }
 `;
 
-export default TestChart2;
+export default LineChart;
