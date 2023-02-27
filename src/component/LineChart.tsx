@@ -10,12 +10,11 @@ const now: any = new Date(Date.now());
 /*
 d3는 DOM을 직접 조작한다.
 차트를 그리는데 사용할 데이터가 외부에 일반 변수로존재한다.
+
+Todo: 미리 600개의 데이터를 초과하는 부분 수정
+Todo: 조회 api 수정 -> spot 타입 데이터 조회로 변경
 */
 const data = new Array(600).fill(0);
-
-/*
-Todo: 데이터 매칭을 어떻게 할지
-*/
 
 const margin = { top: 20, right: 20, bottom: 20, left: 40 };
 
