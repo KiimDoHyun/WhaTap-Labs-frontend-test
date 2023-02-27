@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { queue } from "..";
 import api from "../api";
 
-const TestChart3 = () => {
+const InformaticsChart = () => {
     const [data, setData] = useState([
         {
             name: "act_agent",
@@ -58,18 +58,18 @@ const TestChart3 = () => {
     }, []);
 
     return (
-        <TestChart3Box>
+        <InformaticsChartBox>
             {data.map((item) => (
                 <InformaticsBox key={item.name}>
                     <div className="title">{item.title}</div>
                     <div className="value">{item.value}</div>
                 </InformaticsBox>
             ))}
-        </TestChart3Box>
+        </InformaticsChartBox>
     );
 };
 
-const TestChart3Box = styled.div`
+const InformaticsChartBox = styled.div`
     width: 100%;
     height: 100%;
     min-width: 100px;
@@ -94,4 +94,4 @@ const InformaticsBox = styled.div`
     }
 `;
 
-export default TestChart3;
+export default InformaticsChart;
