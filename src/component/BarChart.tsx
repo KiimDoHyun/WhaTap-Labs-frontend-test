@@ -36,6 +36,7 @@ const BarChart = () => {
     ]);
 
     // resize
+    // !데이터 바인딩 함수와 중복되는 부분 다수 존재
     const responseiveDraw = (parentWidth: any, parentHeight: any) => {
         const svg: any = select(svgRef.current);
 
@@ -51,9 +52,7 @@ const BarChart = () => {
             .attr("transform", `translate(${margin.left}, ${margin.bottom})`)
             .call(xAxis);
 
-        const yMax = max(data, function (d: any) {
-            return d.value;
-        });
+        const yMax = max(data, (d: any) => d.value);
 
         const yScale = scaleLinear()
             .domain([0, Number(yMax)])
@@ -78,68 +77,35 @@ const BarChart = () => {
         svg.selectAll(".text")
             .transition()
             .duration(500)
-            .attr("y", function (d: any, i: any) {
+            .attr("y", function (d: any) {
                 return xScale(d.name) + margin.top + margin.bottom + 17;
             });
     };
 
     // 초기화
-    const drawChart = (parentWidth: any, parentHeight: any) => {
+    const initChart = () => {
         // 막대 차트
         const svg: any = select(svgRef.current);
 
-        const width = parentWidth - margin.left - margin.right;
-        const height = parentHeight - margin.top - margin.bottom;
-
-        const xScale = scaleBand() // x 축
-            .domain(data.map((item) => `${item.name}`))
-            .range([0, height]);
-
-        const xAxis = axisLeft(xScale).ticks(4);
-        svg.select(".x-axis")
-            .attr("transform", `translate(${margin.left}, ${margin.bottom})`)
-            .call(xAxis);
-
-        const yScale = scaleLinear().domain([0, 10]).range([0, width]);
-
-        const yAxis = axisTop(yScale);
-        svg.select(".y-axis")
-            .attr("width", "100%")
-            // .attr("transform", "translate(0, 20)")
-            .attr("opacity", 0)
-            .call(yAxis);
-
         // 텍스트 추가해보기
-
-        let bar = svg
+        const bar = svg
             .selectAll(".item")
             .data(data)
             .enter()
             .append("g")
             .attr("class", "item");
 
+        // 바 생성
         bar.append("rect")
             .attr("class", "bar")
-            // 첫번째 인자에 배열의 요소가, 두번째 인자에 인덱스가 들어있음.
-            .attr("width", 0)
             .attr("height", 25) // 너비는 25로
-            .attr("y", function (d: any, i: any) {
-                return xScale(d.name) + margin.top + margin.bottom;
-            }) // x 위치는 해당 값의 x축의 위치로
-            .attr("x", function (d: any, i: any) {
-                return 70;
-            }); // y 는 원래 높이에서 해당 높이를 뺀 만큼
+            .attr("x", margin.left);
 
+        // 텍스트가 들어갈 요소 생성
         bar.append("text")
             .attr("class", "text")
-            .text(function (d: any) {
-                return d.value;
-            })
-            .attr("fill", "#919191")
-            .attr("x", 80)
-            .attr("y", function (d: any, i: any) {
-                return xScale(d.name) + margin.top + margin.bottom;
-            });
+            .attr("x", margin.left + 10)
+            .attr("fill", "#919191");
     };
 
     // 데이터 바인딩
@@ -147,55 +113,33 @@ const BarChart = () => {
         const svg: any = select(svgRef.current);
 
         const parentWidth = svgParentBoxRef.current.offsetWidth;
-        const parentHeight = svgParentBoxRef.current.offsetHeight;
 
         const width = parentWidth - margin.left - margin.right;
-        const height = parentHeight - margin.top - margin.bottom;
 
-        const xScale = scaleBand() // x 축
-            .domain(newData.map((item: any) => String(item.name)))
-            .range([0, height]);
-
-        const yMax = max(newData, function (d: any) {
-            return d.value;
-        });
+        const yMax = max(newData, (d: any) => d.value);
 
         const yScale = scaleLinear()
             .domain([0, Number(yMax)])
             .range([0, width]);
 
         const yAxis = axisTop(yScale);
-        svg.select(".y-axis")
-            .attr("width", "100%")
-            .attr("opacity", 0)
-            .call(yAxis);
+        svg.select(".y-axis").call(yAxis);
 
+        // 막대차트 길이 갱신
         svg.selectAll(".bar")
             .data(newData)
-            // css: trasition: 500 과 동일함
             .transition()
             .duration(500)
-            // 모든 데이터가 변경되는 경우 딜레이를 추가할 수 있음.
-            // .delay((d: any, i: any) => i * 100)
-            .attr("class", "bar")
-            // 첫번째 인자에 배열의 요소가, 두번째 인자에 인덱스가 들어있음.
             .attr("width", function (d: any) {
                 return d.value ? yScale(d.value) + margin.left : 0;
-                // return d.value;
-            }) // 높이는 각 값의 *5 만큼 크기로
-            .attr("y", function (d: any, i: any) {
-                // return xScale(d.name);
-                return xScale(d.name) + margin.top + margin.bottom;
-            }); // x 위치는 해당 값의 x축의 위치로
+            });
 
+        // 텍스트 갱신
         svg.selectAll(".text")
             .data(newData)
             .transition()
             .duration(500)
-            .attr("class", "text")
-            .text(function (d: any) {
-                return d.value;
-            });
+            .text((d: any) => d.value);
     };
 
     // 조회 에러 발생: 갱신 X
@@ -218,6 +162,7 @@ const BarChart = () => {
 
     // 필요데이터 조회: act (액티브 스테이터스)
     // 최대값 기준
+    const isfirst = useRef(true);
     useEffect(() => {
         setInterval(() => {
             queue.push(apiObj("act_method"));
@@ -235,7 +180,7 @@ const BarChart = () => {
             queue.push(apiObj("act_socket"));
         }, 5000);
 
-        drawChart(0, 0);
+        initChart();
     }, []);
 
     useEffect(() => {
