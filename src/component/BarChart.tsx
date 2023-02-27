@@ -7,7 +7,7 @@ import useResize from "../hook/useResize";
 
 const margin = { top: 20, right: 20, bottom: 20, left: 70 };
 
-const TestChart1 = () => {
+const BarChart = () => {
     const svgRef = useRef(null);
     const svgParentBoxRef = useRef(null);
     const size = useResize(svgParentBoxRef);
@@ -246,7 +246,7 @@ const TestChart1 = () => {
     }, [size]);
 
     return (
-        <TestChart1Box>
+        <BarChartBox>
             <div className="title">
                 액티브 스테이터스 <div className="infoIcon"></div>
             </div>
@@ -256,10 +256,10 @@ const TestChart1 = () => {
                     <g className="x-axis" />
                 </svg>
             </div>
-        </TestChart1Box>
+        </BarChartBox>
     );
 };
-const TestChart1Box = styled.div`
+const BarChartBox = styled.div`
     width: 100%;
     height: 100%;
 
@@ -279,4 +279,4 @@ const TestChart1Box = styled.div`
     }
 `;
 
-export default TestChart1;
+export default BarChart;

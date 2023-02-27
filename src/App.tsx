@@ -1,5 +1,5 @@
 import api from "./api";
-import TestChart1 from "./component/TestChart1";
+import BarChart from "./component/BarChart";
 import TestChart2 from "./component/TestChart2";
 import TestChart3 from "./component/TestChart3";
 import styled from "styled-components";
@@ -88,7 +88,7 @@ function App() {
                         <TestChart3 />
                     </TestCol>
                     <TestCol className="width40">
-                        <TestChart1 />
+                        <BarChart />
                     </TestCol>
                     <TestCol className="width50">
                         <TestChart2 />
