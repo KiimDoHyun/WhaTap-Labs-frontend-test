@@ -6,6 +6,10 @@ import reportWebVitals from "./reportWebVitals";
 
 export const queue = [];
 
+export const enqueueApi = (item) => {
+    queue.push(item);
+};
+
 let isWorking = false;
 
 // 체크: 0.1초 단위

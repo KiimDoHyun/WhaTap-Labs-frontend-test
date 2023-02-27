@@ -3,10 +3,13 @@ import BarChart from "./component/BarChart";
 import LineChart from "./component/LineChart";
 import InformaticsChart from "./component/InformaticsChart";
 import styled from "styled-components";
+import Widget from "./component/Widget";
+import { WidgetPropsType } from "./types/widget";
 const HOUR = 1000 * 60 * 60;
 /*
 Todo: 디자인 (전체 레이아웃, 반응형)
 */
+
 function App() {
     // const [actAgent, setActAgent] = useState<any>();
     // const [httpcSeries, setHttpcSeries] = useState<any>();
@@ -40,55 +43,32 @@ function App() {
 
     // }, []);
 
+    // 타입을 지정하지 않으면 chartType 이 string이 된다. (자동 추론)
+    // 실제 타입은 특정 값만 받도록 되어있기 때문에 에러가 발생한다.
+    // 명시적으로 타입을 지정해서 해결한다.
+    const barChartProps: WidgetPropsType = {
+        chartType: "BAR",
+        apiKey: {
+            spot: [
+                "act_method",
+                "act_sql",
+                "act_httpc",
+                "act_dbc",
+                "act_socket",
+            ],
+        },
+    };
+
     return (
         <div style={{ padding: 20 }}>
-            {/* 인포메틱스 4개 */}
-
-            {/* d3로 제작 */}
-            {/* 바 차트1 - 트랜잭션 관련 3개 */}
-            {/* 바 차트2 - 쓰레드 풀 관련 2개 */}
-            {/* json 하나 정해서 라인 
-      x: 호출 시간
-      y: 호출 값 전부
-      */}
-
-            {/* <TestChart3 /> */}
-
-            {/* 
-            한줄에 모두 표시한다.
-
-            1. 12칸으로 나눈다.
-
-            1:5:6 으로 차지한다.
-
-            화면이 작아지면
-            1:11:12 로 변경된다.
-
-            더 작아지면
-
-            12:12:12 로
-            각 차트가 차지하는 칸 크기에 맞춰서 차트가 업데이트 된다.
-
-            2. wrap 을 고려하지 않는다.
-
-            한줄에 놓인 각 컴포넌트를 % 비율로 가지고 있도록한다.
-
-            전체 컨테이너의 최소 크기를 지정한다: 1024px
-
-
-            직접 구현할지 외부 라이브러리를 사용할지
-
-            차트를 직접 만드는데 스타일은 외부라이브러리로?
-            차트를 직접 만드는데 스타일도 직접?
-            */}
-
             <TestArea>
                 <TestRow>
                     <TestCol className="width10">
                         <InformaticsChart />
                     </TestCol>
                     <TestCol className="width40">
-                        <BarChart />
+                        {/* <BarChart /> */}
+                        <Widget {...barChartProps} />
                     </TestCol>
                     <TestCol className="width50">
                         <LineChart />
