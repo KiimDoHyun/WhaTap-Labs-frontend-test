@@ -5,6 +5,7 @@ import InformaticsChart from "./component/InformaticsChart";
 import styled from "styled-components";
 import Widget from "./component/Widget";
 import { WidgetPropsType } from "./types/widget";
+import "bootstrap/dist/css/bootstrap.min.css";
 const HOUR = 1000 * 60 * 60;
 /*
 Todo: 디자인 (전체 레이아웃, 반응형)
