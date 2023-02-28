@@ -1,18 +1,7 @@
-import api from "./api";
-import BarChart from "./component/BarChart";
-import LineChart from "./component/LineChart";
-import InformaticsChart from "./component/InformaticsChart";
 import styled from "styled-components";
-import Widget from "./component/Widget";
-import { WidgetPropsType } from "./types/widget";
-import "bootstrap/dist/css/bootstrap.min.css";
-import { useState } from "react";
 import Router from "./router/Router";
-const HOUR = 1000 * 60 * 60;
-/*
-Todo: 디자인 (전체 레이아웃, 반응형)
-*/
-
+import "bootstrap/dist/css/bootstrap.min.css";
+import "react-calendar/dist/Calendar.css";
 function App() {
     // const [actAgent, setActAgent] = useState<any>();
     // const [httpcSeries, setHttpcSeries] = useState<any>();
@@ -36,31 +25,6 @@ function App() {
     //     // api.spot('dbc_active').then((result) => {console.log(result); setActAgent(result)})
     //     // api.spot('dbc_idle').then((result) => {console.log(result); setActAgent(result)})
     //     // api.spot('act_method').then((result) => {console.log(result); setActAgent(result)})
-
-    /*
-    현재시간 기준 5초 동안의 데이터 조회 테스트
-
-    transaction: 데이터 없음
-
-    */
-
-    // }, []);
-
-    // 타입을 지정하지 않으면 chartType 이 string이 된다. (자동 추론)
-    // 실제 타입은 특정 값만 받도록 되어있기 때문에 에러가 발생한다.
-    // 명시적으로 타입을 지정해서 해결한다.
-    const barChartProps: WidgetPropsType = {
-        chartType: "BAR",
-        apiKey: {
-            spot: [
-                "act_method",
-                "act_sql",
-                "act_httpc",
-                "act_dbc",
-                "act_socket",
-            ],
-        },
-    };
 
     return (
         <div style={{ padding: 20 }}>

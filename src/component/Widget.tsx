@@ -67,6 +67,7 @@ const Widget = ({ chartType, apiKey }: WidgetPropsType) => {
     const interval = useRef(null);
     const intervalCallback = useRef(() => {});
     useEffect(() => {
+        return;
         if (apiList.length < 1) return;
 
         if (isCallApi) {
