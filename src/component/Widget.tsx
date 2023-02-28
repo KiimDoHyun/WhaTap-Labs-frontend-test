@@ -18,8 +18,10 @@ const Widget = ({ chartType, apiKey }: WidgetPropsType) => {
     // 호출 주기
     const [callCycle, setCAllCycle] = useState<number>(5);
 
+    // 마지막 호출 시간
     const [lastCallTime, setLastCallTime] = useState(null);
 
+    const [isShowSettingModal, setIsShowSettingModal] = useState(false);
     const apiObj = (type: string) => {
         return {
             callApi: () => api.spot(type),
@@ -30,6 +32,7 @@ const Widget = ({ chartType, apiKey }: WidgetPropsType) => {
     };
 
     const onClickShowSetting = () => {
+        setIsShowSettingModal(true);
         // api 호출 정지/시작
         // api 호출 시점 변경
         // 호출 정지시 정시 시간을 알아야 한다.
@@ -104,23 +107,11 @@ const Widget = ({ chartType, apiKey }: WidgetPropsType) => {
     };
 
     /*
-    기존 interval을 중지하고
-    새로운 시간이 할당된 interval을 다시 시작시킨다.
-    */
+    조회 시점을 조정한다
 
-    /*
-    어떤 차트를 사용할지
-    조회할 api
-    조회할 구간
-    조회 정지. 시작
+    대시보드의 전체 데이터 호출 시점을 조정?
 
-    위젯은 데이터 조회관련을 담당한다.
-
-    차트 컴포넌트에 차트를 그리는데 필요한 데이터를 전달한다.
-    */
-
-    /*
-    조회 시점 조절
+    각 위젯의 데이터 갱신 주기 조정?
     */
     return (
         <WidgetBlock>
@@ -129,21 +120,15 @@ const Widget = ({ chartType, apiKey }: WidgetPropsType) => {
             {/* 차트 */}
 
             {/* 모달 */}
-            {/* <WidgetModal /> */}
+            <WidgetModal
+                show={isShowSettingModal}
+                setShow={setIsShowSettingModal}
+                lastCallTime={lastCallTime}
+                callCycle={callCycle}
+                isCallApi={isCallApi}
+                setIsCallApi={setIsCallApi}
+            />
             <ModalBlock>
-                <button onClick={() => setIsCallApi(true)}>
-                    api를 호출한다.
-                </button>
-                <button onClick={() => setIsCallApi(false)}>
-                    api를 호출안한다.
-                </button>
-                <div>
-                    마지막호출 시점:{" "}
-                    {lastCallTime
-                        ? lastCallTime.toLocaleString()
-                        : "호출 정보 없음"}
-                </div>
-                <div>호출 주기: {callCycle}초</div>
                 <input
                     value={callCycleInput}
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => {

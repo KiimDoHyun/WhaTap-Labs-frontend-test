@@ -1,3 +1,4 @@
+// Widget
 type ChartType = "BAR" | "LINE" | "INFO";
 
 interface ApiKeyObjectType {
@@ -13,3 +14,6 @@ export interface WidgetPropsType {
     chartType: ChartType;
     apiKey: ApiKeyType;
 }
+
+// Widget Modal
+export interface WidgetModalPropsType {}
