@@ -115,24 +115,24 @@ const LineChart = () => {
     useEffect(() => {
         // return;
         // 데이터 조회
-        setInterval(() => {
-            const start = Date.now() - 1000 * 60 * 10;
-            const end = Date.now();
-            queue.push({
-                callApi: () =>
-                    api.series("transaction/{stime}/{etime}", {
-                        stime: start,
-                        etime: end,
-                    }),
-                success: (data: any) => {
-                    const filterTarget = data.records.find((item: any) =>
-                        item.service.includes("/product/write/dept/pusan")
-                    );
-                    update(filterTarget ? filterTarget.time_min : 0);
-                },
-                fail: () => console.log("에러"),
-            });
-        }, 5000);
+        // setInterval(() => {
+        //     const start = Date.now() - 1000 * 60 * 10;
+        //     const end = Date.now();
+        //     queue.push({
+        //         callApi: () =>
+        //             api.series("transaction/{stime}/{etime}", {
+        //                 stime: start,
+        //                 etime: end,
+        //             }),
+        //         success: (data: any) => {
+        //             const filterTarget = data.records.find((item: any) =>
+        //                 item.service.includes("/product/write/dept/pusan")
+        //             );
+        //             update(filterTarget ? filterTarget.time_min : 0);
+        //         },
+        //         fail: () => console.log("에러"),
+        //     });
+        // }, 5000);
     }, []);
 
     useEffect(() => {

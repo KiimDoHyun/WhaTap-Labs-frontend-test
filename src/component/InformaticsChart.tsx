@@ -43,18 +43,18 @@ const InformaticsChart = () => {
     };
     // 인포메틱스
     useEffect(() => {
-        setInterval(() => {
-            queue.push(createApi("act_agent"));
-        }, 5000);
-        setInterval(() => {
-            queue.push(createApi("inact_agent"));
-        }, 5000);
-        setInterval(() => {
-            queue.push(createApi("host"));
-        }, 5000);
-        setInterval(() => {
-            queue.push(createApi("cpucore"));
-        }, 5000);
+        // setInterval(() => {
+        //     queue.push(createApi("act_agent"));
+        // }, 5000);
+        // setInterval(() => {
+        //     queue.push(createApi("inact_agent"));
+        // }, 5000);
+        // setInterval(() => {
+        //     queue.push(createApi("host"));
+        // }, 5000);
+        // setInterval(() => {
+        //     queue.push(createApi("cpucore"));
+        // }, 5000);
     }, []);
 
     return (

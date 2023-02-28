@@ -5,8 +5,8 @@ import api from "../api";
 import { WidgetPropsType } from "../types/widget";
 
 const Widget = ({ chartType, apiKey }: WidgetPropsType) => {
-    console.log("apiKey: ", apiKey);
-    console.log("chartType: ", chartType);
+    // console.log("apiKey: ", apiKey);
+    // console.log("chartType: ", chartType);
 
     // api 호출 여부
     const [isCallApi, setIsCallApi] = useState(true);
@@ -17,8 +17,7 @@ const Widget = ({ chartType, apiKey }: WidgetPropsType) => {
     // 호출 주기
     const [callCycle, setCAllCycle] = useState<number>(5);
 
-    const [lastCallTime, setLastCallTime] = useState(new Date(Date.now()));
-    console.log("lastCallTime: ", lastCallTime.toLocaleString());
+    const [lastCallTime, setLastCallTime] = useState(null);
 
     const apiObj = (type: string) => {
         return {
@@ -58,22 +57,56 @@ const Widget = ({ chartType, apiKey }: WidgetPropsType) => {
         }
     }, [apiKey]);
 
+    const callCycleRef = useRef(5);
+
     // 호출할 api 등록
     const interval = useRef(null);
+    const intervalCallback = useRef(() => {});
     useEffect(() => {
         if (apiList.length < 1) return;
 
         if (isCallApi) {
-            interval.current = setInterval(() => {
+            intervalCallback.current = () => {
                 setLastCallTime(new Date(Date.now()));
                 apiList.forEach((apiItem) => {
                     enqueueApi(apiObj(apiItem));
                 });
-            }, 5000);
+            };
+
+            interval.current = setInterval(
+                intervalCallback.current,
+                callCycleRef.current * 1000
+            );
         } else {
             clearInterval(interval.current);
         }
     }, [apiList, isCallApi]);
+
+    // 호출 주기 조정
+    const [callCycleInput, setCallCycleInput] = useState(5);
+    const onClickApplyCallCycle = () => {
+        console.log("적용할 시간", callCycleInput);
+
+        if (window.confirm("호출 주기를 변경하시겠습니까?")) {
+            setCAllCycle(callCycleInput);
+            callCycleRef.current = callCycleInput;
+
+            // 기존 호출 interval 제거
+            clearInterval(interval.current);
+
+            // 주기 변경후 재 등록
+            interval.current = setInterval(
+                intervalCallback.current,
+                callCycleInput * 1000
+            );
+        }
+    };
+
+    /*
+    기존 interval을 중지하고
+    새로운 시간이 할당된 interval을 다시 시작시킨다.
+    */
+
     /*
     어떤 차트를 사용할지
     조회할 api
@@ -102,8 +135,21 @@ const Widget = ({ chartType, apiKey }: WidgetPropsType) => {
                 <button onClick={() => setIsCallApi(false)}>
                     api를 호출안한다.
                 </button>
-                <div>마지막호출 시점: {lastCallTime.toLocaleString()}</div>
-                <div>호출 주기: 5초</div>
+                <div>
+                    마지막호출 시점:{" "}
+                    {lastCallTime
+                        ? lastCallTime.toLocaleString()
+                        : "호출 정보 없음"}
+                </div>
+                <div>호출 주기: {callCycle}초</div>
+                <input
+                    value={callCycleInput}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                        setCallCycleInput(Number(e.target.value));
+                    }}
+                />
+                <button onClick={onClickApplyCallCycle}>적용하기</button>
+                <div>api 호출 상태: {isCallApi ? "호출 중" : "호출 정지"}</div>
             </ModalBlock>
         </WidgetBlock>
     );
