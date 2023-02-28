@@ -6,6 +6,8 @@ import styled from "styled-components";
 import Widget from "./component/Widget";
 import { WidgetPropsType } from "./types/widget";
 import "bootstrap/dist/css/bootstrap.min.css";
+import { useState } from "react";
+import Router from "./router/Router";
 const HOUR = 1000 * 60 * 60;
 /*
 Todo: 디자인 (전체 레이아웃, 반응형)
@@ -62,34 +64,20 @@ function App() {
 
     return (
         <div style={{ padding: 20 }}>
-            <TestArea>
+            <Router />
+            {/* <TestArea>
                 <TestRow>
                     <TestCol className="width10">
                         <InformaticsChart />
                     </TestCol>
                     <TestCol className="width40">
-                        {/* <BarChart /> */}
                         <Widget {...barChartProps} />
                     </TestCol>
                     <TestCol className="width50">
                         <LineChart />
                     </TestCol>
                 </TestRow>
-            </TestArea>
-
-            {/* <h1>Open API (Application)</h1>
-            <a
-                href="https://docs.whatap.io/kr/appendix/open_api_application.pdf"
-                target="_blank"
-            >
-                가이드 문서
-            </a>
-            <h2>프로젝트 API 예시</h2>
-            <h3>Spot 정보 조회 URL</h3>
-            <pre>{JSON.stringify(actAgent, null, 4)}</pre>
-            <hr />
-            <h3>통계 정보 조회 URL</h3>
-            <pre>{JSON.stringify(httpcSeries, null, 4)}</pre> */}
+            </TestArea> */}
         </div>
     );
 }
