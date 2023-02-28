@@ -3,6 +3,7 @@ import styled from "styled-components";
 import { enqueueApi } from "..";
 import api from "../api";
 import { WidgetPropsType } from "../types/widget";
+import WidgetModal from "./Widget/WidgetModal";
 
 const Widget = ({ chartType, apiKey }: WidgetPropsType) => {
     // console.log("apiKey: ", apiKey);
@@ -128,6 +129,7 @@ const Widget = ({ chartType, apiKey }: WidgetPropsType) => {
             {/* 차트 */}
 
             {/* 모달 */}
+            {/* <WidgetModal /> */}
             <ModalBlock>
                 <button onClick={() => setIsCallApi(true)}>
                     api를 호출한다.
