@@ -66,7 +66,7 @@ const BarChart = ({ dataSource }: any) => {
                 return xScale(d.name) + height / 10 - 10;
             })
             .attr("width", function (d: any) {
-                return d.data ? yScale(d.data) + margin.left : 0;
+                return yScale(d.data);
             });
 
         svg.selectAll(".text")
@@ -107,6 +107,7 @@ const BarChart = ({ dataSource }: any) => {
         svg.select(".y-axis")
             .call(yAxis)
             .attr("width", "100%")
+            .attr("transform", `translate(${margin.left}, 0)`)
             .attr("opacity", 0);
 
         const bar = svg
@@ -156,7 +157,7 @@ const BarChart = ({ dataSource }: any) => {
             .transition()
             .duration(500)
             .attr("width", function (d: any) {
-                return d.data ? yScale(d.data) + margin.left : 0;
+                return yScale(d.data);
             });
 
         // 텍스트 갱신
