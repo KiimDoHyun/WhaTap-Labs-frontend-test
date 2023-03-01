@@ -29,6 +29,9 @@ const BarChart = ({ dataSource }: any) => {
 
         const svg: any = select(svgRef.current);
 
+        svgRef.current.style.width = parentWidth;
+        svgRef.current.style.height = parentHeight;
+
         const width = parentWidth - margin.left - margin.right;
         const height = parentHeight - margin.top - margin.bottom;
 
@@ -36,10 +39,11 @@ const BarChart = ({ dataSource }: any) => {
             .domain(data.map((item: any) => `${item.name}`))
             .range([0, height]);
 
-        const xAxis = axisLeft(xScale).ticks(4);
+        const xAxis = axisLeft(xScale);
         svg.select(".x-axis")
-            .attr("transform", `translate(${margin.left}, ${margin.bottom})`)
-            .call(xAxis);
+            .call(xAxis)
+            .attr("height", "100%")
+            .attr("transform", `translate(${margin.left}, ${margin.bottom})`);
 
         const yMax = max(data, (d: any) => d.data);
 
@@ -49,15 +53,17 @@ const BarChart = ({ dataSource }: any) => {
 
         const yAxis = axisTop(yScale);
         svg.select(".y-axis")
+            .call(yAxis)
             .attr("width", "100%")
-            .attr("opacity", 0)
-            .call(yAxis);
+            .attr("opacity", 0);
 
+        // xScale + 전체 높이의 10% - (바 높이 / 2)
         svg.selectAll(".bar")
             .transition()
             .duration(500)
+            .attr("transform", `translate(0, ${margin.bottom})`)
             .attr("y", function (d: any) {
-                return xScale(d.name) + margin.top + margin.bottom;
+                return xScale(d.name) + height / 10 - 10;
             })
             .attr("width", function (d: any) {
                 return d.data ? yScale(d.data) + margin.left : 0;
@@ -66,8 +72,9 @@ const BarChart = ({ dataSource }: any) => {
         svg.selectAll(".text")
             .transition()
             .duration(500)
+            .attr("transform", `translate(0, ${margin.bottom})`)
             .attr("y", function (d: any) {
-                return xScale(d.name) + margin.top + margin.bottom + 17;
+                return xScale(d.name) + height / 10 + 6;
             });
     };
 
@@ -75,8 +82,6 @@ const BarChart = ({ dataSource }: any) => {
     const initChart = () => {
         // 막대 차트
         const svg: any = select(svgRef.current);
-
-        console.log("data: ", data);
 
         const width =
             svgParentBoxRef.current.offsetWidth - margin.left - margin.right;
@@ -87,10 +92,10 @@ const BarChart = ({ dataSource }: any) => {
             .domain(data.map((item: any) => `${item.name}`))
             .range([0, height]);
 
-        const xAxis = axisLeft(xScale).ticks(4);
+        const xAxis = axisLeft(xScale);
         svg.select(".x-axis")
-            .attr("transform", `translate(${margin.left}, ${margin.bottom})`)
-            .call(xAxis);
+            .call(xAxis)
+            .attr("transform", `translate(${margin.left}, ${margin.bottom})`);
 
         const yMax = max(data, (d: any) => d.data);
 
@@ -100,9 +105,9 @@ const BarChart = ({ dataSource }: any) => {
 
         const yAxis = axisTop(yScale);
         svg.select(".y-axis")
+            .call(yAxis)
             .attr("width", "100%")
-            .attr("opacity", 0)
-            .call(yAxis);
+            .attr("opacity", 0);
 
         const bar = svg
             .selectAll(".item")
@@ -114,10 +119,11 @@ const BarChart = ({ dataSource }: any) => {
         // 바 생성
         bar.append("rect")
             .attr("class", "bar")
-            .attr("height", 25) // 너비는 25로
+            .attr("height", 20) // 너비는 20로
             .attr("x", margin.left)
+            .attr("transform", `translate(0, ${margin.bottom})`)
             .attr("y", function (d: any) {
-                return xScale(d.name) + margin.top + margin.bottom;
+                return xScale(d.name) + height / 10 - 10;
             });
 
         // 텍스트가 들어갈 요소 생성
@@ -181,20 +187,9 @@ const BarChart = ({ dataSource }: any) => {
         updateChart();
     }, [dataSource]);
 
-    useEffect(() => {}, []);
-
     return (
-        <BarChartBox>
-            <div className="title">
-                액티브 스테이터스 <div className="infoIcon"></div>
-            </div>
-            <div className="chart" ref={svgParentBoxRef}>
-                <Chart svgRef={svgRef} />
-                {/* <svg ref={svgRef}>
-                    <g className="y-axis" />
-                    <g className="x-axis" />
-                </svg> */}
-            </div>
+        <BarChartBox ref={svgParentBoxRef}>
+            <Chart svgRef={svgRef} />
         </BarChartBox>
     );
 };
@@ -203,24 +198,9 @@ const BarChartBox = styled.div`
     height: 100%;
 
     min-width: 250px;
-    min-height: 400px;
+    min-height: 300px;
 
     position: relative;
-
-    .title {
-        height: 20px;
-        margin-bottom: 10px;
-        font-size: 14px;
-    }
-
-    .chart {
-        height: calc(100% - 30px);
-
-        svg {
-            width: 100%;
-            height: 100%;
-        }
-    }
 `;
 
 export default BarChart;
