@@ -1,7 +1,8 @@
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import { enqueueApi } from "..";
 import api, { OPEN_API } from "../api";
+import { DataType, OPEN_APIType } from "../types/api";
 import { WidgetPropsType } from "../types/widget";
 import BarChart from "./BarChart";
 import InformaticsChart from "./InformaticsChart";
@@ -9,15 +10,6 @@ import LineChart from "./LineChart";
 import WidgetModal from "./Widget/WidgetModal";
 
 export const DEFAULT_CALL_CYCLE = 5;
-
-interface ObjectKeyType {
-    [key: string]: string;
-}
-
-interface OPEN_APIType {
-    "": ObjectKeyType;
-    json: ObjectKeyType;
-}
 
 const OPEN_API_WITH_TYPE: OPEN_APIType = OPEN_API;
 
@@ -48,7 +40,7 @@ const Widget = ({ chartType, apiKey }: WidgetPropsType) => {
     const apiObj = (key: string) => {
         return {
             callApi: () => api.spot(key),
-            success: (data: any) => {
+            success: (data: DataType) => {
                 setDataSource((prev) =>
                     prev.map((item) => (item.key === key ? data : item))
                 );
@@ -113,6 +105,7 @@ const Widget = ({ chartType, apiKey }: WidgetPropsType) => {
 
     각 위젯의 데이터 갱신 주기 조정?
     */
+
     return (
         <WidgetBlock>
             <button onClick={onClickShowSetting}>showSetting</button>
@@ -137,10 +130,5 @@ const Widget = ({ chartType, apiKey }: WidgetPropsType) => {
 };
 
 const WidgetBlock = styled.div``;
-const ModalBlock = styled.div`
-    width: 300px;
-    height: 300px;
-    border: 1px solid;
-    background: white;
-`;
+
 export default Widget;

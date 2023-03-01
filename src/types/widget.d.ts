@@ -12,4 +12,11 @@ export interface WidgetPropsType {
 }
 
 // Widget Modal
-export interface WidgetModalPropsType {}
+export interface WidgetModalPropsType {
+    show: boolean;
+    setShow: React.Dispatch<React.SetStateAction<boolean>>;
+    lastCallTime: object;
+    isCallApi: boolean;
+    setIsCallApi: React.Dispatch<React.SetStateAction<boolean>>;
+    onClickApplyCallCycle: (inputValue: number) => void;
+}

@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Modal } from "react-bootstrap";
 import Form from "react-bootstrap/Form";
-import ListPicker from "../../common/DatePicker/ListPicker";
+import { WidgetModalPropsType } from "../../types/widget";
 import { DEFAULT_CALL_CYCLE } from "../Widget";
 
 const WidgetModal = ({
@@ -11,7 +11,7 @@ const WidgetModal = ({
     isCallApi,
     setIsCallApi,
     onClickApplyCallCycle,
-}: any) => {
+}: WidgetModalPropsType) => {
     // 호출 여부 스위치
     const [switchValue, setSwitchValue] = useState(isCallApi);
 

@@ -1,9 +1,10 @@
-import React, { useEffect, useMemo, useState } from "react";
+import { useMemo } from "react";
 import { Calendar } from "react-calendar";
 import styled from "styled-components";
+import { DatePickerPropsType } from "../types/datePicker";
 import ListPicker from "./DatePicker/ListPicker";
 
-const DatePicker = ({ date, setDate }: any) => {
+const DatePicker = ({ date, setDate }: DatePickerPropsType) => {
     const value = useMemo(
         () => new Date(`${date.year}-${date.month}-${date.date}`),
         [date]

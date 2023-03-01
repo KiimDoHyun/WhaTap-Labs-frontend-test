@@ -1,14 +1,28 @@
-import { axisLeft, axisTop, max, scaleBand, scaleLinear, select } from "d3";
+import {
+    Axis,
+    axisLeft,
+    axisTop,
+    max,
+    ScaleBand,
+    scaleBand,
+    scaleLinear,
+    select,
+    Selection,
+} from "d3";
 import React, { useEffect, useRef } from "react";
-import api from "../api";
 import styled from "styled-components";
 import useResize from "../hook/useResize";
+import {
+    BarChartPropsType,
+    ChartPropsType,
+    dataSourceType,
+} from "../types/barChart";
 
 const margin = { top: 20, right: 20, bottom: 20, left: 70 };
 
-let data: any = null;
+let data: dataSourceType[] = null;
 
-const Chart = React.memo(({ svgRef }: any) => {
+const Chart = React.memo(({ svgRef }: ChartPropsType) => {
     return (
         <svg ref={svgRef}>
             <g className="y-axis" />
@@ -17,14 +31,14 @@ const Chart = React.memo(({ svgRef }: any) => {
     );
 });
 
-const BarChart = ({ dataSource }: any) => {
+const BarChart = ({ dataSource }: BarChartPropsType) => {
     const svgRef = useRef(null);
     const svgParentBoxRef = useRef(null);
     const size = useResize(svgParentBoxRef);
 
     // resize
     // !데이터 바인딩 함수와 중복되는 부분 다수 존재
-    const responseiveDraw = (parentWidth: any, parentHeight: any) => {
+    const responseiveDraw = (parentWidth: number, parentHeight: number) => {
         if (data === null) return;
 
         const svg: any = select(svgRef.current);
@@ -36,7 +50,7 @@ const BarChart = ({ dataSource }: any) => {
         const height = parentHeight - margin.top - margin.bottom;
 
         const xScale = scaleBand() // x 축
-            .domain(data.map((item: any) => `${item.name}`))
+            .domain(data.map((item: dataSourceType) => `${item.name}`))
             .range([0, height]);
 
         const xAxis = axisLeft(xScale);
@@ -45,7 +59,7 @@ const BarChart = ({ dataSource }: any) => {
             .attr("height", "100%")
             .attr("transform", `translate(${margin.left}, ${margin.bottom})`);
 
-        const yMax = max(data, (d: any) => d.data);
+        const yMax = max(data, (d: dataSourceType) => d.data);
 
         const yScale = scaleLinear()
             .domain([0, Number(yMax)])
@@ -62,10 +76,10 @@ const BarChart = ({ dataSource }: any) => {
             .transition()
             .duration(500)
             .attr("transform", `translate(0, ${margin.bottom})`)
-            .attr("y", function (d: any) {
+            .attr("y", function (d: dataSourceType) {
                 return xScale(d.name) + height / 10 - 10;
             })
-            .attr("width", function (d: any) {
+            .attr("width", function (d: dataSourceType) {
                 return yScale(d.data);
             });
 
@@ -73,7 +87,7 @@ const BarChart = ({ dataSource }: any) => {
             .transition()
             .duration(500)
             .attr("transform", `translate(0, ${margin.bottom})`)
-            .attr("y", function (d: any) {
+            .attr("y", function (d: dataSourceType) {
                 return xScale(d.name) + height / 10 + 6;
             });
     };
@@ -81,7 +95,10 @@ const BarChart = ({ dataSource }: any) => {
     // 초기화
     const initChart = () => {
         // 막대 차트
-        const svg: any = select(svgRef.current);
+        const svg = select(
+            // const svg: Selection<SVGElement, {}, HTMLElement, any> = select(
+            svgRef.current
+        );
 
         const width =
             svgParentBoxRef.current.offsetWidth - margin.left - margin.right;
@@ -89,15 +106,18 @@ const BarChart = ({ dataSource }: any) => {
             svgParentBoxRef.current.offsetHeight - margin.top - margin.bottom;
 
         const xScale = scaleBand() // x 축
-            .domain(data.map((item: any) => `${item.name}`))
+            .domain(data.map((item: dataSourceType) => `${item.name}`))
             .range([0, height]);
-
+        // (selection: Selection<BaseType, unknown, null, undefined>, ...args: any[]) => void
+        // SVGGElement
         const xAxis = axisLeft(xScale);
+        // console.log("xAxis: ", xAxis);
+        // console.log("xAxis: ", typeof xAxis);
         svg.select(".x-axis")
             .call(xAxis)
             .attr("transform", `translate(${margin.left}, ${margin.bottom})`);
 
-        const yMax = max(data, (d: any) => d.data);
+        const yMax = max(data, (d: dataSourceType) => d.data);
 
         const yScale = scaleLinear()
             .domain([0, Number(yMax)])
@@ -123,7 +143,7 @@ const BarChart = ({ dataSource }: any) => {
             .attr("height", 20) // 너비는 20로
             .attr("x", margin.left)
             .attr("transform", `translate(0, ${margin.bottom})`)
-            .attr("y", function (d: any) {
+            .attr("y", function (d: dataSourceType) {
                 return xScale(d.name) + height / 10 - 10;
             });
 
@@ -142,7 +162,7 @@ const BarChart = ({ dataSource }: any) => {
 
         const width = parentWidth - margin.left - margin.right;
 
-        const yMax = max(data, (d: any) => d.data) || 0;
+        const yMax = max(data, (d: dataSourceType) => d.data) || 0;
 
         const yScale = scaleLinear()
             .domain([0, Number(yMax)])
@@ -156,7 +176,7 @@ const BarChart = ({ dataSource }: any) => {
             .data(data)
             .transition()
             .duration(500)
-            .attr("width", function (d: any) {
+            .attr("width", function (d: dataSourceType) {
                 return yScale(d.data);
             });
 
@@ -165,7 +185,7 @@ const BarChart = ({ dataSource }: any) => {
             .data(data)
             .transition()
             .duration(500)
-            .text((d: any) => d.data);
+            .text((d: dataSourceType) => d.data);
     };
 
     // 필요데이터 조회: act (액티브 스테이터스)
