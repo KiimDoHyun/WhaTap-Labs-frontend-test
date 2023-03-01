@@ -5,7 +5,7 @@ const DateBox = ({ dateInfo }: any) => {
     return (
         <DateBoxBlock>
             <div className="area1">{`${dateInfo.year}/${dateInfo.month}/${dateInfo.date}`}</div>
-            ~<div className="area2">{`${dateInfo.hour}:${dateInfo.min}`}</div>
+            <div className="area2">{`${dateInfo.hour}:${dateInfo.min}`}</div>
         </DateBoxBlock>
     );
 };

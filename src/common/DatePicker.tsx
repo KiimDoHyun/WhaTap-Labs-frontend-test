@@ -21,34 +21,46 @@ const DatePicker = ({ date, setDate }: any) => {
 
     return (
         <DatePickerBlock>
-            {/* 날짜 */}
-            <Calendar
-                calendarType={"US"}
-                value={value}
-                onChange={onChangeCalendar}
-            />
-            {/* 00 ~ 23 */}
-            <ListPicker
-                num={24}
-                value={date.hour}
-                type={"hour"}
-                setValue={setDate}
-            />
+            <div className="titleArea">
+                {`${date.year}/${date.month}/${date.date} ${date.hour}:${date.min}`}
+            </div>
+            <div className="bodyArea">
+                {/* 날짜 */}
+                <Calendar
+                    calendarType={"US"}
+                    value={value}
+                    onChange={onChangeCalendar}
+                />
+                {/* 00 ~ 23 */}
+                <ListPicker
+                    num={24}
+                    value={date.hour}
+                    type={"hour"}
+                    setValue={setDate}
+                />
 
-            {/* 00 ~ 59 */}
-            <ListPicker
-                num={60}
-                value={date.min}
-                type={"min"}
-                setValue={setDate}
-            />
+                {/* 00 ~ 59 */}
+                <ListPicker
+                    num={60}
+                    value={date.min}
+                    type={"min"}
+                    setValue={setDate}
+                />
+            </div>
         </DatePickerBlock>
     );
 };
 
 const DatePickerBlock = styled.div`
-    position: relative;
-    height: 300px;
-    display: flex;
+    .titleArea {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .bodyArea {
+        position: relative;
+        display: flex;
+        height: 300px;
+    }
 `;
 export default DatePicker;

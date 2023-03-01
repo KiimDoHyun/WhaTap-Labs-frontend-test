@@ -11,12 +11,20 @@ const DashboardHeader = ({
 }: any) => {
     const [isClickDate, setIsClickDate] = useState(false);
 
+    const [tempStartDate, setTempStartDate] = useState(startDate);
+    const [tempEndDate, setTempEndDate] = useState(endDate);
+
     const toggle = () => {
         setIsClickDate(!isClickDate);
     };
 
     const onClickConfirm = () => {
-        //
+        if (window.confirm("조회 범위를 변경하시겠습니까?")) {
+            setStartDate(tempStartDate);
+            setEndDate(tempEndDate);
+        }
+
+        toggle();
     };
 
     return (
@@ -24,12 +32,15 @@ const DashboardHeader = ({
             <TitleBlock onClick={toggle}>
                 <DateBox dateInfo={startDate} />
                 ~
-                <DateBox dateInfo={startDate} />
+                <DateBox dateInfo={endDate} />
             </TitleBlock>
             <DatePickerBlock isClickDate={isClickDate}>
                 <div className="pickArea">
-                    <DatePicker date={startDate} setDate={setStartDate} />
-                    <DatePicker date={endDate} setDate={setEndDate} />
+                    <DatePicker
+                        date={tempStartDate}
+                        setDate={setTempStartDate}
+                    />
+                    <DatePicker date={tempEndDate} setDate={setTempEndDate} />
                 </div>
                 <div className="buttonArea">
                     <button onClick={toggle}>닫기</button>

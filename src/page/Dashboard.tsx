@@ -7,10 +7,11 @@ import Calendar from "react-calendar";
 import DatePicker from "../common/DatePicker";
 import styled from "styled-components";
 import DashboardHeader from "../component/Dashboard/DashboardHeader";
+const start = new Date(Date.now() - 1000 * 60 * 10);
+const end = new Date(Date.now());
 const Dashboard = () => {
     // 조회 범위
     // default: 10분전 ~ 현재
-    const start = new Date(Date.now() - 1000 * 60 * 10);
     const [startDate, setStartDate] = useState({
         year: start.getFullYear(),
         month: start.getMonth() + 1,
@@ -19,7 +20,6 @@ const Dashboard = () => {
         min: start.getMinutes(),
     });
 
-    const end = new Date(Date.now());
     const [endDate, setEndDate] = useState({
         year: end.getFullYear(),
         month: end.getMonth() + 1,
