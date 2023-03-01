@@ -1,15 +1,11 @@
-import React, { useEffect, useState } from "react";
+import { useState } from "react";
 import Widget from "../component/Widget";
 import { WidgetPropsType } from "../types/widget";
-import InputGroup from "react-bootstrap/InputGroup";
-import Form from "react-bootstrap/Form";
-import Calendar from "react-calendar";
-import DatePicker from "../common/DatePicker";
 import styled from "styled-components";
 import DashboardHeader from "../component/Dashboard/DashboardHeader";
-const start = new Date(Date.now() - 1000 * 60 * 10);
-const end = new Date(Date.now());
 const Dashboard = () => {
+    const start = new Date(Date.now() - 1000 * 60 * 10);
+    const end = new Date(Date.now());
     // 조회 범위
     // default: 10분전 ~ 현재
     const [startDate, setStartDate] = useState({
@@ -39,7 +35,8 @@ const Dashboard = () => {
     const barChartProps: WidgetPropsType = {
         chartType: "BAR",
         apiKey: {
-            spot: [
+            type: "spot",
+            keys: [
                 "act_method",
                 "act_sql",
                 "act_httpc",

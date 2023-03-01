@@ -1,13 +1,9 @@
 // Widget
 type ChartType = "BAR" | "LINE" | "INFO";
 
-interface ApiKeyObjectType {
-    [key: string]: string[];
-}
-
-interface ApiKeyType extends ApiKeyObjectType {
-    spot?: string[];
-    series?: string[];
+interface ApiKeyType {
+    type: string;
+    keys: string[];
 }
 
 export interface WidgetPropsType {

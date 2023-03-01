@@ -1,3 +1,4 @@
+import { forEach } from "lodash";
 import React, { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import { enqueueApi } from "..";
@@ -5,28 +6,36 @@ import api from "../api";
 import { WidgetPropsType } from "../types/widget";
 import WidgetModal from "./Widget/WidgetModal";
 
+export const DEFAULT_CALL_CYCLE = 5;
+
 const Widget = ({ chartType, apiKey }: WidgetPropsType) => {
-    // console.log("apiKey: ", apiKey);
+    console.log("apiKey: ", apiKey);
     // console.log("chartType: ", chartType);
 
     // api 호출 여부
     const [isCallApi, setIsCallApi] = useState(true);
 
-    // 호출 리스트
-    const [apiList, setApiList] = useState<string[]>([]);
-
-    // 호출 주기
-    const [callCycle, setCAllCycle] = useState<number>(5);
-
     // 마지막 호출 시간
     const [lastCallTime, setLastCallTime] = useState(null);
 
     const [isShowSettingModal, setIsShowSettingModal] = useState(false);
-    const apiObj = (type: string) => {
+
+    // 호출 주기
+    const callCycleRef = useRef(DEFAULT_CALL_CYCLE);
+
+    // 데이터
+    const [dataSource, setDataSource] = useState(
+        apiKey.keys.map((item) => ({ key: item, data: null }))
+    );
+
+    const apiObj = (key: string) => {
         return {
-            callApi: () => api.spot(type),
-            success: () => {},
-            // success: () => console.log("api 호출에 성공했습니다.", type),
+            callApi: () => api.spot(key),
+            success: (data: any) => {
+                setDataSource((prev) =>
+                    prev.map((item) => (item.key === key ? data : item))
+                );
+            },
             fail: () => console.warn("api 호출에 실패했습니다."),
         };
     };
@@ -38,42 +47,19 @@ const Widget = ({ chartType, apiKey }: WidgetPropsType) => {
         // 호출 정지시 정시 시간을 알아야 한다.
     };
 
-    // 호출할 key 설정
-    useEffect(() => {
-        for (const key in apiKey) {
-            if (key === "spot") {
-                /*
-                    모달을 띄워서 현재 호출되는 리스트를 본다.
-                    매번 현재 데이터를 호출한다. (default)
-                    조회 시점을 선택할 수 있다.
-                    조회 시점을 변경하면 해당 시점부터 5초 간격으로 호출한다.
-                    호출을 정지할 수 있다.
-                */
-
-                setApiList(apiKey[key]);
-                console.log("spot 형");
-            } else if (key === "series") {
-                console.log("series 형");
-                // 조회 범위 설정 가능
-            } else {
-                console.log("정의되지 않은 api 타입");
-            }
-        }
-    }, [apiKey]);
-
-    const callCycleRef = useRef(5);
-
     // 호출할 api 등록
     const interval = useRef(null);
     const intervalCallback = useRef(() => {});
     useEffect(() => {
-        return;
-        if (apiList.length < 1) return;
+        const { type, keys } = apiKey;
+
+        // type 이 spot / series 일 수 있음
+        if (keys.length < 1) return;
 
         if (isCallApi) {
             intervalCallback.current = () => {
                 setLastCallTime(new Date(Date.now()));
-                apiList.forEach((apiItem) => {
+                keys.forEach((apiItem) => {
                     enqueueApi(apiObj(apiItem));
                 });
             };
@@ -85,16 +71,12 @@ const Widget = ({ chartType, apiKey }: WidgetPropsType) => {
         } else {
             clearInterval(interval.current);
         }
-    }, [apiList, isCallApi]);
+    }, [apiKey, isCallApi]);
 
-    // 호출 주기 조정
-    const [callCycleInput, setCallCycleInput] = useState(5);
-    const onClickApplyCallCycle = () => {
-        console.log("적용할 시간", callCycleInput);
-
+    // 호출 주기 변경
+    const onClickApplyCallCycle = (inputValue: number) => {
         if (window.confirm("호출 주기를 변경하시겠습니까?")) {
-            setCAllCycle(callCycleInput);
-            callCycleRef.current = callCycleInput;
+            callCycleRef.current = inputValue;
 
             // 기존 호출 interval 제거
             clearInterval(interval.current);
@@ -102,10 +84,14 @@ const Widget = ({ chartType, apiKey }: WidgetPropsType) => {
             // 주기 변경후 재 등록
             interval.current = setInterval(
                 intervalCallback.current,
-                callCycleInput * 1000
+                inputValue * 1000
             );
         }
     };
+
+    useEffect(() => {
+        console.log("dataSource :", dataSource);
+    }, [dataSource]);
 
     /*
     조회 시점을 조정한다
@@ -125,20 +111,11 @@ const Widget = ({ chartType, apiKey }: WidgetPropsType) => {
                 show={isShowSettingModal}
                 setShow={setIsShowSettingModal}
                 lastCallTime={lastCallTime}
-                callCycle={callCycle}
                 isCallApi={isCallApi}
                 setIsCallApi={setIsCallApi}
+                onClickApplyCallCycle={onClickApplyCallCycle}
             />
-            <ModalBlock>
-                <input
-                    value={callCycleInput}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                        setCallCycleInput(Number(e.target.value));
-                    }}
-                />
-                <button onClick={onClickApplyCallCycle}>적용하기</button>
-                <div>api 호출 상태: {isCallApi ? "호출 중" : "호출 정지"}</div>
-            </ModalBlock>
+            <div>api 호출 상태: {isCallApi ? "호출 중" : "호출 정지"}</div>
         </WidgetBlock>
     );
 };

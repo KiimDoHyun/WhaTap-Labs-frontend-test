@@ -1,20 +1,22 @@
 import React, { useEffect, useState } from "react";
 import { Modal } from "react-bootstrap";
 import Form from "react-bootstrap/Form";
+import ListPicker from "../../common/DatePicker/ListPicker";
+import { DEFAULT_CALL_CYCLE } from "../Widget";
 
 const WidgetModal = ({
     show,
     setShow,
     lastCallTime,
-    callCycle,
     isCallApi,
     setIsCallApi,
+    onClickApplyCallCycle,
 }: any) => {
     // 호출 여부 스위치
     const [switchValue, setSwitchValue] = useState(isCallApi);
 
     // 호출 주기 입력값
-    const [callCycleValue, setCallCycleValue] = useState(0);
+    const [callCycleValue, setCallCycleValue] = useState(DEFAULT_CALL_CYCLE);
 
     const onChangeSwich = (e: React.ChangeEvent<HTMLInputElement>) => {
         const {
@@ -35,23 +37,28 @@ const WidgetModal = ({
                     id="custom-switch"
                     label={switchValue ? "활성화" : "비활성화"}
                 />
-                <Form.Label>호출 주기 설정</Form.Label>
-                <Form.Control
-                    value={callCycleValue}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                        setCallCycleValue(Number(e.target.value))
-                    }
-                />
-                <Form.Control type="time" />
             </Form>
             <div>
-                {" "}
+                <label>호출 주기 (초)</label>
+                <input
+                    value={callCycleValue}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                        setCallCycleValue(Number(e.target.value));
+                    }}
+                />
+                <button onClick={() => onClickApplyCallCycle(callCycleValue)}>
+                    적용하기
+                </button>
+            </div>
+            <div>
                 마지막호출 시점:{" "}
                 {lastCallTime
                     ? lastCallTime.toLocaleString()
                     : "호출 정보 없음"}
             </div>
-            <div>호출 주기 {callCycle} 초</div>
+            <div>
+                <button>닫기</button>
+            </div>
         </Modal>
     );
 };

@@ -22,7 +22,7 @@ const apiManager = () => {
             try {
                 isWorking = true;
                 const result = await queue[0].callApi();
-                queue[0].success(result.data);
+                queue[0].success(result);
             } catch (e) {
                 console.log(e);
                 console.log("에러 발생", queue);
