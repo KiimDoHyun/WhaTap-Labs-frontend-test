@@ -1,36 +1,23 @@
 import { axisLeft, axisTop, max, scaleBand, scaleLinear, select } from "d3";
-import { useEffect, useRef } from "react";
-import { queue } from "..";
+import React, { useEffect, useRef } from "react";
 import api from "../api";
 import styled from "styled-components";
 import useResize from "../hook/useResize";
 
 const margin = { top: 20, right: 20, bottom: 20, left: 70 };
 
-let data = [
-    {
-        name: "act_method",
-        value: 0,
-    },
-    {
-        name: "act_sql",
-        value: 0,
-    },
-    {
-        name: "act_httpc",
-        value: 0,
-    },
-    {
-        name: "act_dbc",
-        value: 0,
-    },
-    {
-        name: "act_socket",
-        value: 0,
-    },
-];
+let data: any = null;
 
-const BarChart = () => {
+const Chart = React.memo(({ svgRef }: any) => {
+    return (
+        <svg ref={svgRef}>
+            <g className="y-axis" />
+            <g className="x-axis" />
+        </svg>
+    );
+});
+
+const BarChart = ({ dataSource }: any) => {
     const svgRef = useRef(null);
     const svgParentBoxRef = useRef(null);
     const size = useResize(svgParentBoxRef);
@@ -38,13 +25,15 @@ const BarChart = () => {
     // resize
     // !데이터 바인딩 함수와 중복되는 부분 다수 존재
     const responseiveDraw = (parentWidth: any, parentHeight: any) => {
+        if (data === null) return;
+
         const svg: any = select(svgRef.current);
 
         const width = parentWidth - margin.left - margin.right;
         const height = parentHeight - margin.top - margin.bottom;
 
         const xScale = scaleBand() // x 축
-            .domain(data.map((item) => `${item.name}`))
+            .domain(data.map((item: any) => `${item.name}`))
             .range([0, height]);
 
         const xAxis = axisLeft(xScale).ticks(4);
@@ -52,7 +41,7 @@ const BarChart = () => {
             .attr("transform", `translate(${margin.left}, ${margin.bottom})`)
             .call(xAxis);
 
-        const yMax = max(data, (d: any) => d.value);
+        const yMax = max(data, (d: any) => d.data);
 
         const yScale = scaleLinear()
             .domain([0, Number(yMax)])
@@ -71,7 +60,7 @@ const BarChart = () => {
                 return xScale(d.name) + margin.top + margin.bottom;
             })
             .attr("width", function (d: any) {
-                return d.value ? yScale(d.value) + margin.left : 0;
+                return d.data ? yScale(d.data) + margin.left : 0;
             });
 
         svg.selectAll(".text")
@@ -87,7 +76,34 @@ const BarChart = () => {
         // 막대 차트
         const svg: any = select(svgRef.current);
 
-        // 텍스트 추가해보기
+        console.log("data: ", data);
+
+        const width =
+            svgParentBoxRef.current.offsetWidth - margin.left - margin.right;
+        const height =
+            svgParentBoxRef.current.offsetHeight - margin.top - margin.bottom;
+
+        const xScale = scaleBand() // x 축
+            .domain(data.map((item: any) => `${item.name}`))
+            .range([0, height]);
+
+        const xAxis = axisLeft(xScale).ticks(4);
+        svg.select(".x-axis")
+            .attr("transform", `translate(${margin.left}, ${margin.bottom})`)
+            .call(xAxis);
+
+        const yMax = max(data, (d: any) => d.data);
+
+        const yScale = scaleLinear()
+            .domain([0, Number(yMax)])
+            .range([0, width]);
+
+        const yAxis = axisTop(yScale);
+        svg.select(".y-axis")
+            .attr("width", "100%")
+            .attr("opacity", 0)
+            .call(yAxis);
+
         const bar = svg
             .selectAll(".item")
             .data(data)
@@ -99,7 +115,10 @@ const BarChart = () => {
         bar.append("rect")
             .attr("class", "bar")
             .attr("height", 25) // 너비는 25로
-            .attr("x", margin.left);
+            .attr("x", margin.left)
+            .attr("y", function (d: any) {
+                return xScale(d.name) + margin.top + margin.bottom;
+            });
 
         // 텍스트가 들어갈 요소 생성
         bar.append("text")
@@ -116,7 +135,7 @@ const BarChart = () => {
 
         const width = parentWidth - margin.left - margin.right;
 
-        const yMax = max(data, (d: any) => d.value);
+        const yMax = max(data, (d: any) => d.data) || 0;
 
         const yScale = scaleLinear()
             .domain([0, Number(yMax)])
@@ -131,7 +150,7 @@ const BarChart = () => {
             .transition()
             .duration(500)
             .attr("width", function (d: any) {
-                return d.value ? yScale(d.value) + margin.left : 0;
+                return d.data ? yScale(d.data) + margin.left : 0;
             });
 
         // 텍스트 갱신
@@ -139,45 +158,11 @@ const BarChart = () => {
             .data(data)
             .transition()
             .duration(500)
-            .text((d: any) => d.value);
-    };
-
-    // 조회 에러 발생: 갱신 X
-    // api 호출 생성 함수
-    const apiObj = (type: string) => {
-        return {
-            callApi: () => api.spot(type),
-            success: (newValue: any) => {
-                data = data.map((item) =>
-                    item.name === type ? { ...item, value: newValue } : item
-                );
-                updateChart();
-            },
-            fail: () => console.warn("api 호출에 실패했습니다."),
-        };
+            .text((d: any) => d.data);
     };
 
     // 필요데이터 조회: act (액티브 스테이터스)
     // 최대값 기준
-    useEffect(() => {
-        setInterval(() => {
-            queue.push(apiObj("act_method"));
-        }, 5000);
-        setInterval(() => {
-            queue.push(apiObj("act_sql"));
-        }, 5000);
-        setInterval(() => {
-            queue.push(apiObj("act_httpc"));
-        }, 5000);
-        setInterval(() => {
-            queue.push(apiObj("act_dbc"));
-        }, 5000);
-        setInterval(() => {
-            queue.push(apiObj("act_socket"));
-        }, 5000);
-
-        initChart();
-    }, []);
 
     useEffect(() => {
         const { width, height } = size;
@@ -186,16 +171,29 @@ const BarChart = () => {
         responseiveDraw(width, height);
     }, [size]);
 
+    useEffect(() => {
+        data = [...dataSource];
+
+        // x,y 축 생성을 초기에 1회만?
+        initChart();
+
+        // 업데이트
+        updateChart();
+    }, [dataSource]);
+
+    useEffect(() => {}, []);
+
     return (
         <BarChartBox>
             <div className="title">
                 액티브 스테이터스 <div className="infoIcon"></div>
             </div>
             <div className="chart" ref={svgParentBoxRef}>
-                <svg ref={svgRef}>
+                <Chart svgRef={svgRef} />
+                {/* <svg ref={svgRef}>
                     <g className="y-axis" />
                     <g className="x-axis" />
-                </svg>
+                </svg> */}
             </div>
         </BarChartBox>
     );
@@ -203,6 +201,11 @@ const BarChart = () => {
 const BarChartBox = styled.div`
     width: 100%;
     height: 100%;
+
+    min-width: 250px;
+    min-height: 400px;
+
+    position: relative;
 
     .title {
         height: 20px;

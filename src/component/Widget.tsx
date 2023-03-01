@@ -1,17 +1,27 @@
-import { forEach } from "lodash";
 import React, { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import { enqueueApi } from "..";
-import api from "../api";
+import api, { OPEN_API } from "../api";
 import { WidgetPropsType } from "../types/widget";
+import BarChart from "./BarChart";
+import InformaticsChart from "./InformaticsChart";
+import LineChart from "./LineChart";
 import WidgetModal from "./Widget/WidgetModal";
 
 export const DEFAULT_CALL_CYCLE = 5;
 
-const Widget = ({ chartType, apiKey }: WidgetPropsType) => {
-    console.log("apiKey: ", apiKey);
-    // console.log("chartType: ", chartType);
+interface ObjectKeyType {
+    [key: string]: string;
+}
 
+interface OPEN_APIType {
+    "": ObjectKeyType;
+    json: ObjectKeyType;
+}
+
+const OPEN_API_WITH_TYPE: OPEN_APIType = OPEN_API;
+
+const Widget = ({ chartType, apiKey }: WidgetPropsType) => {
     // api 호출 여부
     const [isCallApi, setIsCallApi] = useState(true);
 
@@ -25,7 +35,14 @@ const Widget = ({ chartType, apiKey }: WidgetPropsType) => {
 
     // 데이터
     const [dataSource, setDataSource] = useState(
-        apiKey.keys.map((item) => ({ key: item, data: null }))
+        apiKey.keys.map((item: string) => ({
+            key: item,
+            data: null,
+            name:
+                apiKey.type === "spot"
+                    ? OPEN_API_WITH_TYPE[""][item]
+                    : OPEN_API_WITH_TYPE["json"][item],
+        }))
     );
 
     const apiObj = (key: string) => {
@@ -89,10 +106,6 @@ const Widget = ({ chartType, apiKey }: WidgetPropsType) => {
         }
     };
 
-    useEffect(() => {
-        console.log("dataSource :", dataSource);
-    }, [dataSource]);
-
     /*
     조회 시점을 조정한다
 
@@ -105,6 +118,9 @@ const Widget = ({ chartType, apiKey }: WidgetPropsType) => {
             <button onClick={onClickShowSetting}>showSetting</button>
 
             {/* 차트 */}
+            {chartType === "BAR" && <BarChart dataSource={dataSource} />}
+            {chartType === "LINE" && <LineChart />}
+            {chartType === "INFO" && <InformaticsChart />}
 
             {/* 모달 */}
             <WidgetModal
