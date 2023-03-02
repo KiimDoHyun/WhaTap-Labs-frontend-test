@@ -54,6 +54,14 @@ const Dashboard = () => {
         },
     };
 
+    const lineChartProps: WidgetPropsType = {
+        chartType: "LINE",
+        apiKey: {
+            type: "spot",
+            keys: ["cpu"],
+        },
+    };
+
     return (
         <DashboardBox>
             <DashboardHeader
@@ -65,6 +73,7 @@ const Dashboard = () => {
 
             <Widget {...barChartProps} />
             <Widget {...infoChartProps} />
+            <Widget {...lineChartProps} />
         </DashboardBox>
     );
 };
