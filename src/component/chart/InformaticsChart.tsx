@@ -1,6 +1,6 @@
 import styled from "styled-components";
-import { dataSourceType, InformaticsChartPropsType } from "../types/chart";
-import InforMaticsBox from "./chart/InformaticsChart/InforMaticsBox";
+import { dataSourceType, InformaticsChartPropsType } from "../../types/chart";
+import InforMaticsBox from "./InformaticsChart/InforMaticsBox";
 
 const InformaticsChart = ({ dataSource }: InformaticsChartPropsType) => {
     return (

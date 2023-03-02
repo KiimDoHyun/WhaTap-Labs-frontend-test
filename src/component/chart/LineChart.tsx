@@ -1,9 +1,9 @@
 import { axisBottom, axisLeft, line, scaleLinear, scaleTime, select } from "d3";
 import { useEffect, useRef } from "react";
-import { queue } from "..";
-import api from "../api";
+import { queue } from "../..";
+import api from "../../api";
 import styled from "styled-components";
-import useResize from "../hook/useResize";
+import useResize from "../../hook/useResize";
 
 const now: any = new Date(Date.now());
 

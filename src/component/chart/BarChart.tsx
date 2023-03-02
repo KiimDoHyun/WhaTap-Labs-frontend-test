@@ -1,12 +1,12 @@
 import { axisLeft, axisTop, max, scaleBand, scaleLinear, select } from "d3";
 import React, { useEffect, useRef } from "react";
 import styled from "styled-components";
-import useResize from "../hook/useResize";
+import useResize from "../../hook/useResize";
 import {
     BarChartPropsType,
     ChartPropsType,
     dataSourceType,
-} from "../types/chart";
+} from "../../types/chart";
 
 const margin = { top: 20, right: 20, bottom: 20, left: 70 };
 

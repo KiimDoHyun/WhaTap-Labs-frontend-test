@@ -4,9 +4,9 @@ import { enqueueApi } from "..";
 import api, { OPEN_API } from "../api";
 import { DataType, OPEN_APIType } from "../types/api";
 import { WidgetPropsType } from "../types/widget";
-import BarChart from "./BarChart";
-import InformaticsChart from "./InformaticsChart";
-import LineChart from "./LineChart";
+import BarChart from "./chart/BarChart";
+import InformaticsChart from "./chart/InformaticsChart";
+import LineChart from "./chart/LineChart";
 import WidgetModal from "./Widget/WidgetModal";
 
 export const DEFAULT_CALL_CYCLE = 5;
@@ -63,6 +63,16 @@ const Widget = ({ chartType, apiKey }: WidgetPropsType) => {
         const { type, keys } = apiKey;
 
         // type 이 spot / series 일 수 있음
+
+        /*
+        series 도 spot 데이터로 조회함.
+
+        1. Dashboard 에서 설정한 전체 조회 범위를 series 에 설정한다.
+        2. 조회한 spot 데이터와 조회한 시간을 저장한다.
+
+
+        spot 형 데이터 조회는?
+        */
         if (keys.length < 1) return;
 
         if (isCallApi) {
