@@ -46,6 +46,14 @@ const Dashboard = () => {
         },
     };
 
+    const infoChartProps: WidgetPropsType = {
+        chartType: "INFO",
+        apiKey: {
+            type: "spot",
+            keys: ["act_agent", "inact_agent", "host", "cpucore"],
+        },
+    };
+
     return (
         <DashboardBox>
             <DashboardHeader
@@ -56,6 +64,7 @@ const Dashboard = () => {
             />
 
             <Widget {...barChartProps} />
+            <Widget {...infoChartProps} />
         </DashboardBox>
     );
 };

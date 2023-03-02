@@ -1,14 +1,4 @@
-import {
-    Axis,
-    axisLeft,
-    axisTop,
-    max,
-    ScaleBand,
-    scaleBand,
-    scaleLinear,
-    select,
-    Selection,
-} from "d3";
+import { axisLeft, axisTop, max, scaleBand, scaleLinear, select } from "d3";
 import React, { useEffect, useRef } from "react";
 import styled from "styled-components";
 import useResize from "../hook/useResize";
@@ -16,7 +6,7 @@ import {
     BarChartPropsType,
     ChartPropsType,
     dataSourceType,
-} from "../types/barChart";
+} from "../types/chart";
 
 const margin = { top: 20, right: 20, bottom: 20, left: 70 };
 
@@ -95,10 +85,8 @@ const BarChart = ({ dataSource }: BarChartPropsType) => {
     // 초기화
     const initChart = () => {
         // 막대 차트
-        const svg = select(
-            // const svg: Selection<SVGElement, {}, HTMLElement, any> = select(
-            svgRef.current
-        );
+        // const svg:Selection<any, unknown, null, undefined> = select(
+        const svg: any = select(svgRef.current);
 
         const width =
             svgParentBoxRef.current.offsetWidth - margin.left - margin.right;
@@ -113,6 +101,9 @@ const BarChart = ({ dataSource }: BarChartPropsType) => {
         const xAxis = axisLeft(xScale);
         // console.log("xAxis: ", xAxis);
         // console.log("xAxis: ", typeof xAxis);
+        // axisLeft 의 리턴 타입과 .call() 의 props 타입의 불일치?
+        // svg 의 타입을 any로 하면 에러 없음
+        // svg 의 기본타입을 사용하면 에러 발생
         svg.select(".x-axis")
             .call(xAxis)
             .attr("transform", `translate(${margin.left}, ${margin.bottom})`);

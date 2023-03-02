@@ -113,7 +113,9 @@ const Widget = ({ chartType, apiKey }: WidgetPropsType) => {
             {/* 차트 */}
             {chartType === "BAR" && <BarChart dataSource={dataSource} />}
             {chartType === "LINE" && <LineChart />}
-            {chartType === "INFO" && <InformaticsChart />}
+            {chartType === "INFO" && (
+                <InformaticsChart dataSource={dataSource} />
+            )}
 
             {/* 모달 */}
             <WidgetModal
