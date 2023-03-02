@@ -75,6 +75,9 @@ const DatePickerBlock = styled.div<{ isClickDate: boolean }>`
     box-sizing: border-box;
     border: 1px solid black;
     border-radius: 5px;
+    background-color: white;
+    z-index: 100;
+    box-shadow: 0px 0px 12px 0px darkgrey;
 
     display: ${({ isClickDate }) => (isClickDate ? "block" : "none")};
 
