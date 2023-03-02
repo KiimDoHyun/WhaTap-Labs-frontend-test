@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { enqueueApi } from "..";
 import api, { OPEN_API } from "../api";
 import { DataType, OPEN_APIType } from "../types/api";
-import { WidgetPropsType } from "../types/widget";
+import { dateType, WidgetPropsType } from "../types/widget";
 import BarChart from "./chart/BarChart";
 import InformaticsChart from "./chart/InformaticsChart";
 import LineChart from "./chart/LineChart";
@@ -13,11 +13,29 @@ export const DEFAULT_CALL_CYCLE = 5;
 
 const OPEN_API_WITH_TYPE: OPEN_APIType = OPEN_API;
 
-const Widget = ({ chartType, apiKey }: WidgetPropsType) => {
+const chageDate = (dateInfo: dateType) =>
+    new Date(
+        `${dateInfo.year}-${dateInfo.month}-${dateInfo.date}T${dateInfo.hour}:${dateInfo.min}:00`
+    );
+
+const Widget = ({
+    chartType,
+    apiKey,
+    isCallRealTime,
+    startDate,
+    endDate,
+}: WidgetPropsType) => {
+    useEffect(() => {
+        console.log("startDate :", startDate);
+    }, [startDate]);
+
+    useEffect(() => {
+        console.log("endDate :", endDate);
+    }, [endDate]);
     // api 호출 여부
     const [isCallApi, setIsCallApi] = useState(true);
 
-    // 마지막 호출 시간
+    // api 를 마지막으로 호출한 시간
     const [lastCallTime, setLastCallTime] = useState(null);
 
     const [isShowSettingModal, setIsShowSettingModal] = useState(false);
@@ -41,6 +59,9 @@ const Widget = ({ chartType, apiKey }: WidgetPropsType) => {
         return {
             callApi: () => api.spot(key),
             success: (data: DataType) => {
+                // console.log("startDate : ", chageDate(startDate));
+                // console.log("endDate : ", chageDate(endDate));
+
                 setDataSource((prev) =>
                     prev.map((item) => (item.key === key ? data : item))
                 );
@@ -59,10 +80,41 @@ const Widget = ({ chartType, apiKey }: WidgetPropsType) => {
     // 호출할 api 등록
     const interval = useRef(null);
     const intervalCallback = useRef(() => {});
+
     useEffect(() => {
         const { type, keys } = apiKey;
 
-        // type 이 spot / series 일 수 있음
+        // intervalCallback.current = () => {
+        //     setLastCallTime(new Date(Date.now()));
+        //     keys.forEach((apiItem) => {
+        //         enqueueApi(apiObj(apiItem));
+        //     });
+        // };
+
+        // 실시간
+        if (isCallRealTime) {
+            /*
+            실시간 데이터 재 설정 조건
+
+            1. 조회 구간 변경 -> DatePicker 에서 변경
+            2. 조회 주기 변경 -> 모달에서 변경   
+            */
+        }
+        // 특정 구간
+        else {
+            /*
+            특정 구간 재 조회 조건
+            
+            1. 특정 구간 변경
+
+            */
+        }
+    }, [isCallRealTime]);
+
+    useEffect(() => {
+        const { type, keys } = apiKey;
+
+        // type 이 spot / series 일 수 있음[]
 
         /*
         series 도 spot 데이터로 조회함.
@@ -72,25 +124,37 @@ const Widget = ({ chartType, apiKey }: WidgetPropsType) => {
 
 
         spot 형 데이터 조회는?
+
+        실시간이 아니라면 해당 구간의 데이터만 보여준다.
+
+        실시간이 아니라면 해당 구간의 데이터만 조회한다.
+        실시간이라면 매번 갱신한다.
+        
         */
         if (keys.length < 1) return;
 
-        if (isCallApi) {
-            intervalCallback.current = () => {
-                setLastCallTime(new Date(Date.now()));
-                keys.forEach((apiItem) => {
-                    enqueueApi(apiObj(apiItem));
-                });
-            };
+        intervalCallback.current = () => {
+            setLastCallTime(new Date(Date.now()));
+            keys.forEach((apiItem) => {
+                enqueueApi(apiObj(apiItem));
+            });
+        };
 
-            interval.current = setInterval(
-                intervalCallback.current,
-                callCycleRef.current * 1000
-            );
+        if (isCallRealTime) {
+            if (isCallApi) {
+                // 실시간 조회 인 경우 setInterval
+                // 특정 구간 조회인 경우 callback 실행
+                interval.current = setInterval(
+                    intervalCallback.current,
+                    callCycleRef.current * 1000
+                );
+            } else {
+                clearInterval(interval.current);
+            }
         } else {
-            clearInterval(interval.current);
+            intervalCallback.current();
         }
-    }, [apiKey, isCallApi]);
+    }, [apiKey, isCallApi, isCallRealTime]);
 
     // 호출 주기 변경
     const onClickApplyCallCycle = (inputValue: number) => {
@@ -108,21 +172,19 @@ const Widget = ({ chartType, apiKey }: WidgetPropsType) => {
         }
     };
 
-    /*
-    조회 시점을 조정한다
-
-    대시보드의 전체 데이터 호출 시점을 조정?
-
-    각 위젯의 데이터 갱신 주기 조정?
-    */
-
     return (
         <WidgetBlock>
             <button onClick={onClickShowSetting}>showSetting</button>
 
             {/* 차트 */}
             {chartType === "BAR" && <BarChart dataSource={dataSource} />}
-            {chartType === "LINE" && <LineChart />}
+            {chartType === "LINE" && (
+                <LineChart
+                    dataSource={dataSource}
+                    startDate={chageDate(startDate)}
+                    endDate={chageDate(endDate)}
+                />
+            )}
             {chartType === "INFO" && (
                 <InformaticsChart dataSource={dataSource} />
             )}

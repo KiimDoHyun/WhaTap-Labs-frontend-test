@@ -11,6 +11,13 @@ export const enqueueApi = (item) => {
     queue.push(item);
 };
 
+// 전체 호출 일시 정지
+let stop = false;
+
+export const setStop = (value) => {
+    stop = value;
+};
+
 let isWorking = false;
 
 // 체크: 0.1초 단위

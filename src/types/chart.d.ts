@@ -1,3 +1,5 @@
+import { dateType } from "./widget";
+
 // 차트에 사용할 dataSource
 export interface dataSourceType {
     key: string;
@@ -17,6 +19,13 @@ export interface InformaticsChartPropsType {
 
 export interface InformaticsChartBoxPropsType {
     item: dataSourceType;
+}
+
+// Line
+export interface LineChartPropsType {
+    dataSource: dataSourceType[];
+    startDate: Date;
+    endDate: Date;
 }
 
 // Common

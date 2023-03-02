@@ -4,7 +4,7 @@ import styled from "styled-components";
 import { DatePickerPropsType } from "../types/datePicker";
 import ListPicker from "./DatePicker/ListPicker";
 
-const DatePicker = ({ date, setDate }: DatePickerPropsType) => {
+const DatePicker = ({ date, setDate, type }: DatePickerPropsType) => {
     const value = useMemo(
         () => new Date(`${date.year}-${date.month}-${date.date}`),
         [date]
@@ -15,15 +15,16 @@ const DatePicker = ({ date, setDate }: DatePickerPropsType) => {
         setDate({
             ...date,
             year: selected.getFullYear(),
-            month: selected.getMonth() + 1,
-            date: selected.getDate(),
+            month: `0${selected.getMonth() + 1}`.slice(-2),
+            date: `0${selected.getDate()}`.slice(-2),
         });
     };
 
     return (
         <DatePickerBlock>
             <div className="titleArea">
-                {`${date.year}/${date.month}/${date.date} ${date.hour}:${date.min}`}
+                <div>{type === "start" ? "조회 시작" : "조회 종료"}</div>
+                <div>{`${date.year}/${date.month}/${date.date} ${date.hour}:${date.min}`}</div>
             </div>
             <div className="bodyArea">
                 {/* 날짜 */}
@@ -57,6 +58,7 @@ const DatePickerBlock = styled.div`
         display: flex;
         align-items: center;
         justify-content: center;
+        gap: 20px;
     }
     .bodyArea {
         position: relative;

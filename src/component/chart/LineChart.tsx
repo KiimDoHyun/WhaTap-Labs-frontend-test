@@ -4,21 +4,25 @@ import { queue } from "../..";
 import api from "../../api";
 import styled from "styled-components";
 import useResize from "../../hook/useResize";
+import { LineChartPropsType } from "../../types/chart";
 
 const now: any = new Date(Date.now());
 
+console.log("now: ", now);
+console.log("now: ", typeof now);
 /*
 d3는 DOM을 직접 조작한다.
 차트를 그리는데 사용할 데이터가 외부에 일반 변수로존재한다.
 
-Todo: 미리 600개의 데이터를 초과하는 부분 수정
+Todo: 미리 600개의 데이터를 조회하는 부분 수정
 Todo: 조회 api 수정 -> spot 타입 데이터 조회로 변경
 */
 const data = new Array(600).fill(0);
 
 const margin = { top: 20, right: 20, bottom: 20, left: 40 };
 
-const LineChart = () => {
+const LineChart = ({ dataSource, startDate, endDate }: LineChartPropsType) => {
+    console.log("startDate: ", startDate);
     const svgRef = useRef(null);
     const svgParentBoxRef = useRef(null);
     const size = useResize(svgParentBoxRef);
@@ -30,7 +34,7 @@ const LineChart = () => {
         const height = parentHeight - margin.top - margin.bottom;
 
         const xScale = scaleTime()
-            .domain([now - 1000 * 60 * 10, now]) // 현재로부터 10분 전 까지를 범위로 지정한다.
+            .domain([startDate, endDate]) // 현재로부터 10분 전 까지를 범위로 지정한다.
             .range([0, width]);
 
         const yScale = scaleLinear().domain([0, 5000]).range([height, 0]);
@@ -42,7 +46,7 @@ const LineChart = () => {
                 // 실제 보여지는 범위는 range에 의해 축소되어있음.
                 // 1. 단순히 0 ~ 600 px 로 변환
                 // 2. 해당 비율을 반영해서 좌표를 지정
-                const xPos = ((xScale(now - 1000 * 60 * 10) + i) * width) / 600;
+                const xPos = ((xScale(startDate) + i) * width) / 600;
 
                 return xPos;
             })
@@ -82,14 +86,14 @@ const LineChart = () => {
         const now: any = new Date(Date.now());
 
         const xScale: any = scaleTime()
-            .domain([now - 1000 * 60 * 10, now])
+            .domain([startDate, endDate])
             .range([0, width]);
 
         const yScale = scaleLinear().domain([0, 5000]).range([height, 0]);
 
         const myLine: any = line()
             .x(function (d, i: any) {
-                const xPos = ((xScale(now - 1000 * 60 * 10) + i) * width) / 600;
+                const xPos = ((xScale(startDate) + i) * width) / 600;
 
                 return xPos;
             })

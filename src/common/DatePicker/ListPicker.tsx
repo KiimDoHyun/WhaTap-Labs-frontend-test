@@ -5,7 +5,7 @@ const ListPicker = ({ num, value, type, setValue }: ListPickerPropsType) => {
     const onClickList = (input: number) => {
         setValue((prev) => ({
             ...prev,
-            [type]: input,
+            [type]: `0${input}`.slice(-2),
         }));
     };
     return (
@@ -18,7 +18,9 @@ const ListPicker = ({ num, value, type, setValue }: ListPickerPropsType) => {
                 {new Array(num).fill(0).map((_, idx) => (
                     <li
                         key={idx}
-                        className={idx === value ? "selected" : ""}
+                        className={
+                            Number(idx) === Number(value) ? "selected" : ""
+                        }
                         onClick={() => onClickList(idx)}
                     >
                         {idx}

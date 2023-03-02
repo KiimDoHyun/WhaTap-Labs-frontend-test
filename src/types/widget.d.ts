@@ -6,7 +6,18 @@ interface ApiKeyType {
     keys: string[];
 }
 
+interface dateType {
+    year: number;
+    month: string;
+    date: string;
+    hour: string;
+    min: string;
+}
+
 export interface WidgetPropsType {
+    isCallRealTime: boolean;
+    startDate?: dateType;
+    endDate?: dateType;
     chartType: ChartType;
     apiKey: ApiKeyType;
 }
