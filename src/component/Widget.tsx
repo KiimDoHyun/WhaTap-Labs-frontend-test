@@ -102,12 +102,9 @@ const Widget = ({
         const { type, keys } = apiKey;
         if (isActiveSelectRange) {
             clearInterval(interval.current);
-            console.log("실시간 조회를 비활성화 합니다.");
         } else {
             clearInterval(interval.current);
             intervalCallback.current = () => {
-                console.log("호출 구간: ", selectedRealTime);
-
                 const start = Date.now() - 1000 * 60 * selectedRealTime;
                 const end = Date.now();
 
@@ -115,12 +112,11 @@ const Widget = ({
                 ss(new Date(start));
                 se(new Date(end));
                 setDif((end - start) / 1000);
+
                 keys.forEach((apiItem) => {
                     enqueueApi(apiObj(apiItem));
                 });
-                // console.log("test", (end - start) / 1000);
-                // console.log("호출 시작: ", new Date(start));
-                // console.log("호출 종료: ", new Date(end));
+
                 setLastCallTime(new Date(Date.now()));
             };
 
@@ -128,10 +124,6 @@ const Widget = ({
             interval.current = setInterval(
                 intervalCallback.current,
                 callCycleRef.current * 1000
-            );
-            console.log(
-                "실시간 조회를 활성화 합니다. 호출주기: ",
-                callCycleRef.current
             );
 
             // + 마지막 호출 시간 지정?
