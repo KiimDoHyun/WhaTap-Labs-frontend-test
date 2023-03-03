@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import { enqueueApi } from "..";
 import api, { OPEN_API } from "../api";
@@ -13,10 +13,12 @@ export const DEFAULT_CALL_CYCLE = 5;
 
 const OPEN_API_WITH_TYPE: OPEN_APIType = OPEN_API;
 
-const chageDate = (dateInfo: dateType) =>
-    new Date(
+const chageDate = (dateInfo: dateType) => ({
+    string: `${dateInfo.year}-${dateInfo.month}-${dateInfo.date}T${dateInfo.hour}:${dateInfo.min}:00`,
+    date: new Date(
         `${dateInfo.year}-${dateInfo.month}-${dateInfo.date}T${dateInfo.hour}:${dateInfo.min}:00`
-    );
+    ),
+});
 
 const Widget = ({
     chartType,
@@ -29,13 +31,6 @@ const Widget = ({
     setIsSearchSpecificSection,
     selectedRealTime,
 }: WidgetPropsType) => {
-    // useEffect(() => {
-    //     console.log("startDate :", startDate);
-    // }, [startDate]);
-
-    // useEffect(() => {
-    //     console.log("endDate :", endDate);
-    // }, [endDate]);
     // api 호출 여부
     const [isCallApi, setIsCallApi] = useState(true);
 
@@ -46,6 +41,8 @@ const Widget = ({
 
     // 호출 주기
     const callCycleRef = useRef(DEFAULT_CALL_CYCLE);
+
+    const [callCycle, setCallCycle] = useState(DEFAULT_CALL_CYCLE);
 
     // 데이터
     const [dataSource, setDataSource] = useState(
@@ -85,87 +82,89 @@ const Widget = ({
     const interval = useRef(null);
     const intervalCallback = useRef(() => {});
 
+    // start / end ( temp )
+    const [s, ss] = useState(null);
+    const [e, se] = useState(null);
+    const [dif, setDif] = useState(0); // 구간 차이 (초단위)
+
+    const callApiFunction = useCallback(() => {
+        const { type, keys } = apiKey;
+        return () =>
+            keys.forEach((apiItem) => {
+                enqueueApi(apiObj(apiItem));
+            });
+    }, [apiKey]);
+    //         keys.forEach((apiItem) => {
+    //             enqueueApi(apiObj(apiItem));
+    //         });
     // 실시간 조회 시작 / 일시 정지: 특정 구간 선택 활성화에 따라 결정
     useEffect(() => {
+        const { type, keys } = apiKey;
         if (isActiveSelectRange) {
             clearInterval(interval.current);
             console.log("실시간 조회를 비활성화 합니다.");
         } else {
             clearInterval(interval.current);
-            interval.current = setInterval(() => {
+            intervalCallback.current = () => {
                 console.log("호출 구간: ", selectedRealTime);
-            }, callCycleRef.current * 1000);
+
+                const start = Date.now() - 1000 * 60 * selectedRealTime;
+                const end = Date.now();
+
+                // Line 차트의 경우 이 시간을 전달해야 한다.
+                ss(new Date(start));
+                se(new Date(end));
+                setDif((end - start) / 1000);
+                keys.forEach((apiItem) => {
+                    enqueueApi(apiObj(apiItem));
+                });
+                // console.log("test", (end - start) / 1000);
+                // console.log("호출 시작: ", new Date(start));
+                // console.log("호출 종료: ", new Date(end));
+                setLastCallTime(new Date(Date.now()));
+            };
+
+            intervalCallback.current();
+            interval.current = setInterval(
+                intervalCallback.current,
+                callCycleRef.current * 1000
+            );
             console.log(
                 "실시간 조회를 활성화 합니다. 호출주기: ",
                 callCycleRef.current
             );
-            console.log("호출 구간: ", selectedRealTime);
+
+            // + 마지막 호출 시간 지정?
         }
-    }, [isActiveSelectRange, selectedRealTime]);
+    }, [isActiveSelectRange, selectedRealTime, apiKey]);
 
     // 특정 구간 조회 (1 회)
     useEffect(() => {
+        const { type, keys } = apiKey;
         if (isSearchSpecificSection) {
-            console.log("특정 구간을 조회합니다.");
-            console.log(
-                "구간: " +
-                    "\n" +
-                    chageDate(startDate) +
-                    "\n" +
-                    chageDate(endDate)
+            // Line 차트의 경우 이 시간을 전달해야 한다.
+            ss(chageDate(startDate).date);
+            se(chageDate(endDate).date);
+            setDif(
+                (Date.parse(chageDate(endDate).string) -
+                    Date.parse(chageDate(startDate).string)) /
+                    1000
             );
+
+            keys.forEach((apiItem) => {
+                enqueueApi(apiObj(apiItem));
+            });
+
             setIsSearchSpecificSection(false);
         }
-    }, [isSearchSpecificSection]);
-
-    // useEffect(() => {
-    //     const { type, keys } = apiKey;
-
-    //     // type 이 spot / series 일 수 있음[]
-
-    //     /*
-    //     series 도 spot 데이터로 조회함.
-
-    //     1. Dashboard 에서 설정한 전체 조회 범위를 series 에 설정한다.
-    //     2. 조회한 spot 데이터와 조회한 시간을 저장한다.
-
-    //     spot 형 데이터 조회는?
-
-    //     실시간이 아니라면 해당 구간의 데이터만 보여준다.
-
-    //     실시간이 아니라면 해당 구간의 데이터만 조회한다.
-    //     실시간이라면 매번 갱신한다.
-
-    //     */
-    //     if (keys.length < 1) return;
-
-    //     intervalCallback.current = () => {
-    //         setLastCallTime(new Date(Date.now()));
-    //         keys.forEach((apiItem) => {
-    //             enqueueApi(apiObj(apiItem));
-    //         });
-    //     };
-
-    //     if (isCallRealTime) {
-    //         if (isCallApi) {
-    //             // 실시간 조회 인 경우 setInterval
-    //             // 특정 구간 조회인 경우 callback 실행
-    //             interval.current = setInterval(
-    //                 intervalCallback.current,
-    //                 callCycleRef.current * 1000
-    //             );
-    //         } else {
-    //             clearInterval(interval.current);
-    //         }
-    //     } else {
-    //         intervalCallback.current();
-    //     }
-    // }, [apiKey, isCallApi, isCallRealTime]);
+    }, [isSearchSpecificSection, apiKey]);
 
     // 호출 주기 변경
     const onClickApplyCallCycle = (inputValue: number) => {
         if (window.confirm("호출 주기를 변경하시겠습니까?")) {
             callCycleRef.current = inputValue;
+
+            setCallCycle(inputValue);
 
             // 기존 호출 interval 제거
             clearInterval(interval.current);
@@ -189,9 +188,10 @@ const Widget = ({
             {chartType === "LINE" && (
                 <LineChart
                     dataSource={dataSource}
-                    startDate={chageDate(startDate)}
-                    endDate={chageDate(endDate)}
-                    selectedRealTime={selectedRealTime} // 실시간 조회 범위 구간 (분단위)
+                    startDate={s}
+                    endDate={e}
+                    dif={dif}
+                    callCycle={callCycle}
                 />
             )}
             {chartType === "INFO" && (
@@ -207,7 +207,8 @@ const Widget = ({
                 setIsCallApi={setIsCallApi}
                 onClickApplyCallCycle={onClickApplyCallCycle}
             />
-            <div>api 호출 상태: {isCallApi ? "호출 중" : "호출 정지"}</div>
+            {/* 상태: 실시간 호출중, 특정 구간 호출중, 호출 정지 */}
+            {/* <div>api 호출 상태: {isCallApi ? "호출 중" : "호출 정지"}</div> */}
         </WidgetBlock>
     );
 };

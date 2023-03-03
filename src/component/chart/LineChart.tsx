@@ -1,15 +1,11 @@
 import { axisBottom, axisLeft, line, scaleLinear, scaleTime, select } from "d3";
-import { useEffect, useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import { queue } from "../..";
 import api from "../../api";
 import styled from "styled-components";
 import useResize from "../../hook/useResize";
-import { LineChartPropsType } from "../../types/chart";
+import { ChartPropsType, LineChartPropsType } from "../../types/chart";
 
-const now: any = new Date(Date.now());
-
-console.log("now: ", now);
-console.log("now: ", typeof now);
 /*
 d3는 DOM을 직접 조작한다.
 차트를 그리는데 사용할 데이터가 외부에 일반 변수로존재한다.
@@ -17,11 +13,24 @@ d3는 DOM을 직접 조작한다.
 Todo: 미리 600개의 데이터를 조회하는 부분 수정
 Todo: 조회 api 수정 -> spot 타입 데이터 조회로 변경
 */
-const data = new Array(600).fill(0);
+// const data = new Array(600).fill(0);
+
+const data: any = [];
 
 const margin = { top: 20, right: 20, bottom: 20, left: 40 };
 
-const LineChart = ({ dataSource, startDate, endDate }: LineChartPropsType) => {
+const Chart = React.memo(({ svgRef }: ChartPropsType) => {
+    console.log("차트 리렌더링");
+    return (
+        <svg ref={svgRef}>
+            <g className="y-axis" />
+            <g className="x-axis" />
+            <path className="line" />
+        </svg>
+    );
+});
+
+const LineChart = ({ dataSource, startDate, endDate, dif, callCycle }: any) => {
     const svgRef = useRef(null);
     const svgParentBoxRef = useRef(null);
     const size = useResize(svgParentBoxRef);
@@ -45,7 +54,9 @@ const LineChart = ({ dataSource, startDate, endDate }: LineChartPropsType) => {
                 // 실제 보여지는 범위는 range에 의해 축소되어있음.
                 // 1. 단순히 0 ~ 600 px 로 변환
                 // 2. 해당 비율을 반영해서 좌표를 지정
-                const xPos = ((xScale(startDate) + i) * width) / 600;
+                // 조회 주기를 구간 너비로 나눈다?
+                const xPos =
+                    ((xScale(startDate) + i) * width) / (dif / callCycle);
 
                 return xPos;
             })
@@ -92,7 +103,8 @@ const LineChart = ({ dataSource, startDate, endDate }: LineChartPropsType) => {
 
         const myLine: any = line()
             .x(function (d, i: any) {
-                const xPos = ((xScale(startDate) + i) * width) / 600;
+                const xPos =
+                    ((xScale(startDate) + i) * width) / (dif / callCycle);
 
                 return xPos;
             })
@@ -145,18 +157,22 @@ const LineChart = ({ dataSource, startDate, endDate }: LineChartPropsType) => {
         draw2(width, height);
     }, [size]);
 
+    useEffect(() => {
+        // console.log("test: ", test);
+        update();
+
+        console.log("callCycle: ", callCycle);
+
+        console.log("check", dif / callCycle);
+    }, [startDate, endDate, dif, callCycle]);
+
     return (
         <LineChartBox>
             <div className="title">
                 Time <div className="infoIcon"></div>
             </div>
             <div className="chart" ref={svgParentBoxRef}>
-                <svg ref={svgRef}>
-                    {/* <svg width={500} height={500} ref={svgRef}> */}
-                    <g className="y-axis" />
-                    <g className="x-axis" />
-                    <path className="line" />
-                </svg>
+                <Chart svgRef={svgRef} />
             </div>
         </LineChartBox>
     );
