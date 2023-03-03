@@ -18,8 +18,12 @@ export interface WidgetPropsType {
     isCallRealTime: boolean;
     startDate?: dateType;
     endDate?: dateType;
+    isActiveSelectRange: boolean;
+    isSearchSpecificSection: boolean;
+    setIsSearchSpecificSection: React.Dispatch<React.SetStateAction<boolean>>;
     chartType: ChartType;
     apiKey: ApiKeyType;
+    selectedRealTime: number;
 }
 
 // Widget Modal

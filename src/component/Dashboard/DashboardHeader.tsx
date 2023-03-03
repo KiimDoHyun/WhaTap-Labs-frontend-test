@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import { setStop } from "../..";
 import DatePicker from "../../common/DatePicker";
@@ -17,6 +17,11 @@ const DashboardHeader = ({
     setEndDate,
     isCallRealTime,
     setIsCallRealTime,
+    isActiveSelectRange,
+    setIsActiveSelectRange,
+    setIsSearchSpecificSection,
+    selectedRealTime,
+    setSelectedRealTime,
 }: any) => {
     const [isClickDate, setIsClickDate] = useState(false);
     const [isClickRealTime, setIsClickRealTime] = useState(false);
@@ -24,22 +29,18 @@ const DashboardHeader = ({
     const [tempStartDate, setTempStartDate] = useState(startDate);
     const [tempEndDate, setTempEndDate] = useState(endDate);
 
-    const [selectedRealTime, setSelectedRealTime] = useState(10);
-
-    const [isActiveSelectRange, setIsActiveSelectRange] = useState(false);
-
     const toggle = () => {
         setIsClickDate(!isClickDate);
     };
 
     const onClickConfirm = () => {
         if (window.confirm("조회 범위를 변경하시겠습니까?")) {
+            // 조회 범위를 변경하면 해당 범위로 조회 진행 (1 회)
             setStartDate(tempStartDate);
             setEndDate(tempEndDate);
+            setIsSearchSpecificSection(true);
 
             setIsCallRealTime(false);
-
-            setSelectedRealTime(null);
         }
 
         toggle();
@@ -51,13 +52,33 @@ const DashboardHeader = ({
 
     const onClickActiveSelectRange = () => {
         // 범위 재 설정 컴포넌트 활성화
-        setIsActiveSelectRange((isActiveSelectRange) => {
+        setIsActiveSelectRange((isActiveSelectRange: boolean) => {
             if (isActiveSelectRange) {
-                // widget 에서 더이상 실시간 호출을 못하도록 정지해야 함.
-                setStop(false);
-            } else {
-                setStop(true);
+                // isCallApi 값 true / false 처리
+                // 실시간 조회 시작
+                // 시간을 다시 맞춰놓는다.
+                // const now: Date = new Date(Date.now());
+                // const start = new Date(
+                //     Date.now() - 1000 * 60 * selectedRealTime
+                // );
+                // setStartDate({
+                //     year: start.getFullYear(),
+                //     month: `0${start.getMonth() + 1}`.slice(-2),
+                //     date: `0${start.getDate()}`.slice(-2),
+                //     hour: `0${start.getHours()}`.slice(-2),
+                //     min: `0${start.getMinutes()}`.slice(-2),
+                //     sec: `0${start.getSeconds()}`.slice(-2),
+                // });
+                // setEndDate({
+                //     year: now.getFullYear(),
+                //     month: `0${now.getMonth() + 1}`.slice(-2),
+                //     date: `0${now.getDate()}`.slice(-2),
+                //     hour: `0${now.getHours()}`.slice(-2),
+                //     min: `0${now.getMinutes()}`.slice(-2),
+                //     sec: `0${now.getSeconds()}`.slice(-2),
+                // });
             }
+
             return !isActiveSelectRange;
         });
     };
@@ -70,38 +91,79 @@ const DashboardHeader = ({
         //
         // 선택된 항목으로 범위 지정
         // setRange(input)
-        const now: Date = new Date(Date.now());
-        const start = new Date(Date.now() - 1000 * 60 * input);
+        // const now: Date = new Date(Date.now());
+        // const start = new Date(Date.now() - 1000 * 60 * input);
 
-        setStartDate({
-            year: start.getFullYear(),
-            month: `0${start.getMonth() + 1}`.slice(-2),
-            date: `0${start.getDate()}`.slice(-2),
-            hour: `0${start.getHours()}`.slice(-2),
-            min: `0${start.getMinutes()}`.slice(-2),
-        });
-        setEndDate({
-            year: now.getFullYear(),
-            month: `0${now.getMonth() + 1}`.slice(-2),
-            date: `0${now.getDate()}`.slice(-2),
-            hour: `0${now.getHours()}`.slice(-2),
-            min: `0${now.getMinutes()}`.slice(-2),
-        });
+        // setStartDate({
+        //     year: start.getFullYear(),
+        //     month: `0${start.getMonth() + 1}`.slice(-2),
+        //     date: `0${start.getDate()}`.slice(-2),
+        //     hour: `0${start.getHours()}`.slice(-2),
+        //     min: `0${start.getMinutes()}`.slice(-2),
+        //     sec: `0${start.getSeconds()}`.slice(-2),
+        // });
+        // setEndDate({
+        //     year: now.getFullYear(),
+        //     month: `0${now.getMonth() + 1}`.slice(-2),
+        //     date: `0${now.getDate()}`.slice(-2),
+        //     hour: `0${now.getHours()}`.slice(-2),
+        //     min: `0${now.getMinutes()}`.slice(-2),
+        //     sec: `0${now.getSeconds()}`.slice(-2),
+        // });
         setSelectedRealTime(input);
 
         onClickRealTime();
+
+        setIsActiveSelectRange(false);
     };
+
+    const setRealTime = useRef(null);
+    useEffect(() => {
+        console.log("isActiveSelectRange :", isActiveSelectRange);
+
+        if (!isActiveSelectRange) {
+            // setRealTime.current = setInterval(() => {
+            //     const now: Date = new Date(Date.now());
+            //     const start = new Date(
+            //         Date.now() - 1000 * 60 * selectedRealTime
+            //     );
+
+            //     setStartDate({
+            //         year: start.getFullYear(),
+            //         month: `0${start.getMonth() + 1}`.slice(-2),
+            //         date: `0${start.getDate()}`.slice(-2),
+            //         hour: `0${start.getHours()}`.slice(-2),
+            //         min: `0${start.getMinutes()}`.slice(-2),
+            //         sec: `0${start.getSeconds()}`.slice(-2),
+            //     });
+            //     setEndDate({
+            //         year: now.getFullYear(),
+            //         month: `0${now.getMonth() + 1}`.slice(-2),
+            //         date: `0${now.getDate()}`.slice(-2),
+            //         hour: `0${now.getHours()}`.slice(-2),
+            //         min: `0${now.getMinutes()}`.slice(-2),
+            //         sec: `0${now.getSeconds()}`.slice(-2),
+            //     });
+            // }, 1000);
+            console.log(">>> 실시간 시간 활성화");
+        } else {
+            clearInterval(setRealTime.current);
+        }
+        /*
+        isActiveSelectRange: 조회 구간 설정 활성화 여부
+        
+        true: 실시간 조회 정지
+        - 실시간 조회 정지만 담당한다.
+        - 특정 구간을 지정하고 확인 버튼을 누르면 해당 구간을 조회함
+
+        false: 실시간 조회 시작
+        - 실시간 조회는 selectedRealTime 값으로 재 진행
+        */
+    }, [selectedRealTime, isActiveSelectRange]);
     return (
         <DashboardHeaderBlock>
             <TitleBlock>
-                <div
-                    onClick={onClickActiveSelectRange}
-                    title={
-                        isActiveSelectRange
-                            ? "실시간 조회를 시작합니다."
-                            : "실시간 조회를 정지합니다."
-                    }
-                >
+                <div onClick={onClickActiveSelectRange}>
                     <img
                         style={{ width: "20px", height: "20px" }}
                         src={isActiveSelectRange ? play : pause}
@@ -111,26 +173,23 @@ const DashboardHeader = ({
                 {isActiveSelectRange ? (
                     <>
                         {/* 누르면 실시간 조회 시작 */}
-                        <DateBoxBlock
-                            onClick={toggle}
-                            title="특정 구간 조회 설정"
-                        >
+                        <DateBoxBlock onClick={toggle}>
                             <DateBox dateInfo={startDate} />
                             ~
                             <DateBox dateInfo={endDate} />
                         </DateBoxBlock>
                     </>
                 ) : (
-                    <div onClick={onClickActiveSelectRange}>HH:MM:SS</div>
+                    <div
+                        onClick={onClickActiveSelectRange}
+                        style={{ display: "flex", alignItems: "center" }}
+                    >
+                        HH:MM:SS
+                        {/* {endDate.hour}:{endDate.min}:{endDate.sec} */}
+                    </div>
                 )}
-                <RealTimeBlock
-                    title="실시간 조회 설정"
-                    onClick={onClickRealTime}
-                >
-                    <RealTime
-                        selectedRealTime={selectedRealTime}
-                        isRealTime={isCallRealTime}
-                    />
+                <RealTimeBlock onClick={onClickRealTime}>
+                    <RealTime selectedRealTime={selectedRealTime} />
                 </RealTimeBlock>
             </TitleBlock>
 

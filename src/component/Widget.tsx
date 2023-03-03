@@ -24,14 +24,18 @@ const Widget = ({
     isCallRealTime,
     startDate,
     endDate,
+    isActiveSelectRange,
+    isSearchSpecificSection,
+    setIsSearchSpecificSection,
+    selectedRealTime,
 }: WidgetPropsType) => {
-    useEffect(() => {
-        console.log("startDate :", startDate);
-    }, [startDate]);
+    // useEffect(() => {
+    //     console.log("startDate :", startDate);
+    // }, [startDate]);
 
-    useEffect(() => {
-        console.log("endDate :", endDate);
-    }, [endDate]);
+    // useEffect(() => {
+    //     console.log("endDate :", endDate);
+    // }, [endDate]);
     // api 호출 여부
     const [isCallApi, setIsCallApi] = useState(true);
 
@@ -81,80 +85,82 @@ const Widget = ({
     const interval = useRef(null);
     const intervalCallback = useRef(() => {});
 
+    // 실시간 조회 시작 / 일시 정지: 특정 구간 선택 활성화에 따라 결정
     useEffect(() => {
-        const { type, keys } = apiKey;
-
-        // intervalCallback.current = () => {
-        //     setLastCallTime(new Date(Date.now()));
-        //     keys.forEach((apiItem) => {
-        //         enqueueApi(apiObj(apiItem));
-        //     });
-        // };
-
-        // 실시간
-        if (isCallRealTime) {
-            /*
-            실시간 데이터 재 설정 조건
-
-            1. 조회 구간 변경 -> DatePicker 에서 변경
-            2. 조회 주기 변경 -> 모달에서 변경   
-            */
-        }
-        // 특정 구간
-        else {
-            /*
-            특정 구간 재 조회 조건
-            
-            1. 특정 구간 변경
-
-            */
-        }
-    }, [isCallRealTime]);
-
-    useEffect(() => {
-        const { type, keys } = apiKey;
-
-        // type 이 spot / series 일 수 있음[]
-
-        /*
-        series 도 spot 데이터로 조회함.
-
-        1. Dashboard 에서 설정한 전체 조회 범위를 series 에 설정한다.
-        2. 조회한 spot 데이터와 조회한 시간을 저장한다.
-
-
-        spot 형 데이터 조회는?
-
-        실시간이 아니라면 해당 구간의 데이터만 보여준다.
-
-        실시간이 아니라면 해당 구간의 데이터만 조회한다.
-        실시간이라면 매번 갱신한다.
-        
-        */
-        if (keys.length < 1) return;
-
-        intervalCallback.current = () => {
-            setLastCallTime(new Date(Date.now()));
-            keys.forEach((apiItem) => {
-                enqueueApi(apiObj(apiItem));
-            });
-        };
-
-        if (isCallRealTime) {
-            if (isCallApi) {
-                // 실시간 조회 인 경우 setInterval
-                // 특정 구간 조회인 경우 callback 실행
-                interval.current = setInterval(
-                    intervalCallback.current,
-                    callCycleRef.current * 1000
-                );
-            } else {
-                clearInterval(interval.current);
-            }
+        if (isActiveSelectRange) {
+            clearInterval(interval.current);
+            console.log("실시간 조회를 비활성화 합니다.");
         } else {
-            intervalCallback.current();
+            clearInterval(interval.current);
+            interval.current = setInterval(() => {
+                console.log("호출 구간: ", selectedRealTime);
+            }, callCycleRef.current * 1000);
+            console.log(
+                "실시간 조회를 활성화 합니다. 호출주기: ",
+                callCycleRef.current
+            );
+            console.log("호출 구간: ", selectedRealTime);
         }
-    }, [apiKey, isCallApi, isCallRealTime]);
+    }, [isActiveSelectRange, selectedRealTime]);
+
+    // 특정 구간 조회 (1 회)
+    useEffect(() => {
+        if (isSearchSpecificSection) {
+            console.log("특정 구간을 조회합니다.");
+            console.log(
+                "구간: " +
+                    "\n" +
+                    chageDate(startDate) +
+                    "\n" +
+                    chageDate(endDate)
+            );
+            setIsSearchSpecificSection(false);
+        }
+    }, [isSearchSpecificSection]);
+
+    // useEffect(() => {
+    //     const { type, keys } = apiKey;
+
+    //     // type 이 spot / series 일 수 있음[]
+
+    //     /*
+    //     series 도 spot 데이터로 조회함.
+
+    //     1. Dashboard 에서 설정한 전체 조회 범위를 series 에 설정한다.
+    //     2. 조회한 spot 데이터와 조회한 시간을 저장한다.
+
+    //     spot 형 데이터 조회는?
+
+    //     실시간이 아니라면 해당 구간의 데이터만 보여준다.
+
+    //     실시간이 아니라면 해당 구간의 데이터만 조회한다.
+    //     실시간이라면 매번 갱신한다.
+
+    //     */
+    //     if (keys.length < 1) return;
+
+    //     intervalCallback.current = () => {
+    //         setLastCallTime(new Date(Date.now()));
+    //         keys.forEach((apiItem) => {
+    //             enqueueApi(apiObj(apiItem));
+    //         });
+    //     };
+
+    //     if (isCallRealTime) {
+    //         if (isCallApi) {
+    //             // 실시간 조회 인 경우 setInterval
+    //             // 특정 구간 조회인 경우 callback 실행
+    //             interval.current = setInterval(
+    //                 intervalCallback.current,
+    //                 callCycleRef.current * 1000
+    //             );
+    //         } else {
+    //             clearInterval(interval.current);
+    //         }
+    //     } else {
+    //         intervalCallback.current();
+    //     }
+    // }, [apiKey, isCallApi, isCallRealTime]);
 
     // 호출 주기 변경
     const onClickApplyCallCycle = (inputValue: number) => {
@@ -174,7 +180,9 @@ const Widget = ({
 
     return (
         <WidgetBlock>
-            <button onClick={onClickShowSetting}>showSetting</button>
+            <button onClick={onClickShowSetting} disabled={isActiveSelectRange}>
+                showSetting
+            </button>
 
             {/* 차트 */}
             {chartType === "BAR" && <BarChart dataSource={dataSource} />}
@@ -183,6 +191,7 @@ const Widget = ({
                     dataSource={dataSource}
                     startDate={chageDate(startDate)}
                     endDate={chageDate(endDate)}
+                    selectedRealTime={selectedRealTime} // 실시간 조회 범위 구간 (분단위)
                 />
             )}
             {chartType === "INFO" && (

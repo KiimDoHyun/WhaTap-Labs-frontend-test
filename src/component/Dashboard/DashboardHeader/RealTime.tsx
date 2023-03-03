@@ -3,31 +3,21 @@ import styled from "styled-components";
 
 interface RealTimePropsType {
     selectedRealTime: number;
-    isRealTime: boolean;
 }
 
-const RealTime = ({ selectedRealTime, isRealTime }: RealTimePropsType) => {
-    return (
-        <RealTimeBlock isRealTime={isRealTime}>
-            <Dot isRealTime={isRealTime} />
-            {isRealTime ? `실시간 ${selectedRealTime}분` : "특정 구간 조회중"}
-        </RealTimeBlock>
-    );
+const RealTime = ({ selectedRealTime }: RealTimePropsType) => {
+    return <RealTimeBlock>{selectedRealTime}분</RealTimeBlock>;
 };
 
-const RealTimeBlock = styled.div<{ isRealTime: boolean }>`
+const RealTimeBlock = styled.div`
     display: flex;
     align-items: center;
     gap: 5px;
-
-    color: ${({ isRealTime }) => (isRealTime ? "black" : "lightgray")};
-`;
-
-const Dot = styled.div<{ isRealTime: boolean }>`
-    width: 5px;
-    height: 5px;
-    border-radius: 100%;
-    background-color: ${({ isRealTime }) => (isRealTime ? "red" : "gray")};
+    background-color: rgb(0, 181, 67);
+    color: white;
+    border-radius: 2px;
+    padding: 0px 4px;
+    font-size: 11px;
 `;
 
 export default RealTime;

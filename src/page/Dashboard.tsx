@@ -11,13 +11,24 @@ const Dashboard = () => {
     // 실시간 조회 여부
     const [isCallRealTime, setIsCallRealTime] = useState(true);
 
-    // 조회 범위
+    // 특정 구간 선택 활성화 여부
+    const [isActiveSelectRange, setIsActiveSelectRange] = useState(false);
+
+    // 특정 구간 조회 여부
+    const [isSearchSpecificSection, setIsSearchSpecificSection] =
+        useState(false);
+
+    // 실시간 조회 범위구간
+    const [selectedRealTime, setSelectedRealTime] = useState(10);
+
+    // 조회 범위 (특정 구간)
     const [startDate, setStartDate] = useState({
         year: start.getFullYear(),
         month: `0${start.getMonth() + 1}`.slice(-2),
         date: `0${start.getDate()}`.slice(-2),
         hour: `0${start.getHours()}`.slice(-2),
         min: `0${start.getMinutes()}`.slice(-2),
+        sec: `0${start.getSeconds()}`.slice(-2),
     });
 
     const [endDate, setEndDate] = useState({
@@ -26,6 +37,7 @@ const Dashboard = () => {
         date: `0${end.getDate()}`.slice(-2),
         hour: `0${end.getHours()}`.slice(-2),
         min: `0${end.getMinutes()}`.slice(-2),
+        sec: `0${end.getSeconds()}`.slice(-2),
     });
 
     // 타입을 지정하지 않으면 chartType 이 string이 된다. (자동 추론)
@@ -35,6 +47,11 @@ const Dashboard = () => {
         isCallRealTime: isCallRealTime,
         startDate: startDate,
         endDate: endDate,
+        isActiveSelectRange: isActiveSelectRange,
+        isSearchSpecificSection: isSearchSpecificSection,
+        setIsSearchSpecificSection: setIsSearchSpecificSection,
+        selectedRealTime: selectedRealTime,
+
         chartType: "BAR",
         apiKey: {
             type: "spot",
@@ -52,6 +69,11 @@ const Dashboard = () => {
         isCallRealTime: isCallRealTime,
         startDate: startDate,
         endDate: endDate,
+        isActiveSelectRange: isActiveSelectRange,
+        isSearchSpecificSection: isSearchSpecificSection,
+        setIsSearchSpecificSection: setIsSearchSpecificSection,
+        selectedRealTime: selectedRealTime,
+
         chartType: "INFO",
         apiKey: {
             type: "spot",
@@ -63,6 +85,11 @@ const Dashboard = () => {
         isCallRealTime: isCallRealTime,
         startDate: startDate,
         endDate: endDate,
+        isActiveSelectRange: isActiveSelectRange,
+        isSearchSpecificSection: isSearchSpecificSection,
+        setIsSearchSpecificSection: setIsSearchSpecificSection,
+        selectedRealTime: selectedRealTime,
+
         chartType: "LINE",
         apiKey: {
             type: "spot",
@@ -79,6 +106,11 @@ const Dashboard = () => {
                 setEndDate={setEndDate}
                 isCallRealTime={isCallRealTime}
                 setIsCallRealTime={setIsCallRealTime}
+                isActiveSelectRange={isActiveSelectRange}
+                setIsActiveSelectRange={setIsActiveSelectRange}
+                setIsSearchSpecificSection={setIsSearchSpecificSection}
+                selectedRealTime={selectedRealTime}
+                setSelectedRealTime={setSelectedRealTime}
             />
 
             <Widget {...barChartProps} />

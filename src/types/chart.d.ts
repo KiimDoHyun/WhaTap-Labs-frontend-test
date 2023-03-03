@@ -26,6 +26,7 @@ export interface LineChartPropsType {
     dataSource: dataSourceType[];
     startDate: Date;
     endDate: Date;
+    selectedRealTime: number;
 }
 
 // Common

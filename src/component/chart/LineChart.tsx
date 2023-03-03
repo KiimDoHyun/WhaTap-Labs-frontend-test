@@ -22,7 +22,6 @@ const data = new Array(600).fill(0);
 const margin = { top: 20, right: 20, bottom: 20, left: 40 };
 
 const LineChart = ({ dataSource, startDate, endDate }: LineChartPropsType) => {
-    console.log("startDate: ", startDate);
     const svgRef = useRef(null);
     const svgParentBoxRef = useRef(null);
     const size = useResize(svgParentBoxRef);
