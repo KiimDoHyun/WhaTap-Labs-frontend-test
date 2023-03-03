@@ -8,8 +8,6 @@ import {
     select,
 } from "d3";
 import React, { useEffect, useRef } from "react";
-import { queue } from "../..";
-import api from "../../api";
 import styled from "styled-components";
 import useResize from "../../hook/useResize";
 import { ChartPropsType, LineChartPropsType } from "../../types/chart";
@@ -38,6 +36,25 @@ const Chart = React.memo(({ svgRef }: ChartPropsType) => {
     );
 });
 
+/*
+라인차트 데이터 바인딩 관련
+
+1건씩 조회되고있음
+
+데이터의 마지막에 추가하는 방식으로 업데이트
+
+구간에 해당하는 시간별 데이터가 아닌 해당 구간의 가장 마지막 데이터만 바인딩 하는중
+
+실시간의 경우
+실제론 특정 구간의 데이터가 조회 되고, 이후 최신 데이터가 1건씩 추가될 것.
+
+현재는 특정 구간의 마지막 데이터를 조회하고 이후 최신 데이터가 1건씩 추가되고 있음.
+
+특정 구간의 경우
+실제론 특정 구간의 데이터가 조회, 차트 구성후 종료
+
+현재는 특정구간의 마지막 데이터 한건만 조회되고있기 때문에 이전 데이터에 연결되어 나타난다.
+*/
 const LineChart = ({ dataSource, startDate, endDate, dif, callCycle }: any) => {
     const svgRef = useRef(null);
     const svgParentBoxRef = useRef(null);
@@ -50,7 +67,7 @@ const LineChart = ({ dataSource, startDate, endDate, dif, callCycle }: any) => {
         const height = parentHeight - margin.top - margin.bottom;
 
         const xScale = scaleTime()
-            .domain([startDate, endDate]) // 현재로부터 10분 전 까지를 범위로 지정한다.
+            .domain([startDate, endDate])
             .range([0, width]);
 
         const yMax: any = max(data, (d: any) => d.data || 0) || 0;
@@ -60,8 +77,35 @@ const LineChart = ({ dataSource, startDate, endDate, dif, callCycle }: any) => {
         const myLine: any = line()
             .x((d, i: any) => {
                 // 값 위치 지정
+
+                /*
+                위치는 계속 변한다.
+                조회 범위에 따라 변동된다.
+                
+                [1,2,3,4,5]
+
+                0번 인덱스부터그린다.
+                뒤에서부터 그리기 시작한다.
+
+                xScale(startDate): 시작 위치 (영역의 가장 좌측: 0)
+                xScale(endDate): 종료 위치 (영역의 가장 우측: offsetWidth)
+
+                dif: 조회 범위의 시간초 단위 (10분: 600)
+                callCycle: 조회 주기
+
+                600 범위를 5초 단위로 조회: 120 칸
+
+
+
+                
+                
+                특정 구간 조회 <-> 실시간 조회 가 변경되는 경우 이전 데이터를 지워야 한다.
+                */
+
                 const xPos =
-                    xScale(endDate) - (data.length - 1 - i) * callCycle;
+                    xScale(endDate) -
+                    ((xScale(startDate) + data.length - i) * width) /
+                        (dif / callCycle);
 
                 return xPos;
             })
@@ -98,6 +142,8 @@ const LineChart = ({ dataSource, startDate, endDate, dif, callCycle }: any) => {
         const width = parentWidth - margin.left - margin.right;
         const height = parentHeight - margin.top - margin.bottom;
 
+        // data.push
+        // 조건: 새로운 데이터가 들어온 경우?
         const xScale: any = scaleTime()
             .domain([startDate, endDate])
             .range([0, width]);
@@ -110,7 +156,9 @@ const LineChart = ({ dataSource, startDate, endDate, dif, callCycle }: any) => {
         const myLine: any = line()
             .x(function (d, i: any) {
                 const xPos =
-                    xScale(endDate) - (data.length - 1 - i) * callCycle;
+                    xScale(endDate) -
+                    ((xScale(startDate) + data.length - i) * width) /
+                        (dif / callCycle);
 
                 return xPos;
             })
@@ -125,10 +173,29 @@ const LineChart = ({ dataSource, startDate, endDate, dif, callCycle }: any) => {
             )
             .call(axisBottom(xScale));
 
+        svg.select(".y-axis")
+            .attr("transform", `translate(${margin.left}, ${margin.bottom})`)
+            .call(axisLeft(yScale));
+
         svg.select(".line")
             .attr("d", myLine)
             .attr("transform", `translate(${margin.left}, ${margin.bottom})`);
+
+        // data.shift()
+        // 조건: 길이
     };
+
+    useEffect(() => {
+        data.push(dataSource[0]);
+    }, [dataSource]);
+
+    useEffect(() => {
+        if (dif === 0 || callCycle === 0) return;
+
+        while (data.length >= dif / callCycle) {
+            data.shift();
+        }
+    }, [dataSource, dif, callCycle]);
 
     useEffect(() => {
         const { width, height } = size;
@@ -136,14 +203,6 @@ const LineChart = ({ dataSource, startDate, endDate, dif, callCycle }: any) => {
         // 차트 생성
         draw2(width, height);
     }, [size]);
-
-    useEffect(() => {
-        data.push(dataSource[0]);
-
-        if (data.length > dif / callCycle) {
-            data.shift();
-        }
-    }, [dataSource]);
 
     useEffect(() => {
         update();
