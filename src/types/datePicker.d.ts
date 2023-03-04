@@ -5,6 +5,7 @@ interface dateType {
     date: string;
     hour: string;
     min: string;
+    sec: string;
 }
 
 export interface DatePickerPropsType {

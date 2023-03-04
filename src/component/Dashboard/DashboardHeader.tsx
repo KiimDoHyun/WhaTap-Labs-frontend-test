@@ -1,101 +1,125 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import { setStop } from "../..";
-import DatePicker from "../../common/DatePicker";
+import DatePicker from "../common/DatePicker";
 import DateBox from "./DashboardHeader/DateBox";
 import RealTime from "./DashboardHeader/RealTime";
 
 import play from "../../asset/image/play.png";
 import pause from "../../asset/image/pause.png";
 import CurrentTime from "./DashboardHeader/CurrentTime";
+import { createDateObj } from "../../common/date";
 
 const realTimeList = [5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60];
 
 const DashboardHeader = ({
-    startDate,
-    setStartDate,
-    endDate,
-    setEndDate,
-    isCallRealTime,
-    setIsCallRealTime,
-    isActiveSelectRange,
-    setIsActiveSelectRange,
-    setIsSearchSpecificSection,
-    selectedRealTime,
-    setSelectedRealTime,
+    selectedRealTime, // 실시간 조회 범위 구간
+    setSelectedRealTime, // 실시간 조회 범위 구간 setter
+    callApiObject,
+    setCallApiObject,
 }: any) => {
-    const [isClickDate, setIsClickDate] = useState(false);
-    const [isClickRealTime, setIsClickRealTime] = useState(false);
+    // 구간선택 / 실시간 조회 범위 컴포넌트 활성화 제어 변수
+    const [isActiveDatePicker, setIsActiveDatePicker] = useState(false);
+    const [isActiveRealTimeList, setIsActiveRealTimeList] = useState(false);
 
-    const [tempStartDate, setTempStartDate] = useState(startDate);
-    const [tempEndDate, setTempEndDate] = useState(endDate);
+    // 선택된 시간 (최종 적용은 확인 버튼이후)
+    const [tempStartDate, setTempStartDate] = useState(
+        createDateObj(
+            new Date(Date.now() - 1000 * 60 * callApiObject.nowBody.range)
+        )
+    );
+    const [tempEndDate, setTempEndDate] = useState(
+        createDateObj(new Date(Date.now()))
+    );
 
-    const toggle = () => {
-        setIsClickDate(!isClickDate);
+    // callApiObject status toggle
+    const toggleCallApiObject = () => {
+        setCallApiObject((callApiObject: any) => {
+            const { status } = callApiObject;
+            if (status === "STOP" || status === "PAST") {
+                return { ...callApiObject, status: "NOW" };
+            } else {
+                return { ...callApiObject, status: "STOP" };
+            }
+        });
     };
 
+    // DatePicker 활성화 여부 toggle
+    const toggleIsActiveDatePicker = () => {
+        setIsActiveDatePicker(!isActiveDatePicker);
+    };
+
+    // 실시간 조회 범위 선택 리스트 활성화 여부 toggle
+    const toggleIsActiveRealTimeList = () => {
+        setIsActiveRealTimeList(!isActiveRealTimeList);
+    };
+
+    // 선택된 구간 적용 확인 클릭 이벤트
     const onClickConfirm = () => {
         if (window.confirm("조회 범위를 변경하시겠습니까?")) {
-            // 조회 범위를 변경하면 해당 범위로 조회 진행 (1 회)
-            setStartDate(tempStartDate);
-            setEndDate(tempEndDate);
-            setIsSearchSpecificSection(true);
+            setCallApiObject((callApiObject: any) => ({
+                ...callApiObject,
+                status: "PAST",
+                pastBody: {
+                    startDate: tempStartDate,
+                    endDate: tempEndDate,
+                },
+            }));
 
-            setIsCallRealTime(false);
+            toggleIsActiveDatePicker();
         }
-
-        toggle();
     };
 
-    const onClickRealTime = () => {
-        setIsClickRealTime(!isClickRealTime);
-    };
-
-    const onClickActiveSelectRange = () => {
-        // 범위 재 설정 컴포넌트 활성화
-        setIsActiveSelectRange(!isActiveSelectRange);
-    };
-
+    // 실시간 조회 리스트 아이템 클릭 이벤트
     const onClickRealTimeList = (input: number) => {
-        // 실시간 flag : true
-        // setFlag = true
-        setIsCallRealTime(true);
-
+        // 실시간 조회 범위 설정
         setSelectedRealTime(input);
 
-        onClickRealTime();
+        // 실시간 리스트 비활성화
+        toggleIsActiveRealTimeList();
 
-        setIsActiveSelectRange(false);
+        // 특정 구간 선택 비활성화
+        // setIsActiveSelectRange(false);
+        setCallApiObject((callApiObject: any) => ({
+            ...callApiObject,
+            status: "NOW",
+            nowBody: {
+                range: input,
+            },
+        }));
     };
 
     return (
         <DashboardHeaderBlock>
             <TitleBlock>
-                <div onClick={onClickActiveSelectRange}>
+                <div onClick={toggleCallApiObject}>
                     <img
                         style={{ width: "20px", height: "20px" }}
-                        src={isActiveSelectRange ? play : pause}
+                        src={callApiObject.status === "NOW" ? pause : play}
                         alt={"icon"}
                     />
                 </div>
-                {isActiveSelectRange ? (
+                {callApiObject.status === "NOW" ? (
+                    <CurrentTime onClick={toggleCallApiObject} />
+                ) : (
                     <>
-                        {/* 누르면 실시간 조회 시작 */}
-                        <DateBoxBlock onClick={toggle}>
-                            <DateBox dateInfo={startDate} />
+                        <DateBoxBlock onClick={toggleIsActiveDatePicker}>
+                            <DateBox
+                                dateInfo={callApiObject.pastBody.startDate}
+                            />
                             ~
-                            <DateBox dateInfo={endDate} />
+                            <DateBox
+                                dateInfo={callApiObject.pastBody.endDate}
+                            />
                         </DateBoxBlock>
                     </>
-                ) : (
-                    <CurrentTime onClick={onClickActiveSelectRange} />
                 )}
-                <RealTimeBlock onClick={onClickRealTime}>
+                <RealTimeBlock onClick={toggleIsActiveRealTimeList}>
                     <RealTime selectedRealTime={selectedRealTime} />
                 </RealTimeBlock>
             </TitleBlock>
 
-            <DatePickerBlock isClickDate={isClickDate}>
+            <DatePickerBlock isActiveDatePicker={isActiveDatePicker}>
                 <div className="pickArea">
                     <DatePicker
                         date={tempStartDate}
@@ -109,12 +133,12 @@ const DashboardHeader = ({
                     />
                 </div>
                 <div className="buttonArea">
-                    <button onClick={toggle}>닫기</button>
+                    <button onClick={toggleIsActiveDatePicker}>닫기</button>
                     <button onClick={onClickConfirm}>확인</button>
                 </div>
             </DatePickerBlock>
 
-            <RealTimePickerblock isClickRealTime={isClickRealTime}>
+            <RealTimePickerblock isActiveRealTimeList={isActiveRealTimeList}>
                 <ul>
                     {realTimeList.map((item: number) => (
                         <li
@@ -173,7 +197,7 @@ const RealTimeBlock = styled.div`
     }
 `;
 
-const DatePickerBlock = styled.div<{ isClickDate: boolean }>`
+const DatePickerBlock = styled.div<{ isActiveDatePicker: boolean }>`
     position: absolute;
     top: 35px;
     padding: 5px;
@@ -184,7 +208,8 @@ const DatePickerBlock = styled.div<{ isClickDate: boolean }>`
     z-index: 100;
     box-shadow: 0px 0px 12px 0px darkgrey;
 
-    display: ${({ isClickDate }) => (isClickDate ? "block" : "none")};
+    display: ${({ isActiveDatePicker }) =>
+        isActiveDatePicker ? "block" : "none"};
 
     .buttonArea,
     .pickArea {
@@ -197,7 +222,7 @@ const DatePickerBlock = styled.div<{ isClickDate: boolean }>`
     }
 `;
 
-const RealTimePickerblock = styled.div<{ isClickRealTime: boolean }>`
+const RealTimePickerblock = styled.div<{ isActiveRealTimeList: boolean }>`
     position: absolute;
     top: 35px;
     padding: 5px;
@@ -208,7 +233,8 @@ const RealTimePickerblock = styled.div<{ isClickRealTime: boolean }>`
     z-index: 100;
     box-shadow: 0px 0px 12px 0px darkgrey;
 
-    display: ${({ isClickRealTime }) => (isClickRealTime ? "block" : "none")};
+    display: ${({ isActiveRealTimeList }) =>
+        isActiveRealTimeList ? "block" : "none"};
 
     ul {
         list-style: none;

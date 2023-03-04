@@ -13,6 +13,20 @@ import useResize from "../../hook/useResize";
 import { ChartPropsType, LineChartPropsType } from "../../types/chart";
 
 /*
+라인 차트 바인딩 해결 (V)
+
+상태관리 -> Context 로
+
+코드 공통화(모듈화)
+
+타입스크립트
+
+lint any 적용
+
+outsideClick 적용
+*/
+
+/*
 d3는 DOM을 직접 조작한다.
 차트를 그리는데 사용할 데이터가 외부에 일반 변수로존재한다.
 
@@ -120,7 +134,7 @@ const LineChart = ({ dataSource, startDate, endDate, dif, callCycle }: any) => {
 
         svg.select(".y-axis")
             .attr("transform", `translate(${margin.left}, ${margin.bottom})`)
-            .call(axisLeft(yScale));
+            .call(axisLeft(yScale).ticks(5));
 
         svg.select(".line")
             .datum(data)
@@ -175,7 +189,7 @@ const LineChart = ({ dataSource, startDate, endDate, dif, callCycle }: any) => {
 
         svg.select(".y-axis")
             .attr("transform", `translate(${margin.left}, ${margin.bottom})`)
-            .call(axisLeft(yScale));
+            .call(axisLeft(yScale).ticks(5));
 
         svg.select(".line")
             .attr("d", myLine)

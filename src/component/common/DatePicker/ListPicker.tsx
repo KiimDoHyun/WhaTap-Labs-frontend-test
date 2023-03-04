@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { ListPickerPropsType } from "../../types/datePicker";
+import { ListPickerPropsType } from "../../../types/datePicker";
 
 const ListPicker = ({ num, value, type, setValue }: ListPickerPropsType) => {
     const onClickList = (input: number) => {

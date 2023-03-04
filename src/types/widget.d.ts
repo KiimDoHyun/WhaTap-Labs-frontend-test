@@ -12,18 +12,22 @@ interface dateType {
     date: string;
     hour: string;
     min: string;
+    sec: string;
 }
 
 export interface WidgetPropsType {
-    isCallRealTime: boolean;
-    startDate?: dateType;
-    endDate?: dateType;
-    isActiveSelectRange: boolean;
-    isSearchSpecificSection: boolean;
-    setIsSearchSpecificSection: React.Dispatch<React.SetStateAction<boolean>>;
     chartType: ChartType;
     apiKey: ApiKeyType;
-    selectedRealTime: number;
+    callApiObject: {
+        status: string;
+        pastBody: {
+            startDate: dateType;
+            endDate: dateType;
+        };
+        nowBody: {
+            range: number;
+        };
+    };
 }
 
 // Widget Modal
@@ -31,7 +35,5 @@ export interface WidgetModalPropsType {
     show: boolean;
     setShow: React.Dispatch<React.SetStateAction<boolean>>;
     lastCallTime: object;
-    isCallApi: boolean;
-    setIsCallApi: React.Dispatch<React.SetStateAction<boolean>>;
     onClickApplyCallCycle: (inputValue: number) => void;
 }
