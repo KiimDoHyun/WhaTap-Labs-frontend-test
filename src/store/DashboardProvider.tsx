@@ -1,11 +1,15 @@
-import React, { createContext, useCallback, useState } from "react";
+import React, { createContext, useState } from "react";
 import { createDateObj, getDateRange } from "../common/date";
 
 export const DashboardContext = createContext(null);
 
 const DEFAULT_RANGE = 10;
 
-const DashboardProvider = ({ children }: any) => {
+interface ProviderPropsType {
+    children: React.ReactNode;
+}
+
+const DashboardProvider = ({ children }: ProviderPropsType) => {
     const { startDate, endDate } = getDateRange();
 
     const [callApiObject, setCallApiObject] = useState({

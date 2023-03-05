@@ -3,10 +3,13 @@ import styled from "styled-components";
 
 interface RealTimePropsType {
     selectedRealTime: number;
+    onClick: React.MouseEventHandler<HTMLDivElement>;
 }
 
-const RealTime = ({ selectedRealTime }: RealTimePropsType) => {
-    return <RealTimeBlock>{selectedRealTime}분</RealTimeBlock>;
+const RealTime = ({ selectedRealTime, onClick }: RealTimePropsType) => {
+    return (
+        <RealTimeBlock onClick={onClick}>{selectedRealTime}분</RealTimeBlock>
+    );
 };
 
 const RealTimeBlock = styled.div`

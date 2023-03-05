@@ -1,47 +1,14 @@
-import { useContext, useState } from "react";
+import { useContext } from "react";
 import styled from "styled-components";
-import DatePicker from "../common/DatePicker";
-import DateBox from "./DashboardHeader/DateBox";
-import RealTime from "./DashboardHeader/RealTime";
-
 import play from "../../asset/image/play.png";
 import pause from "../../asset/image/pause.png";
 import CurrentTime from "./DashboardHeader/CurrentTime";
-import { createDateObj } from "../../common/date";
-import { callApiObjectType } from "../../types/widget";
 import { DashboardContext } from "../../store/DashboardProvider";
-import useOutsideClick from "../../hook/useOutsideClick";
-
-const realTimeList = [5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60];
+import DatePickerArea from "./DashboardHeader/DatePickerArea";
+import SelectRealTimeRangeArea from "./DashboardHeader/SelectRealTimeRangeArea";
 
 const DashboardHeader = () => {
     const [callApiObject, setCallApiObject] = useContext(DashboardContext);
-
-    // 구간선택 / 실시간 조회 범위 컴포넌트 활성화 제어 변수
-    const [isActiveDatePicker, setIsActiveDatePicker] = useState(false);
-    const [isActiveRealTimeList, setIsActiveRealTimeList] = useState(false);
-
-    // 선택된 시간 (최종 적용은 확인 버튼이후)
-    const [tempStartDate, setTempStartDate] = useState(
-        createDateObj(
-            new Date(Date.now() - 1000 * 60 * callApiObject.nowBody.range)
-        )
-    );
-    const [tempEndDate, setTempEndDate] = useState(
-        createDateObj(new Date(Date.now()))
-    );
-
-    const DateBoxBlockRefCallback = () => {
-        setIsActiveDatePicker(false);
-    };
-
-    const RealTimeBlockRefCallback = () => {
-        setIsActiveRealTimeList(false);
-    };
-
-    const DateBoxBlockRef = useOutsideClick(DateBoxBlockRefCallback);
-
-    const RealTimeBlockRef = useOutsideClick(RealTimeBlockRefCallback);
 
     // callApiObject status toggle
     const toggleCallApiObject = () => {
@@ -53,47 +20,6 @@ const DashboardHeader = () => {
                 return { ...callApiObject, status: "STOP" };
             }
         });
-    };
-
-    // DatePicker 활성화 여부 toggle
-    const toggleIsActiveDatePicker = () => {
-        setIsActiveDatePicker(!isActiveDatePicker);
-    };
-
-    // 실시간 조회 범위 선택 리스트 활성화 여부 toggle
-    const toggleIsActiveRealTimeList = () => {
-        setIsActiveRealTimeList(!isActiveRealTimeList);
-    };
-
-    // 선택된 구간 적용 확인 클릭 이벤트
-    const onClickConfirm = () => {
-        if (window.confirm("조회 범위를 변경하시겠습니까?")) {
-            setCallApiObject((callApiObject: callApiObjectType) => ({
-                ...callApiObject,
-                status: "PAST",
-                pastBody: {
-                    startDate: tempStartDate,
-                    endDate: tempEndDate,
-                },
-            }));
-
-            toggleIsActiveDatePicker();
-        }
-    };
-
-    // 실시간 조회 리스트 아이템 클릭 이벤트
-    const onClickRealTimeList = (input: number) => {
-        // 실시간 리스트 비활성화
-        toggleIsActiveRealTimeList();
-
-        // 실시간 조회 범위 갱신
-        setCallApiObject((callApiObject: callApiObjectType) => ({
-            ...callApiObject,
-            status: "NOW",
-            nowBody: {
-                range: input,
-            },
-        }));
     };
 
     return (
@@ -109,63 +35,10 @@ const DashboardHeader = () => {
                 {callApiObject.status === "NOW" ? (
                     <CurrentTime onClick={toggleCallApiObject} />
                 ) : (
-                    <DateBoxBlock
-                        onClick={toggleIsActiveDatePicker}
-                        ref={DateBoxBlockRef}
-                    >
-                        <DateBox dateInfo={callApiObject.pastBody.startDate} />
-                        ~
-                        <DateBox dateInfo={callApiObject.pastBody.endDate} />
-                        <DatePickerBlock
-                            isActiveDatePicker={isActiveDatePicker}
-                        >
-                            <div className="pickArea">
-                                <DatePicker
-                                    date={tempStartDate}
-                                    setDate={setTempStartDate}
-                                    type={"start"}
-                                />
-                                <DatePicker
-                                    date={tempEndDate}
-                                    setDate={setTempEndDate}
-                                    type={"end"}
-                                />
-                            </div>
-                            <div className="buttonArea">
-                                <button onClick={toggleIsActiveDatePicker}>
-                                    닫기
-                                </button>
-                                <button onClick={onClickConfirm}>확인</button>
-                            </div>
-                        </DatePickerBlock>
-                    </DateBoxBlock>
+                    <DatePickerArea />
                 )}
-                <RealTimeBlock
-                    onClick={toggleIsActiveRealTimeList}
-                    ref={RealTimeBlockRef}
-                >
-                    <RealTime selectedRealTime={callApiObject.nowBody.range} />
 
-                    <RealTimePickerblock
-                        isActiveRealTimeList={isActiveRealTimeList}
-                    >
-                        <ul>
-                            {realTimeList.map((item: number) => (
-                                <li
-                                    key={item}
-                                    onClick={() => onClickRealTimeList(item)}
-                                    className={
-                                        item === callApiObject.nowBody.range
-                                            ? "selected"
-                                            : ""
-                                    }
-                                >
-                                    {item} 분
-                                </li>
-                            ))}
-                        </ul>
-                    </RealTimePickerblock>
-                </RealTimeBlock>
+                <SelectRealTimeRangeArea />
             </TitleBlock>
         </DashboardHeaderBlock>
     );
@@ -189,18 +62,7 @@ const TitleBlock = styled.div`
     font-size: 12px;
 `;
 
-const DateBoxBlock = styled.div`
-    display: flex;
-    gap: 10px;
-
-    border-bottom: 1px solid #ffffff;
-
-    :hover {
-        border-bottom: 1px solid black;
-    }
-`;
-
-const RealTimeBlock = styled.div`
+export const PickerAreaBlock = styled.div`
     display: flex;
     align-items: center;
 
@@ -211,7 +73,7 @@ const RealTimeBlock = styled.div`
     }
 `;
 
-const DatePickerBlock = styled.div<{ isActiveDatePicker: boolean }>`
+export const PickerBoxBlock = styled.div<{ isActive: boolean }>`
     position: absolute;
     top: 35px;
     right: 0;
@@ -223,56 +85,7 @@ const DatePickerBlock = styled.div<{ isActiveDatePicker: boolean }>`
     z-index: 100;
     box-shadow: 0px 0px 12px 0px darkgrey;
 
-    display: ${({ isActiveDatePicker }) =>
-        isActiveDatePicker ? "block" : "none"};
-
-    .buttonArea,
-    .pickArea {
-        display: flex;
-    }
-
-    .buttonArea {
-        margin-top: 10px;
-        justify-content: flex-end;
-    }
-`;
-
-const RealTimePickerblock = styled.div<{ isActiveRealTimeList: boolean }>`
-    position: absolute;
-    top: 35px;
-    right: 0;
-    padding: 5px;
-    box-sizing: border-box;
-    border: 1px solid black;
-    border-radius: 5px;
-    background-color: white;
-    z-index: 100;
-    box-shadow: 0px 0px 12px 0px darkgrey;
-
-    display: ${({ isActiveRealTimeList }) =>
-        isActiveRealTimeList ? "block" : "none"};
-
-    ul {
-        list-style: none;
-        padding: 0;
-        width: 50px;
-
-        li {
-            cursor: pointer;
-            text-align: center;
-            transition: 0.3s;
-        }
-
-        li:hover {
-            background-color: rgba(41, 108, 242, 0.1);
-        }
-
-        .selected {
-            background-color: rgba(41, 108, 242, 0.1) !important;
-            color: rgb(41, 108, 242) !important;
-            font-wdight: bold !important;
-        }
-    }
+    display: ${({ isActive }) => (isActive ? "block" : "none")};
 `;
 
 export default DashboardHeader;
