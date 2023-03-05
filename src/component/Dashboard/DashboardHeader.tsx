@@ -10,6 +10,7 @@ import CurrentTime from "./DashboardHeader/CurrentTime";
 import { createDateObj } from "../../common/date";
 import { callApiObjectType } from "../../types/widget";
 import { DashboardContext } from "../../store/DashboardProvider";
+import useOutsideClick from "../../hook/useOutsideClick";
 
 const realTimeList = [5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60];
 
@@ -29,6 +30,18 @@ const DashboardHeader = () => {
     const [tempEndDate, setTempEndDate] = useState(
         createDateObj(new Date(Date.now()))
     );
+
+    const DateBoxBlockRefCallback = () => {
+        setIsActiveDatePicker(false);
+    };
+
+    const RealTimeBlockRefCallback = () => {
+        setIsActiveRealTimeList(false);
+    };
+
+    const DateBoxBlockRef = useOutsideClick(DateBoxBlockRefCallback);
+
+    const RealTimeBlockRef = useOutsideClick(RealTimeBlockRefCallback);
 
     // callApiObject status toggle
     const toggleCallApiObject = () => {
@@ -96,59 +109,64 @@ const DashboardHeader = () => {
                 {callApiObject.status === "NOW" ? (
                     <CurrentTime onClick={toggleCallApiObject} />
                 ) : (
-                    <>
-                        <DateBoxBlock onClick={toggleIsActiveDatePicker}>
-                            <DateBox
-                                dateInfo={callApiObject.pastBody.startDate}
-                            />
-                            ~
-                            <DateBox
-                                dateInfo={callApiObject.pastBody.endDate}
-                            />
-                        </DateBoxBlock>
-                    </>
+                    <DateBoxBlock
+                        onClick={toggleIsActiveDatePicker}
+                        ref={DateBoxBlockRef}
+                    >
+                        <DateBox dateInfo={callApiObject.pastBody.startDate} />
+                        ~
+                        <DateBox dateInfo={callApiObject.pastBody.endDate} />
+                        <DatePickerBlock
+                            isActiveDatePicker={isActiveDatePicker}
+                        >
+                            <div className="pickArea">
+                                <DatePicker
+                                    date={tempStartDate}
+                                    setDate={setTempStartDate}
+                                    type={"start"}
+                                />
+                                <DatePicker
+                                    date={tempEndDate}
+                                    setDate={setTempEndDate}
+                                    type={"end"}
+                                />
+                            </div>
+                            <div className="buttonArea">
+                                <button onClick={toggleIsActiveDatePicker}>
+                                    닫기
+                                </button>
+                                <button onClick={onClickConfirm}>확인</button>
+                            </div>
+                        </DatePickerBlock>
+                    </DateBoxBlock>
                 )}
-                <RealTimeBlock onClick={toggleIsActiveRealTimeList}>
+                <RealTimeBlock
+                    onClick={toggleIsActiveRealTimeList}
+                    ref={RealTimeBlockRef}
+                >
                     <RealTime selectedRealTime={callApiObject.nowBody.range} />
+
+                    <RealTimePickerblock
+                        isActiveRealTimeList={isActiveRealTimeList}
+                    >
+                        <ul>
+                            {realTimeList.map((item: number) => (
+                                <li
+                                    key={item}
+                                    onClick={() => onClickRealTimeList(item)}
+                                    className={
+                                        item === callApiObject.nowBody.range
+                                            ? "selected"
+                                            : ""
+                                    }
+                                >
+                                    {item} 분
+                                </li>
+                            ))}
+                        </ul>
+                    </RealTimePickerblock>
                 </RealTimeBlock>
             </TitleBlock>
-
-            <DatePickerBlock isActiveDatePicker={isActiveDatePicker}>
-                <div className="pickArea">
-                    <DatePicker
-                        date={tempStartDate}
-                        setDate={setTempStartDate}
-                        type={"start"}
-                    />
-                    <DatePicker
-                        date={tempEndDate}
-                        setDate={setTempEndDate}
-                        type={"end"}
-                    />
-                </div>
-                <div className="buttonArea">
-                    <button onClick={toggleIsActiveDatePicker}>닫기</button>
-                    <button onClick={onClickConfirm}>확인</button>
-                </div>
-            </DatePickerBlock>
-
-            <RealTimePickerblock isActiveRealTimeList={isActiveRealTimeList}>
-                <ul>
-                    {realTimeList.map((item: number) => (
-                        <li
-                            key={item}
-                            onClick={() => onClickRealTimeList(item)}
-                            className={
-                                item === callApiObject.nowBody.range
-                                    ? "selected"
-                                    : ""
-                            }
-                        >
-                            {item} 분
-                        </li>
-                    ))}
-                </ul>
-            </RealTimePickerblock>
         </DashboardHeaderBlock>
     );
 };
@@ -196,6 +214,7 @@ const RealTimeBlock = styled.div`
 const DatePickerBlock = styled.div<{ isActiveDatePicker: boolean }>`
     position: absolute;
     top: 35px;
+    right: 0;
     padding: 5px;
     box-sizing: border-box;
     border: 1px solid black;
@@ -221,6 +240,7 @@ const DatePickerBlock = styled.div<{ isActiveDatePicker: boolean }>`
 const RealTimePickerblock = styled.div<{ isActiveRealTimeList: boolean }>`
     position: absolute;
     top: 35px;
+    right: 0;
     padding: 5px;
     box-sizing: border-box;
     border: 1px solid black;

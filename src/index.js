@@ -1,21 +1,14 @@
-import React, { createContext } from "react";
+import React from "react";
 import ReactDOM from "react-dom";
 import "./index.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import { BrowserRouter } from "react-router-dom";
 
-export const queue = [];
+const queue = [];
 
 export const enqueueApi = (item) => {
     queue.push(item);
-};
-
-// 전체 호출 일시 정지
-let stop = false;
-
-export const setStop = (value) => {
-    stop = value;
 };
 
 let isWorking = false;
