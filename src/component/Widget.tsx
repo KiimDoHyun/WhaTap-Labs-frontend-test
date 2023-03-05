@@ -1,11 +1,12 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useContext, useEffect, useRef, useState } from "react";
 import { Button } from "react-bootstrap";
 import styled from "styled-components";
 import { enqueueApi } from "..";
 import api, { OPEN_API } from "../api";
 import { getDateRange, parseDate } from "../common/date";
+import { DashboardContext } from "../store/DashboardProvider";
 import { DataType, OPEN_APIType } from "../types/api";
-import { dateType, WidgetPropsType } from "../types/widget";
+import { WidgetPropsType } from "../types/widget";
 import BarChart from "./chart/BarChart";
 import InformaticsChart from "./chart/InformaticsChart";
 import LineChart from "./chart/LineChart";
@@ -16,7 +17,9 @@ export const DEFAULT_CALL_CYCLE = 5;
 
 const OPEN_API_WITH_TYPE: OPEN_APIType = OPEN_API;
 
-const Widget = ({ chartType, apiKey, callApiObject }: WidgetPropsType) => {
+const Widget = ({ chartType, apiKey }: WidgetPropsType) => {
+    const [callApiObject] = useContext(DashboardContext);
+
     // api 를 마지막으로 호출한 시간
     const [lastCallTime, setLastCallTime] = useState(null);
 

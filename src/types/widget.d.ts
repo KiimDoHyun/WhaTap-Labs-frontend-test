@@ -15,19 +15,19 @@ interface dateType {
     sec: string;
 }
 
+export interface callApiObjectType {
+    status: string;
+    pastBody: {
+        startDate: dateType;
+        endDate: dateType;
+    };
+    nowBody: {
+        range: number;
+    };
+}
 export interface WidgetPropsType {
     chartType: ChartType;
     apiKey: ApiKeyType;
-    callApiObject: {
-        status: string;
-        pastBody: {
-            startDate: dateType;
-            endDate: dateType;
-        };
-        nowBody: {
-            range: number;
-        };
-    };
 }
 
 // Widget Modal

@@ -1,6 +1,5 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import { useContext, useState } from "react";
 import styled from "styled-components";
-import { setStop } from "../..";
 import DatePicker from "../common/DatePicker";
 import DateBox from "./DashboardHeader/DateBox";
 import RealTime from "./DashboardHeader/RealTime";
@@ -9,15 +8,14 @@ import play from "../../asset/image/play.png";
 import pause from "../../asset/image/pause.png";
 import CurrentTime from "./DashboardHeader/CurrentTime";
 import { createDateObj } from "../../common/date";
+import { callApiObjectType } from "../../types/widget";
+import { DashboardContext } from "../../store/DashboardProvider";
 
 const realTimeList = [5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60];
 
-const DashboardHeader = ({
-    selectedRealTime, // 실시간 조회 범위 구간
-    setSelectedRealTime, // 실시간 조회 범위 구간 setter
-    callApiObject,
-    setCallApiObject,
-}: any) => {
+const DashboardHeader = () => {
+    const [callApiObject, setCallApiObject] = useContext(DashboardContext);
+
     // 구간선택 / 실시간 조회 범위 컴포넌트 활성화 제어 변수
     const [isActiveDatePicker, setIsActiveDatePicker] = useState(false);
     const [isActiveRealTimeList, setIsActiveRealTimeList] = useState(false);
@@ -57,7 +55,7 @@ const DashboardHeader = ({
     // 선택된 구간 적용 확인 클릭 이벤트
     const onClickConfirm = () => {
         if (window.confirm("조회 범위를 변경하시겠습니까?")) {
-            setCallApiObject((callApiObject: any) => ({
+            setCallApiObject((callApiObject: callApiObjectType) => ({
                 ...callApiObject,
                 status: "PAST",
                 pastBody: {
@@ -72,15 +70,11 @@ const DashboardHeader = ({
 
     // 실시간 조회 리스트 아이템 클릭 이벤트
     const onClickRealTimeList = (input: number) => {
-        // 실시간 조회 범위 설정
-        setSelectedRealTime(input);
-
         // 실시간 리스트 비활성화
         toggleIsActiveRealTimeList();
 
-        // 특정 구간 선택 비활성화
-        // setIsActiveSelectRange(false);
-        setCallApiObject((callApiObject: any) => ({
+        // 실시간 조회 범위 갱신
+        setCallApiObject((callApiObject: callApiObjectType) => ({
             ...callApiObject,
             status: "NOW",
             nowBody: {
@@ -115,7 +109,7 @@ const DashboardHeader = ({
                     </>
                 )}
                 <RealTimeBlock onClick={toggleIsActiveRealTimeList}>
-                    <RealTime selectedRealTime={selectedRealTime} />
+                    <RealTime selectedRealTime={callApiObject.nowBody.range} />
                 </RealTimeBlock>
             </TitleBlock>
 
@@ -145,7 +139,9 @@ const DashboardHeader = ({
                             key={item}
                             onClick={() => onClickRealTimeList(item)}
                             className={
-                                item === selectedRealTime ? "selected" : ""
+                                item === callApiObject.nowBody.range
+                                    ? "selected"
+                                    : ""
                             }
                         >
                             {item} 분
