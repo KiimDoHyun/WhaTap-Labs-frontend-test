@@ -1,5 +1,6 @@
 // Common
 //
+
 import {
     axisBottom,
     axisLeft,
@@ -15,14 +16,16 @@ import {
 } from "d3";
 import { dataSourceType } from "../types/chart";
 
+interface MarginType {
+    top: number;
+    right: number;
+    bottom: number;
+    left: number;
+}
+
 // svg width/height 계산
 export const calcNewSize = (
-    margin: {
-        top: number;
-        right: number;
-        bottom: number;
-        left: number;
-    },
+    margin: MarginType,
     width: number,
     height: number
 ) => {
@@ -83,12 +86,7 @@ export const createLineXScale = (
 };
 
 export const drawLineXAxis = (
-    margin: {
-        top: number;
-        right: number;
-        bottom: number;
-        left: number;
-    },
+    margin: MarginType,
     svg: any,
     height: number,
     xScale: ScaleTime<number, number, never>
