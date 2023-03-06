@@ -89,6 +89,7 @@ const Widget = ({ chartType, apiKey }: WidgetPropsType) => {
         [apiKey]
     );
 
+    // api 호출 로직
     useEffect(() => {
         const { status, pastBody, nowBody } = callApiObject;
 
@@ -150,6 +151,8 @@ const Widget = ({ chartType, apiKey }: WidgetPropsType) => {
             <Button
                 onClick={onClickShowSetting}
                 disabled={callApiObject.status === "PAST"}
+                className="button"
+                size="sm"
             >
                 showSetting
             </Button>
@@ -180,6 +183,13 @@ const Widget = ({ chartType, apiKey }: WidgetPropsType) => {
     );
 };
 
-const WidgetBlock = styled.div``;
+const WidgetBlock = styled.div`
+    width: 100%;
+    height: 100%;
+
+    // .button {
+    //     height: 30px;
+    // }
+`;
 
 export default Widget;
