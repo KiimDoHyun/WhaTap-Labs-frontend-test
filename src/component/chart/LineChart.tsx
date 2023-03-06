@@ -11,6 +11,13 @@ import {
 } from "d3";
 import React, { useEffect, useRef } from "react";
 import styled from "styled-components";
+import {
+    createLineXScale,
+    createLineYScale,
+    drawLine,
+    drawLineXAxis,
+    drawyLineAxis,
+} from "../../common/chart";
 import useResize from "../../hook/useResize";
 import { ChartPropsType, dataSourceType } from "../../types/chart";
 
@@ -40,56 +47,24 @@ const Chart = React.memo(({ svgRef }: ChartPropsType) => {
     );
 });
 
-const LineChart = ({ dataSource, startDate, endDate, dif, callCycle }: any) => {
+interface LineChartPropsType {
+    dataSource: dataSourceType[];
+    startDate: Date;
+    endDate: Date;
+    dif: number;
+    callCycle: number;
+}
+
+const LineChart = ({
+    dataSource,
+    startDate,
+    endDate,
+    dif,
+    callCycle,
+}: LineChartPropsType) => {
     const svgRef = useRef(null);
     const svgParentBoxRef = useRef(null);
     const size = useResize(svgParentBoxRef);
-
-    const getMax = () => max(data, (d: dataSourceType) => d.data);
-
-    const createYScale = (height: number) => {
-        return scaleLinear().domain([0, getMax()]).range([height, 0]);
-    };
-    const drawXAxis = (
-        svg: any,
-        height: number,
-        xScale: ScaleTime<number, number, never>
-    ) => {
-        svg.select(".x-axis")
-            .transition()
-            .attr(
-                "transform",
-                `translate(${margin.left}, ${height + margin.bottom})`
-            )
-            .call(axisBottom(xScale));
-    };
-
-    const drawyAxis = (
-        svg: any,
-        yScale: ScaleLinear<number, number, never>
-    ) => {
-        svg.select(".y-axis").call(axisLeft(yScale).ticks(5));
-    };
-
-    const drawLine = (
-        svg: any,
-        xScale: ScaleTime<number, number, never>,
-        yScale: ScaleLinear<number, number, never>,
-        width: number
-    ) => {
-        const myLine: any = line()
-            .x((d, i: any) => {
-                const xPos =
-                    xScale(endDate) -
-                    ((xScale(startDate) + data.length - i) * width) /
-                        (dif / callCycle);
-
-                return xPos;
-            })
-            .y((d: any) => yScale(d.data || 0));
-
-        svg.select(".line").datum(data).attr("d", myLine);
-    };
 
     const renderChart = (parentWidth: any, parentHeight: any) => {
         const svg: any = select(svgRef.current);
@@ -97,15 +72,23 @@ const LineChart = ({ dataSource, startDate, endDate, dif, callCycle }: any) => {
         const width = parentWidth - margin.left - margin.right;
         const height = parentHeight - margin.top - margin.bottom;
 
-        const xScale = scaleTime()
-            .domain([startDate, endDate])
-            .range([0, width]);
-        drawXAxis(svg, height, xScale);
+        const xScale = createLineXScale(startDate, endDate, width);
+        drawLineXAxis(margin, svg, height, xScale);
 
-        const yScale = createYScale(height);
-        drawyAxis(svg, yScale);
+        const yScale = createLineYScale(data, height);
+        drawyLineAxis(svg, yScale);
 
-        drawLine(svg, xScale, yScale, width);
+        drawLine(
+            svg,
+            xScale,
+            yScale,
+            width,
+            startDate,
+            endDate,
+            data,
+            dif,
+            callCycle
+        );
     };
 
     useEffect(() => {

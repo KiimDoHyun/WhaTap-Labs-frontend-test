@@ -10,6 +10,13 @@ import {
 } from "d3";
 import React, { useEffect, useRef } from "react";
 import styled from "styled-components";
+import {
+    calcNewSize,
+    createBarXScale,
+    createBarYScale,
+    drawBarXAxis,
+    drawBaryAxis,
+} from "../../common/chart";
 import useResize from "../../hook/useResize";
 import {
     BarChartPropsType,
@@ -46,58 +53,17 @@ const BarChart = ({ dataSource }: BarChartPropsType) => {
     const svgParentBoxRef = useRef(null);
     const size = useResize(svgParentBoxRef);
 
-    // 필요데이터 조회: act (액티브 스테이터스)
-    // 최대값 기준
-
-    // 최댓값 계산
-    const getMax = () => max(data, (d: dataSourceType) => d.data);
-
-    // xScale 생성
-    const createXScale = (height: number) => {
-        return scaleBand() // x 축
-            .domain(data.map((item: dataSourceType) => `${item.name}`))
-            .range([0, height]);
-    };
-
-    // yScale 생성
-    const createYScale = (width: number) => {
-        return scaleLinear()
-            .domain([0, Number(getMax())])
-            .range([0, width]);
-    };
-
-    // xAxis 생성
-    const drawXAxis = (svg: any, xScale: ScaleBand<string>) => {
-        svg.select(".x-axis").call(axisLeft(xScale));
-    };
-
-    // yAxis 생성
-    const drawyAxis = (
-        svg: any,
-        yScale: ScaleLinear<number, number, never>
-    ) => {
-        svg.select(".y-axis").call(axisTop(yScale));
-    };
-
-    // svg width/height 계산
-    const calcNewSize = (width: number, height: number) => {
-        const newWidth = width - margin.left - margin.right;
-        const newHeight = height - margin.top - margin.bottom;
-
-        return [newWidth, newHeight];
-    };
-
     // Chart Render
     const renderChart = (width: number, height: number, type: string) => {
         const svg: any = select(svgRef.current);
 
         // name : left
-        const xScale = createXScale(height);
-        drawXAxis(svg, xScale);
+        const xScale = createBarXScale(data, height);
+        drawBarXAxis(svg, xScale);
 
         // value : top
-        const yScale = createYScale(width);
-        drawyAxis(svg, yScale);
+        const yScale = createBarYScale(data, width);
+        drawBaryAxis(svg, yScale);
 
         if (type === "INIT") {
             const bar = svg
@@ -156,7 +122,11 @@ const BarChart = ({ dataSource }: BarChartPropsType) => {
             current: { offsetWidth, offsetHeight },
         } = svgParentBoxRef;
 
-        const [newWidth, newHeight] = calcNewSize(offsetWidth, offsetHeight);
+        const [newWidth, newHeight] = calcNewSize(
+            margin,
+            offsetWidth,
+            offsetHeight
+        );
 
         renderChart(newWidth, newHeight, "INIT");
     }, []);
@@ -168,7 +138,7 @@ const BarChart = ({ dataSource }: BarChartPropsType) => {
         svgRef.current.style.width = width;
         svgRef.current.style.height = height;
 
-        const [newWidth, newHeight] = calcNewSize(width, height);
+        const [newWidth, newHeight] = calcNewSize(margin, width, height);
 
         renderChart(newWidth, newHeight, "DRAW");
     }, [size, dataSource]);
