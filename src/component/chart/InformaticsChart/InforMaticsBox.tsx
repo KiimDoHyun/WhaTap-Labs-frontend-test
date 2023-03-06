@@ -14,6 +14,7 @@ const InforMaticsBoxBlock = styled.div`
     border-bottom: 1px solid;
     padding: 8px;
     box-sizing: border-box;
+    flex: 1;
 
     .title {
         font-size: 12px;
