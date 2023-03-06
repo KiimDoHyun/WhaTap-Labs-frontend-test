@@ -1,14 +1,4 @@
-import {
-    axisBottom,
-    axisLeft,
-    line,
-    max,
-    ScaleLinear,
-    scaleLinear,
-    ScaleTime,
-    scaleTime,
-    select,
-} from "d3";
+import { select } from "d3";
 import React, { useEffect, useRef } from "react";
 import styled from "styled-components";
 import {

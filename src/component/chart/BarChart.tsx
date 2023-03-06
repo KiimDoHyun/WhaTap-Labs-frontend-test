@@ -1,13 +1,4 @@
-import {
-    axisLeft,
-    axisTop,
-    max,
-    ScaleBand,
-    scaleBand,
-    ScaleLinear,
-    scaleLinear,
-    select,
-} from "d3";
+import { select } from "d3";
 import React, { useEffect, useRef } from "react";
 import styled from "styled-components";
 import {
