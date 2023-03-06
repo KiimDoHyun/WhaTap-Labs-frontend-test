@@ -3,6 +3,7 @@ import { WidgetPropsType } from "../types/widget";
 import styled from "styled-components";
 import DashboardHeader from "../component/Dashboard/DashboardHeader";
 import DashboardProvider from "../store/DashboardProvider";
+import { Col, Container, Row } from "react-bootstrap";
 
 const Dashboard = () => {
     const barChartProps: WidgetPropsType = {
@@ -39,10 +40,19 @@ const Dashboard = () => {
         <DashboardProvider>
             <DashboardBox>
                 <DashboardHeader />
-
-                <Widget {...barChartProps} />
-                <Widget {...infoChartProps} />
-                <Widget {...lineChartProps} />
+                <Container>
+                    <Row>
+                        <Col sm={12} md={2} lg={2}>
+                            <Widget {...infoChartProps} />
+                        </Col>
+                        <Col sm={12} md={10} lg={4}>
+                            <Widget {...barChartProps} />
+                        </Col>
+                        <Col sm={12} md={12} lg={6}>
+                            <Widget {...lineChartProps} />
+                        </Col>
+                    </Row>
+                </Container>
             </DashboardBox>
         </DashboardProvider>
     );
