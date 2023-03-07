@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Modal } from "react-bootstrap";
-import { DEFAULT_CALL_CYCLE } from "../../common/widtet";
+import { DEFAULT_CALL_CYCLE } from "../../common/widget";
 import { WidgetModalPropsType } from "../../types/widget";
 
 const WidgetModal = ({

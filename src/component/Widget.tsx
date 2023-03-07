@@ -4,7 +4,7 @@ import styled from "styled-components";
 import { enqueueApi } from "..";
 import api, { OPEN_API } from "../api";
 import { getDateRange, parseDate } from "../common/date";
-import { DEFAULT_CALL_CYCLE } from "../common/widtet";
+import { DEFAULT_CALL_CYCLE } from "../common/widget";
 import { DashboardContext } from "../store/DashboardProvider";
 import { DataType, OPEN_APIType } from "../types/api";
 import { WidgetPropsType } from "../types/widget";

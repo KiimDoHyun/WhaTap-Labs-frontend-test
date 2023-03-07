@@ -6,7 +6,7 @@ import useOutsideClick from "../../../hook/useOutsideClick";
 import { DashboardContext } from "../../../store/DashboardProvider";
 import { callApiObjectType } from "../../../types/widget";
 import DatePicker from "../../common/DatePicker";
-import { PickerAreaBlock, PickerBoxBlock } from "../DashboardHeader";
+import { PickerAreaBlock, PickerBoxBlock } from "../CommonStyle";
 import DateBox from "./DateBox";
 
 const DatePickerArea = () => {

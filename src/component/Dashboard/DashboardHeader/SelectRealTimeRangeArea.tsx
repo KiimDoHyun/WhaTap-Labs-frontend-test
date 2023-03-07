@@ -4,7 +4,7 @@ import useBoolean from "../../../hook/useBoolean";
 import useOutsideClick from "../../../hook/useOutsideClick";
 import { DashboardContext } from "../../../store/DashboardProvider";
 import { callApiObjectType } from "../../../types/widget";
-import { PickerAreaBlock, PickerBoxBlock } from "../DashboardHeader";
+import { PickerAreaBlock, PickerBoxBlock } from "../CommonStyle";
 import RealTime from "./RealTime";
 import SelectRealTimeListItem from "./SelectRealTimeListItem";
 
