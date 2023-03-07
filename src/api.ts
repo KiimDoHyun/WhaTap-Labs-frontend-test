@@ -1,13 +1,15 @@
+import { DataType, OPEN_APIType } from "./types/api";
+
 const DEMO_PROJECT_API_TOCKEN = "XGJHUSQZTI2AVIENWA27HI5V";
-const DEMO_PROJECT_CODE = 5490;
-const OPEN_API_HEADERS = {
+const DEMO_PROJECT_CODE = "5490";
+const OPEN_API_HEADERS: HeadersInit = {
     "x-whatap-pcode": DEMO_PROJECT_CODE,
     "x-whatap-token": DEMO_PROJECT_API_TOCKEN,
 };
 
 const OPEN_API_ROOT = "https://api.whatap.io/open/api";
 
-export const OPEN_API = {
+export const OPEN_API: OPEN_APIType = {
     "": {
         // 몇개 정해서 인포매틱스로?
         act_agent: "활성화 상태의 에이전트 수",
@@ -51,7 +53,7 @@ export const OPEN_API = {
         "transaction/{stime}/{etime}": "트랜잭션",
     },
 };
-const getPath = (url, param = {}) => {
+const getPath = (url: string, param: any = {}) => {
     let path = url;
     for (let key in param) {
         path = path.replace(new RegExp("\\{" + key + "\\}", "g"), param[key]);
@@ -60,7 +62,7 @@ const getPath = (url, param = {}) => {
     return path;
 };
 
-const getOpenApi = (type) => (key, param) =>
+const getOpenApi = (type: string) => (key: string, param?: any) =>
     new Promise((resolve, reject) => {
         if (key in OPEN_API[type]) {
             return resolve({
@@ -72,12 +74,12 @@ const getOpenApi = (type) => (key, param) =>
         } else {
             reject("잘못된 API 정보");
         }
-    }).then(({ url, name }) =>
+    }).then(({ url, name }: any) =>
         fetch(getPath(url, param), {
             headers: OPEN_API_HEADERS,
         })
             .then((response) => response.json())
-            .then((data) => ({
+            .then((data: DataType) => ({
                 key,
                 name,
                 data,

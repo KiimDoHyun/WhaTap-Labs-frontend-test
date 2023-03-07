@@ -1,4 +1,11 @@
-import { dateType } from "../types/widget";
+interface dateType {
+    year: number;
+    month: string;
+    date: string;
+    hour: string;
+    min: string;
+    sec: string;
+}
 
 // Date 객체 생성
 export const createDateObj = (date: Date) => {

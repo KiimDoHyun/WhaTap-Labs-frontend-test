@@ -1,5 +1,3 @@
-import { dateType } from "./widget";
-
 // 차트에 사용할 dataSource
 export interface dataSourceType {
     key: string;

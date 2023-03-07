@@ -2,7 +2,11 @@ interface ObjectKeyType {
     [key: string]: string;
 }
 
-export interface OPEN_APIType {
+interface ObjectType {
+    [key: string]: ObjectKeyType;
+}
+
+export interface OPEN_APIType extends ObjectType {
     "": ObjectKeyType;
     json: ObjectKeyType;
 }

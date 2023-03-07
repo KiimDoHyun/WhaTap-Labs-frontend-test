@@ -6,7 +6,7 @@ import api, { OPEN_API } from "../api";
 import { getDateRange, parseDate } from "../common/date";
 import { DEFAULT_CALL_CYCLE } from "../common/widget";
 import { DashboardContext } from "../store/DashboardProvider";
-import { DataType, OPEN_APIType } from "../types/api";
+import { DataType } from "../types/api";
 import { WidgetPropsType } from "../types/widget";
 import BarChart from "./chart/BarChart";
 import InformaticsChart from "./chart/InformaticsChart";
@@ -25,8 +25,6 @@ import WidgetModal from "./Widget/WidgetModal";
 
 
 */
-
-const OPEN_API_WITH_TYPE: OPEN_APIType = OPEN_API;
 
 const Widget = ({ chartType, apiKey }: WidgetPropsType) => {
     const [callApiObject] = useContext(DashboardContext);
@@ -56,8 +54,8 @@ const Widget = ({ chartType, apiKey }: WidgetPropsType) => {
             data: null,
             name:
                 apiKey.type === "spot"
-                    ? OPEN_API_WITH_TYPE[""][item]
-                    : OPEN_API_WITH_TYPE["json"][item],
+                    ? OPEN_API[""][item]
+                    : OPEN_API["json"][item],
         }))
     );
 
