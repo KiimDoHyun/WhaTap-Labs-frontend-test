@@ -9,7 +9,36 @@ const queue = [];
 
 export const enqueueApi = (item) => {
     queue.push(item);
+
+    // startInterval();
+
+    // queue에 아이템이 추가되면 interval을 시작한다.
+    // queue가 비어있으면 interval을 종료한다.
+    // 중간에 에러가 발생한다면?
 };
+
+/*
+startInterval () {
+    interval.run(queue);
+
+    intervalCallback() {
+        try {
+            callApi()
+        }
+        catch {
+            failApiList.push(failApi)
+        }
+        finally {
+            queue.shift()
+        }
+    }
+
+
+    if(failApiList.length > 0) {
+        interval.run(failApiList)
+    }
+}
+*/
 
 let isWorking = false;
 

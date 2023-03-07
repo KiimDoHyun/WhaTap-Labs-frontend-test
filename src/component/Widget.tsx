@@ -4,6 +4,7 @@ import styled from "styled-components";
 import { enqueueApi } from "..";
 import api, { OPEN_API } from "../api";
 import { getDateRange, parseDate } from "../common/date";
+import { DEFAULT_CALL_CYCLE } from "../common/widtet";
 import { DashboardContext } from "../store/DashboardProvider";
 import { DataType, OPEN_APIType } from "../types/api";
 import { WidgetPropsType } from "../types/widget";
@@ -12,8 +13,18 @@ import InformaticsChart from "./chart/InformaticsChart";
 import LineChart from "./chart/LineChart";
 import WidgetModal from "./Widget/WidgetModal";
 
-// Default 호출 주기 : 5 초
-export const DEFAULT_CALL_CYCLE = 5;
+/*
+위젯의 역할
+
+1. api 호출 주기 변경 (모달)
+2. api 호출
+    - callApiObject 에 따라 호출 로직이 다름
+
+3. 모달 on/off
+4. 차트 컴포넌트 호출
+
+
+*/
 
 const OPEN_API_WITH_TYPE: OPEN_APIType = OPEN_API;
 
@@ -21,8 +32,16 @@ const Widget = ({ chartType, apiKey }: WidgetPropsType) => {
     const [callApiObject] = useContext(DashboardContext);
 
     // api 를 마지막으로 호출한 시간
+    /*
+    set: Widget
+    use: WidgetModal
+    */
     const [lastCallTime, setLastCallTime] = useState(null);
 
+    /*
+    set: Widget
+    use: WidgetModal
+    */
     const [isShowSettingModal, setIsShowSettingModal] = useState(false);
 
     // 호출 주기
