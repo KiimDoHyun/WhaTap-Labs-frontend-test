@@ -15,3 +15,5 @@ const AppBlock = styled.div`
 `;
 
 export default App;
+
+// npx madge --image graph3.svg ./src/App.tsx
