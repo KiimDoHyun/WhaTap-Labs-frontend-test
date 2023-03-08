@@ -26,6 +26,7 @@ export interface callApiObjectType {
     };
 }
 export interface WidgetPropsType {
+    widgetId: number;
     chartType: ChartType;
     apiKey: ApiKeyType;
 }

@@ -1,5 +1,5 @@
 import { select } from "d3";
-import React, { useEffect, useRef, useContext } from "react";
+import React, { useEffect, useRef } from "react";
 import styled from "styled-components";
 import {
     createLineXScale,
@@ -9,11 +9,7 @@ import {
     drawyLineAxis,
 } from "../../common/chart";
 import useResize from "../../hook/useResize";
-import {
-    WidgetSetterContext,
-    WidgetStateContext,
-} from "../../store/WidgetProvider";
-import { ChartPropsType, dataSourceType } from "../../types/chart";
+import { ChartPropsType } from "../../types/chart";
 
 const data: any = [];
 
@@ -41,19 +37,10 @@ const Chart = React.memo(({ svgRef }: ChartPropsType) => {
     );
 });
 
-interface LineChartPropsType {
-    dataSource: dataSourceType[];
-    startDate: Date;
-    endDate: Date;
-    dif: number;
-    callCycle: number;
-}
-
 const LineChart = ({ dataSource, apiInfo }: any) => {
     const svgRef = useRef(null);
     const svgParentBoxRef = useRef(null);
     const size = useResize(svgParentBoxRef);
-    // const chartProps = useContext(WidgetStateContext);
 
     const renderChart = (parentWidth: any, parentHeight: any) => {
         const { startDate, endDate, dif, callCycle } = apiInfo;

@@ -6,6 +6,7 @@ import api, { OPEN_API } from "../api";
 import { getDateRange, parseDate } from "../common/date";
 import { DEFAULT_CALL_CYCLE } from "../common/widget";
 import { DashboardContext } from "../store/DashboardProvider";
+import { WidgetPropsSettingModalSetterContext } from "../store/WidgetProvider";
 import { DataType } from "../types/api";
 import { WidgetPropsType } from "../types/widget";
 import WidgetChart from "./Widget/WidgetChart";
@@ -24,9 +25,12 @@ import WidgetModal from "./Widget/WidgetModal";
 
 */
 
-const Widget = ({ chartType, apiKey }: WidgetPropsType) => {
+const Widget = ({ chartType, apiKey, widgetId }: WidgetPropsType) => {
     const [callApiObject] = useContext(DashboardContext);
 
+    const { setTrueActiveWidgetSettingModal, deleteWidgetProps } = useContext(
+        WidgetPropsSettingModalSetterContext
+    );
     // console.log("changeChartProps: ", changeChartProps);
 
     // api 를 마지막으로 호출한 시간
@@ -56,6 +60,18 @@ const Widget = ({ chartType, apiKey }: WidgetPropsType) => {
                     : OPEN_API["json"][item],
         }))
     );
+    useEffect(() => {
+        setDataSource(
+            apiKey.keys.map((item: string) => ({
+                key: item,
+                data: null,
+                name:
+                    apiKey.type === "spot"
+                        ? OPEN_API[""][item]
+                        : OPEN_API["json"][item],
+            }))
+        );
+    }, [apiKey]);
 
     // 조회 관련 정보
     const [apiInfo, setApiInfo] = useState({
@@ -168,15 +184,30 @@ const Widget = ({ chartType, apiKey }: WidgetPropsType) => {
         }
     };
 
+    const onClickEdit = () => {
+        setTrueActiveWidgetSettingModal("MODI", widgetId, chartType, apiKey);
+    };
+
+    const onClickDelete = () => {
+        if (window.confirm("삭제하시겠습니까?")) {
+            deleteWidgetProps(widgetId);
+        }
+    };
+
     return (
         <WidgetBlock>
             <Button
                 onClick={onClickShowSetting}
                 disabled={callApiObject.status === "PAST"}
-                className="button"
                 size="sm"
             >
                 showSetting
+            </Button>
+            <Button size="sm" onClick={onClickEdit}>
+                EDIT
+            </Button>
+            <Button size="sm" onClick={onClickDelete}>
+                DELETE
             </Button>
 
             {/* 차트 */}
@@ -185,19 +216,6 @@ const Widget = ({ chartType, apiKey }: WidgetPropsType) => {
                 dataSource={dataSource}
                 apiInfo={apiInfo}
             />
-            {/* {chartType === "BAR" && <BarChart dataSource={dataSource} />}
-            {chartType === "LINE" && (
-                <LineChart
-                    dataSource={dataSource}
-                    startDate={startDate}
-                    endDate={endDate}
-                    dif={dif}
-                    callCycle={callCycle}
-                />
-            )}
-            {chartType === "INFO" && (
-                <InformaticsChart dataSource={dataSource} />
-            )} */}
 
             {/* 모달 */}
             <WidgetModal
@@ -213,10 +231,6 @@ const Widget = ({ chartType, apiKey }: WidgetPropsType) => {
 const WidgetBlock = styled.div`
     width: 100%;
     height: 100%;
-
-    // .button {
-    //     height: 30px;
-    // }
 `;
 
 export default Widget;

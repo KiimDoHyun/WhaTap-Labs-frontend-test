@@ -1,5 +1,5 @@
 import { select } from "d3";
-import React, { useEffect, useRef, useContext } from "react";
+import React, { useEffect, useRef } from "react";
 import styled from "styled-components";
 import {
     calcNewSize,
@@ -9,12 +9,7 @@ import {
     drawBaryAxis,
 } from "../../common/chart";
 import useResize from "../../hook/useResize";
-import { WidgetStateContext } from "../../store/WidgetProvider";
-import {
-    BarChartPropsType,
-    ChartPropsType,
-    dataSourceType,
-} from "../../types/chart";
+import { ChartPropsType, dataSourceType } from "../../types/chart";
 
 const margin = { top: 20, right: 20, bottom: 20, left: 70 };
 
@@ -44,7 +39,6 @@ const BarChart = ({ dataSource, apiInfo }: any) => {
     const svgRef = useRef(null);
     const svgParentBoxRef = useRef(null);
     const size = useResize(svgParentBoxRef);
-    // const chartProps = useContext(WidgetStateContext);
 
     // Chart Render
     const renderChart = (width: number, height: number, type: string) => {
@@ -73,7 +67,8 @@ const BarChart = ({ dataSource, apiInfo }: any) => {
                 .attr("x", margin.left)
                 .attr("transform", `translate(0, ${margin.bottom})`)
                 .attr("y", function (d: dataSourceType) {
-                    return xScale(d.name) + height / 10 - 10;
+                    const y = xScale(d.name) + height / 10 - 10;
+                    return y > 0 ? y : 0;
                 });
 
             // 텍스트가 들어갈 요소 생성
@@ -83,7 +78,8 @@ const BarChart = ({ dataSource, apiInfo }: any) => {
                 .attr("fill", "#919191")
                 .attr("transform", `translate(0, ${margin.bottom})`)
                 .attr("y", function (d: dataSourceType) {
-                    return xScale(d.name) + height / 10 + 6;
+                    const y = xScale(d.name) + height / 10 + 6;
+                    return y > 0 ? y : 0;
                 });
         } else if (type === "DRAW") {
             svg.selectAll(".bar")
@@ -91,7 +87,8 @@ const BarChart = ({ dataSource, apiInfo }: any) => {
                 .transition()
                 .duration(500)
                 .attr("y", function (d: dataSourceType) {
-                    return xScale(d.name) + height / 10 - 10;
+                    const y = xScale(d.name) + height / 10 - 10;
+                    return y > 0 ? y : 0;
                 })
                 .attr("width", function (d: dataSourceType) {
                     return yScale(d.data);

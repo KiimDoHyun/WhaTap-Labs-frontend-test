@@ -6,9 +6,13 @@ import CurrentTime from "./DashboardHeader/CurrentTime";
 import { DashboardContext } from "../../store/DashboardProvider";
 import DatePickerArea from "./DashboardHeader/DatePickerArea";
 import SelectRealTimeRangeArea from "./DashboardHeader/SelectRealTimeRangeArea";
+import { WidgetPropsSettingModalSetterContext } from "../../store/WidgetProvider";
 
-const DashboardHeader = ({ setTrue }: any) => {
+const DashboardHeader = () => {
     const [callApiObject, setCallApiObject] = useContext(DashboardContext);
+    const { setTrueActiveWidgetSettingModal } = useContext(
+        WidgetPropsSettingModalSetterContext
+    );
 
     // callApiObject status toggle
     const toggleCallApiObject = () => {
@@ -24,7 +28,9 @@ const DashboardHeader = ({ setTrue }: any) => {
 
     return (
         <DashboardHeaderBlock>
-            <button onClick={setTrue}>모달 활성화</button>
+            <button onClick={() => setTrueActiveWidgetSettingModal("ADD")}>
+                모달 활성화
+            </button>
             <TitleBlock>
                 <div onClick={toggleCallApiObject}>
                     <img
