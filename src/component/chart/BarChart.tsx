@@ -53,6 +53,8 @@ const BarChart = ({ dataSource, apiInfo }: any) => {
         drawBaryAxis(svg, yScale);
 
         if (type === "INIT") {
+            console.log("INIT", data);
+            svg.selectAll(".item").remove();
             const bar = svg
                 .selectAll(".item")
                 .data(data)
@@ -67,7 +69,7 @@ const BarChart = ({ dataSource, apiInfo }: any) => {
                 .attr("x", margin.left)
                 .attr("transform", `translate(0, ${margin.bottom})`)
                 .attr("y", function (d: dataSourceType) {
-                    const y = xScale(d.name) + height / 10 - 10;
+                    const y = xScale(d.name) + height / data.length / 2 - 10;
                     return y > 0 ? y : 0;
                 });
 
@@ -78,7 +80,7 @@ const BarChart = ({ dataSource, apiInfo }: any) => {
                 .attr("fill", "#919191")
                 .attr("transform", `translate(0, ${margin.bottom})`)
                 .attr("y", function (d: dataSourceType) {
-                    const y = xScale(d.name) + height / 10 + 6;
+                    const y = xScale(d.name) + height / data.length / 2 + 6;
                     return y > 0 ? y : 0;
                 });
         } else if (type === "DRAW") {
@@ -87,11 +89,14 @@ const BarChart = ({ dataSource, apiInfo }: any) => {
                 .transition()
                 .duration(500)
                 .attr("y", function (d: dataSourceType) {
-                    const y = xScale(d.name) + height / 10 - 10;
+                    const y = xScale(d.name) + height / data.length / 2 - 10;
+
                     return y > 0 ? y : 0;
                 })
                 .attr("width", function (d: dataSourceType) {
-                    return yScale(d.data);
+                    return yScale(d.data) && yScale(d.data) > 0
+                        ? yScale(d.data)
+                        : 0;
                 });
 
             svg.selectAll(".text")
@@ -99,13 +104,17 @@ const BarChart = ({ dataSource, apiInfo }: any) => {
                 .transition()
                 .duration(500)
                 .attr("y", function (d: dataSourceType) {
-                    return xScale(d.name) + height / 10 + 6;
+                    const y = xScale(d.name) + height / data.length / 2 + 6;
+                    return y > 0 ? y : 0;
                 })
                 .text((d: dataSourceType) => d.data);
         }
     };
 
+    const prevDataSourceLength = useRef(0);
     useEffect(() => {
+        if (dataSource.length === prevDataSourceLength.current) return;
+
         data = [...dataSource];
 
         const {
@@ -119,7 +128,8 @@ const BarChart = ({ dataSource, apiInfo }: any) => {
         );
 
         renderChart(newWidth, newHeight, "INIT");
-    }, []);
+        prevDataSourceLength.current = dataSource.length;
+    }, [dataSource]);
 
     useEffect(() => {
         const { width, height } = size;
