@@ -1,11 +1,11 @@
 import styled from "styled-components";
-import { dataSourceType, InformaticsChartPropsType } from "../../types/chart";
+import { dataSourceType } from "../../types/chart";
 import InforMaticsBox from "./InformaticsChart/InforMaticsBox";
 
-const InformaticsChart = ({ dataSource }: InformaticsChartPropsType) => {
+const InformaticsChart = ({ dataSource, apiInfo }: any) => {
     return (
         <InformaticsChartBox>
-            {dataSource.map((item: dataSourceType) => (
+            {dataSource?.map((item: dataSourceType) => (
                 <InforMaticsBox key={item.key} item={item} />
             ))}
         </InformaticsChartBox>

@@ -21,6 +21,10 @@ const DashboardProvider = ({ children }: ProviderPropsType) => {
         nowBody: { range: DEFAULT_RANGE },
     });
 
+    // 위젯 추가
+    // 위젯 삭제
+    // 위젯 수정
+
     return (
         <DashboardContext.Provider value={[callApiObject, setCallApiObject]}>
             {children}

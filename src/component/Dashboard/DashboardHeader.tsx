@@ -7,7 +7,7 @@ import { DashboardContext } from "../../store/DashboardProvider";
 import DatePickerArea from "./DashboardHeader/DatePickerArea";
 import SelectRealTimeRangeArea from "./DashboardHeader/SelectRealTimeRangeArea";
 
-const DashboardHeader = () => {
+const DashboardHeader = ({ setTrue }: any) => {
     const [callApiObject, setCallApiObject] = useContext(DashboardContext);
 
     // callApiObject status toggle
@@ -24,6 +24,7 @@ const DashboardHeader = () => {
 
     return (
         <DashboardHeaderBlock>
+            <button onClick={setTrue}>모달 활성화</button>
             <TitleBlock>
                 <div onClick={toggleCallApiObject}>
                     <img

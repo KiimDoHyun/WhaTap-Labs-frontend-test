@@ -1,5 +1,5 @@
 import { select } from "d3";
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useContext } from "react";
 import styled from "styled-components";
 import {
     calcNewSize,
@@ -9,6 +9,7 @@ import {
     drawBaryAxis,
 } from "../../common/chart";
 import useResize from "../../hook/useResize";
+import { WidgetStateContext } from "../../store/WidgetProvider";
 import {
     BarChartPropsType,
     ChartPropsType,
@@ -39,10 +40,11 @@ const Chart = React.memo(({ svgRef }: ChartPropsType) => {
     );
 });
 
-const BarChart = ({ dataSource }: BarChartPropsType) => {
+const BarChart = ({ dataSource, apiInfo }: any) => {
     const svgRef = useRef(null);
     const svgParentBoxRef = useRef(null);
     const size = useResize(svgParentBoxRef);
+    // const chartProps = useContext(WidgetStateContext);
 
     // Chart Render
     const renderChart = (width: number, height: number, type: string) => {

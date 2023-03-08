@@ -1,5 +1,5 @@
 import { select } from "d3";
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useContext } from "react";
 import styled from "styled-components";
 import {
     createLineXScale,
@@ -9,6 +9,10 @@ import {
     drawyLineAxis,
 } from "../../common/chart";
 import useResize from "../../hook/useResize";
+import {
+    WidgetSetterContext,
+    WidgetStateContext,
+} from "../../store/WidgetProvider";
 import { ChartPropsType, dataSourceType } from "../../types/chart";
 
 const data: any = [];
@@ -45,18 +49,14 @@ interface LineChartPropsType {
     callCycle: number;
 }
 
-const LineChart = ({
-    dataSource,
-    startDate,
-    endDate,
-    dif,
-    callCycle,
-}: LineChartPropsType) => {
+const LineChart = ({ dataSource, apiInfo }: any) => {
     const svgRef = useRef(null);
     const svgParentBoxRef = useRef(null);
     const size = useResize(svgParentBoxRef);
+    // const chartProps = useContext(WidgetStateContext);
 
     const renderChart = (parentWidth: any, parentHeight: any) => {
+        const { startDate, endDate, dif, callCycle } = apiInfo;
         const svg: any = select(svgRef.current);
 
         const width = parentWidth - margin.left - margin.right;
@@ -86,12 +86,13 @@ const LineChart = ({
     }, [dataSource]);
 
     useEffect(() => {
+        const { dif, callCycle } = apiInfo;
         if (dif === 0 || callCycle === 0) return;
 
         while (data.length >= dif / callCycle) {
             data.shift();
         }
-    }, [dataSource, dif, callCycle]);
+    }, [dataSource, apiInfo]);
 
     // 데이터 바인딩
     useEffect(() => {
@@ -101,7 +102,7 @@ const LineChart = ({
         svgRef.current.style.height = height;
 
         renderChart(width, height);
-    }, [startDate, endDate, dif, callCycle, size]);
+    }, [apiInfo, size]);
 
     return (
         <LineChartBox ref={svgParentBoxRef}>

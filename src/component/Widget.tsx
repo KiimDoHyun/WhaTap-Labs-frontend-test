@@ -8,9 +8,7 @@ import { DEFAULT_CALL_CYCLE } from "../common/widget";
 import { DashboardContext } from "../store/DashboardProvider";
 import { DataType } from "../types/api";
 import { WidgetPropsType } from "../types/widget";
-import BarChart from "./chart/BarChart";
-import InformaticsChart from "./chart/InformaticsChart";
-import LineChart from "./chart/LineChart";
+import WidgetChart from "./Widget/WidgetChart";
 import WidgetModal from "./Widget/WidgetModal";
 
 /*
@@ -29,6 +27,8 @@ import WidgetModal from "./Widget/WidgetModal";
 const Widget = ({ chartType, apiKey }: WidgetPropsType) => {
     const [callApiObject] = useContext(DashboardContext);
 
+    // console.log("changeChartProps: ", changeChartProps);
+
     // api 를 마지막으로 호출한 시간
     /*
     set: Widget
@@ -45,8 +45,6 @@ const Widget = ({ chartType, apiKey }: WidgetPropsType) => {
     // 호출 주기
     const callCycleRef = useRef(DEFAULT_CALL_CYCLE);
 
-    const [callCycle, setCallCycle] = useState(DEFAULT_CALL_CYCLE);
-
     // 데이터
     const [dataSource, setDataSource] = useState(
         apiKey.keys.map((item: string) => ({
@@ -58,6 +56,14 @@ const Widget = ({ chartType, apiKey }: WidgetPropsType) => {
                     : OPEN_API["json"][item],
         }))
     );
+
+    // 조회 관련 정보
+    const [apiInfo, setApiInfo] = useState({
+        startDate: null,
+        endDate: null,
+        dif: 0,
+        callCycle: DEFAULT_CALL_CYCLE,
+    });
 
     const apiObj = (key: string) => {
         return {
@@ -75,11 +81,6 @@ const Widget = ({ chartType, apiKey }: WidgetPropsType) => {
         setIsShowSettingModal(true);
     };
 
-    // 라인차트 axis 생성용
-    const [startDate, setStartDate] = useState(null);
-    const [endDate, setEndDate] = useState(null);
-    const [dif, setDif] = useState(600); // 구간 차이 (초단위)
-
     // 호출할 api 등록
     const interval = useRef(null);
 
@@ -89,11 +90,12 @@ const Widget = ({ chartType, apiKey }: WidgetPropsType) => {
 
             // 조회 시작, 종료 시간 설정
 
-            setStartDate(new Date(startDate));
-            setEndDate(new Date(endDate));
-
-            // 조회 간격 설정
-            setDif((endDate - startDate) / 1000);
+            setApiInfo((prevApiInfo) => ({
+                ...prevApiInfo,
+                startDate: new Date(startDate),
+                endDate: new Date(endDate),
+                dif: (endDate - startDate) / 1000,
+            }));
 
             // 호출  api 등록
             keys.forEach((apiItem) => {
@@ -147,7 +149,10 @@ const Widget = ({ chartType, apiKey }: WidgetPropsType) => {
         if (window.confirm("호출 주기를 변경하시겠습니까?")) {
             callCycleRef.current = inputValue;
 
-            setCallCycle(inputValue);
+            setApiInfo((prevApiInfo) => ({
+                ...prevApiInfo,
+                callCycle: inputValue,
+            }));
 
             // 기존 호출 interval 제거
             clearInterval(interval.current);
@@ -175,7 +180,12 @@ const Widget = ({ chartType, apiKey }: WidgetPropsType) => {
             </Button>
 
             {/* 차트 */}
-            {chartType === "BAR" && <BarChart dataSource={dataSource} />}
+            <WidgetChart
+                chartType={chartType}
+                dataSource={dataSource}
+                apiInfo={apiInfo}
+            />
+            {/* {chartType === "BAR" && <BarChart dataSource={dataSource} />}
             {chartType === "LINE" && (
                 <LineChart
                     dataSource={dataSource}
@@ -187,7 +197,7 @@ const Widget = ({ chartType, apiKey }: WidgetPropsType) => {
             )}
             {chartType === "INFO" && (
                 <InformaticsChart dataSource={dataSource} />
-            )}
+            )} */}
 
             {/* 모달 */}
             <WidgetModal
