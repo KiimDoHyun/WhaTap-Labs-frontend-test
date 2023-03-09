@@ -7,11 +7,14 @@ import {
     drawLine,
     drawLineXAxis,
     drawyLineAxis,
+    initLine,
 } from "../../common/chart";
 import useResize from "../../hook/useResize";
 import { ChartPropsType } from "../../types/chart";
 
-const data: any = [];
+let data: any = [];
+
+let series: string[] = [];
 
 const margin = { top: 20, right: 20, bottom: 20, left: 40 };
 
@@ -27,7 +30,6 @@ const lineStyle = {
 };
 
 const Chart = React.memo(({ svgRef }: ChartPropsType) => {
-    console.log("차트 리렌더링");
     return (
         <svg ref={svgRef}>
             <g className="y-axis" {...yAxis} />
@@ -42,7 +44,7 @@ const LineChart = ({ dataSource, apiInfo }: any) => {
     const svgParentBoxRef = useRef(null);
     const size = useResize(svgParentBoxRef);
 
-    const renderChart = (parentWidth: any, parentHeight: any) => {
+    const renderChart = (parentWidth: any, parentHeight: any, type: string) => {
         const { startDate, endDate, dif, callCycle } = apiInfo;
         const svg: any = select(svgRef.current);
 
@@ -55,30 +57,72 @@ const LineChart = ({ dataSource, apiInfo }: any) => {
         const yScale = createLineYScale(data, height);
         drawyLineAxis(svg, yScale);
 
-        drawLine(
-            svg,
-            xScale,
-            yScale,
-            width,
-            startDate,
-            endDate,
-            data,
-            dif,
-            callCycle
-        );
+        if (type === "INIT") {
+            initLine(svg, data, series);
+        } else if (type === "DRAW") {
+            drawLine(
+                svg,
+                xScale,
+                yScale,
+                width,
+                startDate,
+                endDate,
+                data,
+                dif,
+                callCycle
+            );
+        }
     };
 
     useEffect(() => {
-        data.push(dataSource[0]);
+        const names = dataSource.map((item: any) => item.name);
+        if (JSON.stringify(series) !== JSON.stringify(names)) {
+            series = names;
+            data = [];
+
+            dataSource.forEach((item: any) => {
+                const targetIndex = series.findIndex(
+                    (seriesItem) => seriesItem === item.name
+                );
+
+                if (!data[targetIndex]) {
+                    data[targetIndex] = [];
+                }
+                if (item.data !== null) {
+                    data[targetIndex].push(item);
+                }
+            });
+
+            const {
+                current: { offsetWidth, offsetHeight },
+            } = svgParentBoxRef;
+
+            renderChart(offsetWidth, offsetHeight, "INIT");
+        } else {
+            dataSource.forEach((item: any) => {
+                const targetIndex = series.findIndex(
+                    (seriesItem) => seriesItem === item.name
+                );
+
+                if (!data[targetIndex]) {
+                    data[targetIndex] = [];
+                }
+                if (item.data !== null) {
+                    data[targetIndex].push(item);
+                }
+            });
+        }
     }, [dataSource]);
 
     useEffect(() => {
         const { dif, callCycle } = apiInfo;
         if (dif === 0 || callCycle === 0) return;
 
-        while (data.length >= dif / callCycle) {
-            data.shift();
-        }
+        data.forEach((dataItem: any) => {
+            while (dataItem.length >= dif / callCycle) {
+                dataItem.shift();
+            }
+        });
     }, [dataSource, apiInfo]);
 
     // 데이터 바인딩
@@ -88,7 +132,7 @@ const LineChart = ({ dataSource, apiInfo }: any) => {
         svgRef.current.style.width = width;
         svgRef.current.style.height = height;
 
-        renderChart(width, height);
+        renderChart(width, height, "DRAW");
     }, [apiInfo, size]);
 
     return (
@@ -105,6 +149,12 @@ const LineChartBox = styled.div`
     min-height: 300px;
 
     position: relative;
+
+    .lineChart {
+        fill: none;
+        stroke-width: 1px;
+        transform: translate(${margin.left}px, ${margin.bottom}px);
+    }
 `;
 
 export default LineChart;

@@ -11,8 +11,10 @@ import {
     scaleBand,
     ScaleLinear,
     scaleLinear,
+    scaleOrdinal,
     ScaleTime,
     scaleTime,
+    schemeCategory10,
 } from "d3";
 import { dataSourceType } from "../types/chart";
 
@@ -71,9 +73,15 @@ export const drawBaryAxis = (
 // Line Chart
 //
 
-export const createLineYScale = (data: dataSourceType[], height: number) => {
+export const createLineYScale = (data: any, height: number) => {
+    const maxResult = data.map((item: any) => {
+        if (JSON.stringify(item) === "[]") return 0;
+
+        return getMax(item);
+    });
+
     return scaleLinear()
-        .domain([0, getMax(data)])
+        .domain([0, max(maxResult, (d: number) => d) || 0])
         .range([height, 0]);
 };
 
@@ -107,6 +115,47 @@ export const drawyLineAxis = (
     svg.select(".y-axis").call(axisLeft(yScale).ticks(5));
 };
 
+export const initLine = (svg: any, data: any, series: string[]) => {
+    const colors = scaleOrdinal(schemeCategory10);
+    svg.selectAll(".lineWrapper").remove();
+    const lineG = svg
+        .append("g")
+        .attr("class", "lineWrapper")
+        .selectAll("g")
+        .data(data)
+        .enter();
+
+    lineG
+        .append("path")
+        .attr("class", "lineChart")
+        .attr("fill", "none")
+        .style("stroke", function (d: any, i: any) {
+            return colors(series[i]);
+        });
+};
+
+export const createLine = (
+    xScale: any,
+    yScale: any,
+    startDate: any,
+    endDate: any,
+    data: any,
+    width: any,
+    dif: number,
+    callCycle: number
+) => {
+    return line()
+        .x((d, i: any) => {
+            const xPos =
+                xScale(endDate) -
+                ((xScale(startDate) + data[0].length - i) * width) /
+                    (dif / callCycle);
+
+            return xPos;
+        })
+        .y((d: any) => yScale(d.data || 0));
+};
+
 export const drawLine = (
     svg: any,
     xScale: ScaleTime<number, number, never>,
@@ -114,7 +163,7 @@ export const drawLine = (
     width: number,
     startDate: Date,
     endDate: Date,
-    data: dataSourceType[],
+    data: any,
     dif: number,
     callCycle: number
 ) => {
@@ -122,12 +171,13 @@ export const drawLine = (
         .x((d, i: any) => {
             const xPos =
                 xScale(endDate) -
-                ((xScale(startDate) + data.length - i) * width) /
+                ((xScale(startDate) + data[0].length - i) * width) /
                     (dif / callCycle);
 
             return xPos;
         })
         .y((d: any) => yScale(d.data || 0));
 
-    svg.select(".line").datum(data).attr("d", myLine);
+    svg.selectAll(".lineWrapper").data(data).enter();
+    svg.selectAll(".lineChart").attr("d", myLine);
 };
