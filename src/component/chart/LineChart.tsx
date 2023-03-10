@@ -1,7 +1,6 @@
 import { select } from "d3";
 import React, { useEffect, useRef } from "react";
 import styled from "styled-components";
-import { getAllJSDocTagsOfKind } from "typescript";
 import {
     createLineXScale,
     createLineYScale,
@@ -75,6 +74,8 @@ const LineChart = ({ dataSource, apiInfo }: any) => {
     };
 
     useEffect(() => {
+        if (dataSource.length === 0) return;
+
         const names = dataSource.map((item: any) => item.name);
         if (JSON.stringify(series.current) !== JSON.stringify(names)) {
             series.current = names;

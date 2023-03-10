@@ -9,10 +9,6 @@ export const WidgetSetterContext = createContext(null);
 export const WidgetPropsSettingModalStateContext = createContext(null);
 export const WidgetPropsSettingModalSetterContext = createContext(null);
 
-// 호출 주기 설정
-export const WidgetSettingModalStateContext = createContext(null);
-export const WidgetSettingModalSetterContext = createContext(null);
-
 type chartPropsKey =
     | "dataSource"
     | "startDate"
@@ -25,7 +21,7 @@ interface ProviderPropsType {
 }
 
 const WidgetProvider = ({ children }: ProviderPropsType) => {
-    // 위젯
+    // 위젯 설정(차트타입, 호출할 api 종류)
     const [widgetProps, setWidgetProps] = useState<WidgetPropsType[]>([
         {
             widgetId: Math.random(),
@@ -86,13 +82,6 @@ const WidgetProvider = ({ children }: ProviderPropsType) => {
         );
     }, []);
 
-    // 호출 주기 설정
-    const {
-        state: activeWidgetModal,
-        setTrue: setTrueActiveWidgetModal,
-        setFalse: setFalseActiveWidgetModal,
-    } = useBoolean(false);
-
     return (
         <WidgetSetterContext.Provider value={{ setWidgetProps }}>
             <WidgetStateContext.Provider value={{ widgetProps }}>
@@ -109,18 +98,7 @@ const WidgetProvider = ({ children }: ProviderPropsType) => {
                             deleteWidgetProps,
                         }}
                     >
-                        <WidgetSettingModalStateContext.Provider
-                            value={{ activeWidgetModal }}
-                        >
-                            <WidgetSettingModalSetterContext.Provider
-                                value={{
-                                    setTrueActiveWidgetModal,
-                                    setFalseActiveWidgetModal,
-                                }}
-                            >
-                                {children}
-                            </WidgetSettingModalSetterContext.Provider>
-                        </WidgetSettingModalStateContext.Provider>
+                        {children}
                     </WidgetPropsSettingModalSetterContext.Provider>
                 </WidgetPropsSettingModalStateContext.Provider>
             </WidgetStateContext.Provider>

@@ -53,6 +53,11 @@ export const OPEN_API: OPEN_APIType = {
         "transaction/{stime}/{etime}": "트랜잭션",
     },
 };
+
+export const getApiName = ({ type, key }: { type: string; key: string }) => {
+    return type === "spot" ? OPEN_API[""][key] : OPEN_API["json"][key];
+};
+
 const getPath = (url: string, param: any = {}) => {
     let path = url;
     for (let key in param) {

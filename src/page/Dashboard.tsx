@@ -5,7 +5,7 @@ import DashboardProvider from "../store/DashboardProvider";
 import { Col, Container, Row } from "react-bootstrap";
 import WidgetProvider, { WidgetStateContext } from "../store/WidgetProvider";
 import { useContext } from "react";
-import WidgetPropsSettingModal from "../component/Dashboard/WidgetPropsSettingModal";
+import WidgetPropsSettingModal from "../component/Widget/WidgetPropsSettingModal";
 
 const WidgetWrapper = () => {
     const { widgetProps } = useContext(WidgetStateContext);
