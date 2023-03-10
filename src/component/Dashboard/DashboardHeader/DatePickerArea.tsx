@@ -10,6 +10,10 @@ import { PickerAreaBlock, PickerBoxBlock } from "../CommonStyle";
 import DateBox from "./DateBox";
 
 const DatePickerArea = () => {
+    /*
+start,end Date 설정
+조회 범위 적용 이벤트
+    */
     const [callApiObject, setCallApiObject] = useContext(DashboardContext);
 
     const { state: isActiveDatePicker, setFalse, toggle } = useBoolean(false);

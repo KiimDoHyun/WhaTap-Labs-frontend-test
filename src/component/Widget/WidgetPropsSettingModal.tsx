@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useMemo, useState } from "react";
 import { Container, Modal, Row, Col } from "react-bootstrap";
 import styled from "styled-components";
-import { OPEN_API } from "../../api";
+import { OPEN_API } from "../../common/api";
 import {
     WidgetPropsSettingModalSetterContext,
     WidgetPropsSettingModalStateContext,

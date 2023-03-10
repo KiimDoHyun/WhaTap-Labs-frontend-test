@@ -1,17 +1,15 @@
 import { useCallback, useContext, useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import { enqueueApi } from "..";
-import { getApiName } from "../api";
 import { getDateRange, parseDate } from "../common/date";
 import { DEFAULT_CALL_CYCLE } from "../common/widget";
 import useBoolean from "../hook/useBoolean";
 import { DashboardContext } from "../store/DashboardProvider";
-import { DataType } from "../types/api";
-import { WidgetPropsType } from "../types/widget";
+import { WidgetPropsType, DataType } from "../types/widget";
 import WidgetButtons from "./Widget/WidgetButtons";
 import WidgetChart from "./Widget/WidgetChart";
 import WidgetCallCycleSettingModal from "./Widget/WidgetCallCycleSettingModal";
-import { createApiObj } from "../common/api";
+import { createApiObj, getApiName } from "../common/api";
 
 const Widget = ({ chartType, apiKey, widgetId }: WidgetPropsType) => {
     // api 호출 범위/구간/상태

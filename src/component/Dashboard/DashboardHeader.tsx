@@ -1,15 +1,18 @@
 import { useContext } from "react";
 import styled from "styled-components";
-import play from "../../asset/image/play.png";
-import pause from "../../asset/image/pause.png";
-import CurrentTime from "./DashboardHeader/CurrentTime";
 import { DashboardContext } from "../../store/DashboardProvider";
-import DatePickerArea from "./DashboardHeader/DatePickerArea";
 import SelectRealTimeRangeArea from "./DashboardHeader/SelectRealTimeRangeArea";
 import { WidgetPropsSettingModalSetterContext } from "../../store/WidgetProvider";
+import PlayIcon from "./DashboardHeader/PlayIcon";
+import TimeBlock from "./DashboardHeader/TimeBlock";
+import { Button } from "react-bootstrap";
 
 const DashboardHeader = () => {
-    const [callApiObject, setCallApiObject] = useContext(DashboardContext);
+    /*
+    토글 이벤트,
+    이미지, 시간/데이트피커 토글
+    */
+    const [{ status }, setCallApiObject] = useContext(DashboardContext);
     const { setTrueActiveWidgetSettingModal } = useContext(
         WidgetPropsSettingModalSetterContext
     );
@@ -28,22 +31,13 @@ const DashboardHeader = () => {
 
     return (
         <DashboardHeaderBlock>
-            <button onClick={() => setTrueActiveWidgetSettingModal("ADD")}>
+            <Button onClick={() => setTrueActiveWidgetSettingModal("ADD")}>
                 모달 활성화
-            </button>
+            </Button>
             <TitleBlock>
-                <div onClick={toggleCallApiObject}>
-                    <img
-                        style={{ width: "20px", height: "20px" }}
-                        src={callApiObject.status === "NOW" ? pause : play}
-                        alt={"icon"}
-                    />
-                </div>
-                {callApiObject.status === "NOW" ? (
-                    <CurrentTime onClick={toggleCallApiObject} />
-                ) : (
-                    <DatePickerArea />
-                )}
+                <PlayIcon onClick={toggleCallApiObject} status={status} />
+
+                <TimeBlock onClick={toggleCallApiObject} status={status} />
 
                 <SelectRealTimeRangeArea />
             </TitleBlock>

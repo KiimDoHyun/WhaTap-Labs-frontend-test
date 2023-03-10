@@ -30,7 +30,12 @@ interface callApiObjectType {
 }
 
 const SelectRealTimeRangeArea = () => {
-    const [callApiObject, setCallApiObject] = useContext(DashboardContext);
+    const [
+        {
+            nowBody: { range },
+        },
+        setCallApiObject,
+    ] = useContext(DashboardContext);
 
     const { state: isActiveRealTimeList, setFalse, toggle } = useBoolean(false);
 
@@ -51,10 +56,7 @@ const SelectRealTimeRangeArea = () => {
 
     return (
         <PickerAreaBlock ref={RealTimeBlockRef}>
-            <RealTime
-                selectedRealTime={callApiObject.nowBody.range}
-                onClick={toggle}
-            />
+            <RealTime selectedRealTime={range} onClick={toggle} />
 
             <PickerBoxBlock isActive={isActiveRealTimeList}>
                 <SelectList>
@@ -63,7 +65,7 @@ const SelectRealTimeRangeArea = () => {
                             key={item}
                             range={item}
                             onClick={onClickRealTimeList}
-                            prevSelectedRange={callApiObject.nowBody.range}
+                            prevSelectedRange={range}
                         />
                     ))}
                 </SelectList>

@@ -15,6 +15,12 @@ interface dateType {
     sec: string;
 }
 
+export interface DataType {
+    key: string;
+    name: string;
+    data: number;
+}
+
 export interface callApiObjectType {
     status: string;
     pastBody: {
