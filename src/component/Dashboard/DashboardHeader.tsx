@@ -6,6 +6,7 @@ import { WidgetPropsSettingModalSetterContext } from "../../store/WidgetProvider
 import PlayIcon from "./DashboardHeader/PlayIcon";
 import TimeBlock from "./DashboardHeader/TimeBlock";
 import { Button } from "react-bootstrap";
+import { callApiObjectType } from "../../types/widget";
 
 const DashboardHeader = () => {
     /*
@@ -19,7 +20,7 @@ const DashboardHeader = () => {
 
     // callApiObject status toggle
     const toggleCallApiObject = () => {
-        setCallApiObject((callApiObject: any) => {
+        setCallApiObject((callApiObject: callApiObjectType) => {
             const { status } = callApiObject;
             if (status === "STOP" || status === "PAST") {
                 return { ...callApiObject, status: "NOW" };

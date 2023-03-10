@@ -2,6 +2,7 @@ import { useMemo } from "react";
 import { Calendar } from "react-calendar";
 import styled from "styled-components";
 import { DatePickerPropsType } from "../../types/datePicker";
+import DatePickerTitle from "./DatePicker/DatePickerTitle";
 import ListPicker from "./DatePicker/ListPicker";
 
 const DatePicker = ({ date, setDate, type }: DatePickerPropsType) => {
@@ -22,11 +23,9 @@ const DatePicker = ({ date, setDate, type }: DatePickerPropsType) => {
 
     return (
         <DatePickerBlock>
-            <div className="titleArea">
-                <div>{type === "start" ? "조회 시작" : "조회 종료"}</div>
-                <div>{`${date.year}/${date.month}/${date.date} ${date.hour}:${date.min}`}</div>
-            </div>
-            <div className="bodyArea">
+            <DatePickerTitle type={type} date={date} />
+
+            <DatePickerBodyBlock>
                 {/* 날짜 */}
                 <Calendar
                     calendarType={"US"}
@@ -36,7 +35,7 @@ const DatePicker = ({ date, setDate, type }: DatePickerPropsType) => {
                 {/* 00 ~ 23 */}
                 <ListPicker
                     num={24}
-                    value={date.hour}
+                    value={Number(date.hour)}
                     type={"hour"}
                     setValue={setDate}
                 />
@@ -44,11 +43,11 @@ const DatePicker = ({ date, setDate, type }: DatePickerPropsType) => {
                 {/* 00 ~ 59 */}
                 <ListPicker
                     num={60}
-                    value={date.min}
+                    value={Number(date.min)}
                     type={"min"}
                     setValue={setDate}
                 />
-            </div>
+            </DatePickerBodyBlock>
         </DatePickerBlock>
     );
 };
@@ -61,9 +60,12 @@ const DatePickerBlock = styled.div`
         gap: 20px;
     }
     .bodyArea {
-        position: relative;
-        display: flex;
-        height: 300px;
     }
+`;
+
+const DatePickerBodyBlock = styled.div`
+    position: relative;
+    display: flex;
+    height: 300px;
 `;
 export default DatePicker;

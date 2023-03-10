@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import { ListPickerPropsType } from "../../../types/datePicker";
+import ListPickerItem from "./ListPickerItem";
 
 const ListPicker = ({ num, value, type, setValue }: ListPickerPropsType) => {
     const onClickList = (input: number) => {
@@ -10,51 +11,27 @@ const ListPicker = ({ num, value, type, setValue }: ListPickerPropsType) => {
     };
     return (
         <ListPickerBlock>
-            <ul
-                style={{
-                    listStyle: "none",
-                }}
-            >
+            <ListPickerUl>
                 {new Array(num).fill(0).map((_, idx) => (
-                    <li
+                    <ListPickerItem
                         key={idx}
-                        className={
-                            Number(idx) === Number(value) ? "selected" : ""
-                        }
-                        onClick={() => onClickList(idx)}
-                    >
-                        {idx}
-                    </li>
+                        onClick={onClickList}
+                        idx={idx}
+                        value={value}
+                    />
                 ))}
-            </ul>
+            </ListPickerUl>
         </ListPickerBlock>
     );
 };
 
+const ListPickerUl = styled.ul`
+    list-style: none;
+    padding: 0;
+    width: 50px;
+`;
 const ListPickerBlock = styled.div`
     height: 100%;
     overflow-y: scroll;
-
-    ul {
-        list-style: none;
-        padding: 0;
-        width: 50px;
-
-        li {
-            cursor: pointer;
-            text-align: center;
-            transition: 0.3s;
-        }
-
-        li:hover {
-            background-color: rgba(41, 108, 242, 0.1);
-        }
-
-        .selected {
-            background-color: rgba(41, 108, 242, 0.1) !important;
-            color: rgb(41, 108, 242) !important;
-            font-wdight: bold !important;
-        }
-    }
 `;
 export default ListPicker;

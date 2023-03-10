@@ -3,7 +3,12 @@ import styled from "styled-components";
 import play from "../../../asset/image/play.png";
 import pause from "../../../asset/image/pause.png";
 
-const PlayIcon = ({ onClick, status }: any) => {
+interface PlayIconPropsType {
+    onClick: React.MouseEventHandler<HTMLDivElement>;
+    status: string;
+}
+
+const PlayIcon = ({ onClick, status }: PlayIconPropsType) => {
     return (
         <PlayIconBlock onClick={onClick}>
             <PlayIconImage src={status === "NOW" ? pause : play} alt={"icon"} />

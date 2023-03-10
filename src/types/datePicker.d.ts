@@ -16,7 +16,7 @@ export interface DatePickerPropsType {
 
 export interface ListPickerPropsType {
     num: number;
-    value: number | string;
+    value: number;
     type: string;
     setValue: React.Dispatch<React.SetStateAction<dateType>>;
 }
