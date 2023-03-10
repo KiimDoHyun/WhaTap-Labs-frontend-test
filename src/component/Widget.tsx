@@ -9,6 +9,7 @@ import { DashboardContext } from "../store/DashboardProvider";
 import { WidgetPropsSettingModalSetterContext } from "../store/WidgetProvider";
 import { DataType } from "../types/api";
 import { WidgetPropsType } from "../types/widget";
+import WidgetButtons from "./Widget/WidgetButtons";
 import WidgetChart from "./Widget/WidgetChart";
 import WidgetModal from "./Widget/WidgetModal";
 
@@ -28,23 +29,12 @@ import WidgetModal from "./Widget/WidgetModal";
 const Widget = ({ chartType, apiKey, widgetId }: WidgetPropsType) => {
     const [callApiObject] = useContext(DashboardContext);
 
-    const { setTrueActiveWidgetSettingModal, deleteWidgetProps } = useContext(
-        WidgetPropsSettingModalSetterContext
-    );
-    // console.log("changeChartProps: ", changeChartProps);
-
     // api 를 마지막으로 호출한 시간
     /*
     set: Widget
     use: WidgetModal
     */
     const [lastCallTime, setLastCallTime] = useState(null);
-
-    /*
-    set: Widget
-    use: WidgetModal
-    */
-    const [isShowSettingModal, setIsShowSettingModal] = useState(false);
 
     // 호출 주기
     const callCycleRef = useRef(DEFAULT_CALL_CYCLE);
@@ -91,10 +81,6 @@ const Widget = ({ chartType, apiKey, widgetId }: WidgetPropsType) => {
             },
             fail: () => console.warn("api 호출에 실패했습니다."),
         };
-    };
-
-    const onClickShowSetting = () => {
-        setIsShowSettingModal(true);
     };
 
     // 호출할 api 등록
@@ -160,55 +146,19 @@ const Widget = ({ chartType, apiKey, widgetId }: WidgetPropsType) => {
         }
     }, [callApiObject, intervalCallback]);
 
-    // 호출 주기 변경
-    const onClickApplyCallCycle = (inputValue: number) => {
-        if (window.confirm("호출 주기를 변경하시겠습니까?")) {
-            callCycleRef.current = inputValue;
-
-            setApiInfo((prevApiInfo) => ({
-                ...prevApiInfo,
-                callCycle: inputValue,
-            }));
-
-            // 기존 호출 interval 제거
+    useEffect(() => {
+        return () => {
             clearInterval(interval.current);
-
-            // 주기 변경후 재 등록
-            interval.current = setInterval(() => {
-                const { startDate, endDate } = getDateRange(
-                    callApiObject.nowBody.range
-                );
-
-                intervalCallback(startDate, endDate);
-            }, callCycleRef.current * 1000);
-        }
-    };
-
-    const onClickEdit = () => {
-        setTrueActiveWidgetSettingModal("MODI", widgetId, chartType, apiKey);
-    };
-
-    const onClickDelete = () => {
-        if (window.confirm("삭제하시겠습니까?")) {
-            deleteWidgetProps(widgetId);
-        }
-    };
+        };
+    }, []);
 
     return (
         <WidgetBlock>
-            <Button
-                onClick={onClickShowSetting}
-                disabled={callApiObject.status === "PAST"}
-                size="sm"
-            >
-                showSetting
-            </Button>
-            <Button size="sm" onClick={onClickEdit}>
-                EDIT
-            </Button>
-            <Button size="sm" onClick={onClickDelete}>
-                DELETE
-            </Button>
+            <WidgetButtons
+                widgetId={widgetId}
+                chartType={chartType}
+                apiKey={apiKey}
+            />
 
             {/* 차트 */}
             <WidgetChart
@@ -219,10 +169,12 @@ const Widget = ({ chartType, apiKey, widgetId }: WidgetPropsType) => {
 
             {/* 모달 */}
             <WidgetModal
-                show={isShowSettingModal}
-                setShow={setIsShowSettingModal}
                 lastCallTime={lastCallTime}
-                onClickApplyCallCycle={onClickApplyCallCycle}
+                callCycleRef={callCycleRef}
+                setApiInfo={setApiInfo}
+                interval={interval}
+                intervalCallback={intervalCallback}
+                range={callApiObject.nowBody.range}
             />
         </WidgetBlock>
     );

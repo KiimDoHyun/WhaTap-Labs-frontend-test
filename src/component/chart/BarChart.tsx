@@ -53,7 +53,6 @@ const BarChart = ({ dataSource, apiInfo }: any) => {
         drawBaryAxis(svg, yScale);
 
         if (type === "INIT") {
-            console.log("INIT", data);
             svg.selectAll(".item").remove();
             const bar = svg
                 .selectAll(".item")
