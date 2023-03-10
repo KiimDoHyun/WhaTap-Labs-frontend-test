@@ -1,6 +1,7 @@
 import { select } from "d3";
 import React, { useEffect, useRef } from "react";
 import styled from "styled-components";
+import { getAllJSDocTagsOfKind } from "typescript";
 import {
     createLineXScale,
     createLineYScale,
@@ -11,10 +12,6 @@ import {
 } from "../../common/chart";
 import useResize from "../../hook/useResize";
 import { ChartPropsType } from "../../types/chart";
-
-let data: any = [];
-
-let series: string[] = [];
 
 const margin = { top: 20, right: 20, bottom: 20, left: 40 };
 
@@ -44,6 +41,9 @@ const LineChart = ({ dataSource, apiInfo }: any) => {
     const svgParentBoxRef = useRef(null);
     const size = useResize(svgParentBoxRef);
 
+    const data: any = useRef([]);
+    const series: any = useRef([]);
+
     const renderChart = (parentWidth: any, parentHeight: any, type: string) => {
         const { startDate, endDate, dif, callCycle } = apiInfo;
         const svg: any = select(svgRef.current);
@@ -54,11 +54,11 @@ const LineChart = ({ dataSource, apiInfo }: any) => {
         const xScale = createLineXScale(startDate, endDate, width);
         drawLineXAxis(margin, svg, height, xScale);
 
-        const yScale = createLineYScale(data, height);
+        const yScale = createLineYScale(data.current, height);
         drawyLineAxis(svg, yScale);
 
         if (type === "INIT") {
-            initLine(svg, data, series);
+            initLine(svg, data.current, series.current);
         } else if (type === "DRAW") {
             drawLine(
                 svg,
@@ -67,7 +67,7 @@ const LineChart = ({ dataSource, apiInfo }: any) => {
                 width,
                 startDate,
                 endDate,
-                data,
+                data.current,
                 dif,
                 callCycle
             );
@@ -76,20 +76,20 @@ const LineChart = ({ dataSource, apiInfo }: any) => {
 
     useEffect(() => {
         const names = dataSource.map((item: any) => item.name);
-        if (JSON.stringify(series) !== JSON.stringify(names)) {
-            series = names;
-            data = [];
+        if (JSON.stringify(series.current) !== JSON.stringify(names)) {
+            series.current = names;
+            data.current = [];
 
             dataSource.forEach((item: any) => {
-                const targetIndex = series.findIndex(
-                    (seriesItem) => seriesItem === item.name
+                const targetIndex = series.current.findIndex(
+                    (seriesItem: any) => seriesItem === item.name
                 );
 
-                if (!data[targetIndex]) {
-                    data[targetIndex] = [];
+                if (!data.current[targetIndex]) {
+                    data.current[targetIndex] = [];
                 }
                 if (item.data !== null) {
-                    data[targetIndex].push(item);
+                    data.current[targetIndex].push(item);
                 }
             });
 
@@ -100,15 +100,15 @@ const LineChart = ({ dataSource, apiInfo }: any) => {
             renderChart(offsetWidth, offsetHeight, "INIT");
         } else {
             dataSource.forEach((item: any) => {
-                const targetIndex = series.findIndex(
-                    (seriesItem) => seriesItem === item.name
+                const targetIndex = series.current.findIndex(
+                    (seriesItem: string) => seriesItem === item.name
                 );
 
-                if (!data[targetIndex]) {
-                    data[targetIndex] = [];
+                if (!data.current[targetIndex]) {
+                    data.current[targetIndex] = [];
                 }
                 if (item.data !== null) {
-                    data[targetIndex].push(item);
+                    data.current[targetIndex].push(item);
                 }
             });
         }
@@ -118,7 +118,7 @@ const LineChart = ({ dataSource, apiInfo }: any) => {
         const { dif, callCycle } = apiInfo;
         if (dif === 0 || callCycle === 0) return;
 
-        data.forEach((dataItem: any) => {
+        data.current.forEach((dataItem: any) => {
             while (dataItem.length >= dif / callCycle) {
                 dataItem.shift();
             }
