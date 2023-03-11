@@ -56,6 +56,12 @@ Presentational container 와 비교
 
 */
 
+interface Props {
+    chartType: any;
+    apiKey: any;
+    widgetId: any;
+}
+
 const Widget = ({ chartType, apiKey, widgetId }: WidgetPropsType) => {
     // 필요한 데이터만 사용
     const { lastCallTime, dataSource, apiInfo, onClickApplyCallCycle } =
@@ -84,7 +90,6 @@ const Widget = ({ chartType, apiKey, widgetId }: WidgetPropsType) => {
             />
 
             {/* 모달 */}
-            {/* 많은 props 가 전달되는 이유는 호출 주기 변경 함수를 모달에서 구현하기 때문이다. */}
             <WidgetCallCycleSettingModal
                 show={activeWidgetModal}
                 onHide={setFalseActiveWidgetModal}
