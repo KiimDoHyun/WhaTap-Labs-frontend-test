@@ -1,7 +1,7 @@
 // 차트에 사용할 dataSource
 export interface dataSourceType {
     key: string;
-    data: number;
+    data: number | null;
     name: string;
 }
 

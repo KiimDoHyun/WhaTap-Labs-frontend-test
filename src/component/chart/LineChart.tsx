@@ -68,7 +68,7 @@ const LineChart = ({ dataSource, apiInfo }: LineChartPropsType) => {
     };
 
     useEffect(() => {
-        if (dataSource.length === 0) return;
+        if (dataSource.length < 1) return;
 
         const names = dataSource.map((item: dataSourceType) => item.name);
         if (JSON.stringify(series.current) !== JSON.stringify(names)) {
