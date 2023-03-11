@@ -11,29 +11,9 @@ import {
 } from "../../common/chart";
 import useResize from "../../hook/useResize";
 import { ChartPropsType } from "../../types/chart";
+import ChartSvg from "./ChartSvg";
 
 const margin = { top: 20, right: 20, bottom: 20, left: 40 };
-
-const yAxis = {
-    transform: `translate(${margin.left}, ${margin.bottom})`,
-};
-
-const lineStyle = {
-    fill: "none",
-    stroke: "blue",
-    strokeWidth: "1px",
-    transform: `translate(${margin.left}, ${margin.bottom})`,
-};
-
-const Chart = React.memo(({ svgRef }: ChartPropsType) => {
-    return (
-        <svg ref={svgRef}>
-            <g className="y-axis" {...yAxis} />
-            <g className="x-axis" />
-            <path className="line" {...lineStyle} />
-        </svg>
-    );
-});
 
 const LineChart = ({ dataSource, apiInfo }: any) => {
     const svgRef = useRef(null);
@@ -54,10 +34,10 @@ const LineChart = ({ dataSource, apiInfo }: any) => {
         drawLineXAxis(margin, svg, height, xScale);
 
         const yScale = createLineYScale(data.current, height);
-        drawyLineAxis(svg, yScale);
+        drawyLineAxis(svg, yScale, margin);
 
         if (type === "INIT") {
-            initLine(svg, data.current, series.current);
+            initLine(svg, data.current, series.current, margin);
         } else if (type === "DRAW") {
             drawLine(
                 svg,
@@ -138,7 +118,7 @@ const LineChart = ({ dataSource, apiInfo }: any) => {
 
     return (
         <LineChartBox ref={svgParentBoxRef}>
-            <Chart svgRef={svgRef} />
+            <ChartSvg svgRef={svgRef} />
         </LineChartBox>
     );
 };
@@ -150,12 +130,6 @@ const LineChartBox = styled.div`
     min-height: 300px;
 
     position: relative;
-
-    .lineChart {
-        fill: none;
-        stroke-width: 1px;
-        transform: translate(${margin.left}px, ${margin.bottom}px);
-    }
 `;
 
 export default LineChart;
