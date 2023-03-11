@@ -11,11 +11,22 @@ import {
     initBarChart,
 } from "../../common/chart";
 import useResize from "../../hook/useResize";
+import { dataSourceType } from "../../types/chart";
 import ChartSvg from "./ChartSvg";
 
 const margin = { top: 20, right: 20, bottom: 20, left: 70 };
 
-const BarChart = ({ dataSource, apiInfo }: any) => {
+interface BarChartPropsType {
+    dataSource: dataSourceType[];
+    apiInfo: {
+        startDate: any;
+        endDate: any;
+        dif: number;
+        callCycle: number;
+    };
+}
+
+const BarChart = ({ dataSource, apiInfo }: BarChartPropsType) => {
     const svgRef = useRef(null);
     const svgParentBoxRef = useRef(null);
     const size = useResize(svgParentBoxRef);

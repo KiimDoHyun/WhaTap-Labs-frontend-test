@@ -83,10 +83,10 @@ export const drawBaryAxis = (
 
 export const initBarChart = (
     svg: any,
-    data: any,
+    data: dataSourceType[],
     margin: MarginType,
-    xScale: any,
-    height: any
+    xScale: ScaleBand<string>,
+    height: number
 ) => {
     svg.selectAll(".item").remove();
     const bar = svg
@@ -120,10 +120,10 @@ export const initBarChart = (
 };
 export const drawBarChart = (
     svg: any,
-    data: any,
-    height: any,
-    xScale: any,
-    yScale: any
+    data: dataSourceType[],
+    height: number,
+    xScale: ScaleBand<string>,
+    yScale: ScaleLinear<number, number, never>
 ) => {
     svg.selectAll(".bar")
         .data(data)
@@ -153,7 +153,7 @@ export const drawBarChart = (
 // Line Chart
 //
 
-export const createLineYScale = (data: any, height: number) => {
+export const createLineYScale = (data: dataSourceType[], height: number) => {
     const maxResult = data.map((item: any) => {
         if (JSON.stringify(item) === "[]") return 0;
 
@@ -174,8 +174,8 @@ export const createLineXScale = (
 };
 
 export const drawLineXAxis = (
-    margin: MarginType,
     svg: any,
+    margin: MarginType,
     height: number,
     xScale: ScaleTime<number, number, never>
 ) => {
@@ -200,9 +200,9 @@ export const drawyLineAxis = (
 
 export const initLine = (
     svg: any,
-    data: any,
+    data: dataSourceType[],
     series: string[],
-    margin: any
+    margin: MarginType
 ) => {
     const colors = scaleOrdinal(schemeCategory10);
     svg.selectAll(".lineWrapper").remove();
@@ -219,31 +219,9 @@ export const initLine = (
         .attr("fill", "none")
         .attr("stroke-width", "1px")
         .style("transform", `translate(${margin.left}px, ${margin.bottom}px)`)
-        .style("stroke", function (d: any, i: any) {
+        .style("stroke", function (d: any, i: number) {
             return colors(series[i]);
         });
-};
-
-export const createLine = (
-    xScale: any,
-    yScale: any,
-    startDate: any,
-    endDate: any,
-    data: any,
-    width: any,
-    dif: number,
-    callCycle: number
-) => {
-    return line()
-        .x((d, i: any) => {
-            const xPos =
-                xScale(endDate) -
-                ((xScale(startDate) + data[0].length - i) * width) /
-                    (dif / callCycle);
-
-            return xPos;
-        })
-        .y((d: any) => yScale(d.data || 0));
 };
 
 export const drawLine = (
@@ -253,12 +231,15 @@ export const drawLine = (
     width: number,
     startDate: Date,
     endDate: Date,
-    data: any,
+    // data: any,
+    data: dataSourceType[][],
     dif: number,
     callCycle: number
 ) => {
+    if(data.length === 0) return;
+
     const myLine: any = line()
-        .x((d, i: any) => {
+        .x((d, i: number) => {
             const xPos =
                 xScale(endDate) -
                 ((xScale(startDate) + data[0].length - i) * width) /

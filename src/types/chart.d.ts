@@ -29,5 +29,5 @@ export interface LineChartPropsType {
 
 // Common
 export interface ChartPropsType {
-    svgRef: React.MutableRefObject<any>;
+    dataSource: dataSourceType[];
 }

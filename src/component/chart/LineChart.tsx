@@ -10,20 +10,34 @@ import {
     initLine,
 } from "../../common/chart";
 import useResize from "../../hook/useResize";
-import { ChartPropsType } from "../../types/chart";
+import { dataSourceType } from "../../types/chart";
 import ChartSvg from "./ChartSvg";
 
 const margin = { top: 20, right: 20, bottom: 20, left: 40 };
 
-const LineChart = ({ dataSource, apiInfo }: any) => {
+interface LineChartPropsType {
+    dataSource: dataSourceType[];
+    apiInfo: {
+        startDate: any;
+        endDate: any;
+        dif: number;
+        callCycle: number;
+    };
+}
+
+const LineChart = ({ dataSource, apiInfo }: LineChartPropsType) => {
     const svgRef = useRef(null);
     const svgParentBoxRef = useRef(null);
     const size = useResize(svgParentBoxRef);
 
-    const data: any = useRef([]);
-    const series: any = useRef([]);
+    const data: any = useRef<dataSourceType[]>([]);
+    const series: any = useRef<string[]>([]);
 
-    const renderChart = (parentWidth: any, parentHeight: any, type: string) => {
+    const renderChart = (
+        parentWidth: number,
+        parentHeight: number,
+        type: string
+    ) => {
         const { startDate, endDate, dif, callCycle } = apiInfo;
         const svg: any = select(svgRef.current);
 
@@ -31,7 +45,7 @@ const LineChart = ({ dataSource, apiInfo }: any) => {
         const height = parentHeight - margin.top - margin.bottom;
 
         const xScale = createLineXScale(startDate, endDate, width);
-        drawLineXAxis(margin, svg, height, xScale);
+        drawLineXAxis(svg, margin, height, xScale);
 
         const yScale = createLineYScale(data.current, height);
         drawyLineAxis(svg, yScale, margin);
@@ -56,14 +70,17 @@ const LineChart = ({ dataSource, apiInfo }: any) => {
     useEffect(() => {
         if (dataSource.length === 0) return;
 
-        const names = dataSource.map((item: any) => item.name);
+        const names = dataSource.map((item: dataSourceType) => item.name);
         if (JSON.stringify(series.current) !== JSON.stringify(names)) {
+            // if series !== name
+            // init series / data
             series.current = names;
             data.current = [];
 
-            dataSource.forEach((item: any) => {
+            // push data
+            dataSource.forEach((item: dataSourceType) => {
                 const targetIndex = series.current.findIndex(
-                    (seriesItem: any) => seriesItem === item.name
+                    (seriesItem: string) => seriesItem === item.name
                 );
 
                 if (!data.current[targetIndex]) {
@@ -74,13 +91,16 @@ const LineChart = ({ dataSource, apiInfo }: any) => {
                 }
             });
 
+            // init chart
             const {
                 current: { offsetWidth, offsetHeight },
             } = svgParentBoxRef;
 
             renderChart(offsetWidth, offsetHeight, "INIT");
         } else {
-            dataSource.forEach((item: any) => {
+            // if series === name
+            // push data
+            dataSource.forEach((item) => {
                 const targetIndex = series.current.findIndex(
                     (seriesItem: string) => seriesItem === item.name
                 );
@@ -99,7 +119,7 @@ const LineChart = ({ dataSource, apiInfo }: any) => {
         const { dif, callCycle } = apiInfo;
         if (dif === 0 || callCycle === 0) return;
 
-        data.current.forEach((dataItem: any) => {
+        data.current.forEach(<T extends {}>(dataItem: Array<T>) => {
             while (dataItem.length >= dif / callCycle) {
                 dataItem.shift();
             }
