@@ -1,11 +1,11 @@
 import Widget from "../component/Widget";
 import styled from "styled-components";
 import DashboardHeader from "../component/Dashboard/DashboardHeader";
-import DashboardProvider from "../store/DashboardProvider";
+// import DashboardProvider from "../store/DashboardProvider";
 import { Col, Container, Row } from "react-bootstrap";
-import WidgetProvider, { WidgetStateContext } from "../store/WidgetProvider";
 import { useContext } from "react";
 import WidgetPropsSettingModal from "../component/Widget/WidgetPropsSettingModal";
+import { WidgetStateContext } from "../store/WidgetProvider";
 
 const WidgetWrapper = () => {
     const { widgetProps } = useContext(WidgetStateContext);
@@ -28,15 +28,11 @@ const WidgetWrapper = () => {
 
 const Dashboard = () => {
     return (
-        <DashboardProvider>
-            <DashboardBox>
-                <WidgetProvider>
-                    <DashboardHeader />
+        <DashboardBox>
+            <DashboardHeader />
 
-                    <WidgetWrapper />
-                </WidgetProvider>
-            </DashboardBox>
-        </DashboardProvider>
+            <WidgetWrapper />
+        </DashboardBox>
     );
 };
 

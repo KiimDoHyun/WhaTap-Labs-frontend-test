@@ -4,6 +4,7 @@ import "./index.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import { BrowserRouter } from "react-router-dom";
+import GlobalProvider from "./store";
 
 const queue = [];
 
@@ -47,9 +48,11 @@ export const enqueueApi = (item) => {
 
 ReactDOM.render(
     <React.StrictMode>
-        <BrowserRouter>
-            <App />
-        </BrowserRouter>
+        <GlobalProvider>
+            <BrowserRouter>
+                <App />
+            </BrowserRouter>
+        </GlobalProvider>
     </React.StrictMode>,
     document.getElementById("root")
 );

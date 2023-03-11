@@ -2,11 +2,11 @@ import { useContext } from "react";
 import styled from "styled-components";
 import { DashboardContext } from "../../store/DashboardProvider";
 import SelectRealTimeRangeArea from "./DashboardHeader/SelectRealTimeRangeArea";
-import { WidgetPropsSettingModalSetterContext } from "../../store/WidgetProvider";
 import PlayIcon from "./DashboardHeader/PlayIcon";
 import TimeBlock from "./DashboardHeader/TimeBlock";
 import { Button } from "react-bootstrap";
 import { callApiObjectType } from "../../types/widget";
+import { WidgetPropsSettingModalSetterContext } from "../../store/WidgetPropsSettingModalProvider";
 
 const DashboardHeader = () => {
     /*

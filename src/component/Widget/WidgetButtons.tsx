@@ -1,6 +1,7 @@
 import { useContext } from "react";
 import { Button } from "react-bootstrap";
-import { WidgetPropsSettingModalSetterContext } from "../../store/WidgetProvider";
+import { WidgetPropsSettingModalSetterContext } from "../../store/WidgetPropsSettingModalProvider";
+import { WidgetSetterContext } from "../../store/WidgetProvider";
 
 const WidgetButtons = ({
     setTrueActiveWidgetModal,
@@ -8,9 +9,10 @@ const WidgetButtons = ({
     chartType,
     apiKey,
 }: any) => {
-    const { setTrueActiveWidgetSettingModal, deleteWidgetProps } = useContext(
+    const { setTrueActiveWidgetSettingModal } = useContext(
         WidgetPropsSettingModalSetterContext
     );
+    const { deleteWidgetProps } = useContext(WidgetSetterContext);
 
     // 호출 주기 조정 모달
     const onClickShowSetting = () => {

@@ -1,13 +1,8 @@
 import React, { createContext, useState, useCallback } from "react";
-import useBoolean from "../hook/useBoolean";
 import { WidgetPropsType } from "../types/widget";
 
 export const WidgetStateContext = createContext(null);
 export const WidgetSetterContext = createContext(null);
-
-// 위젯 차트타입/api 설정
-export const WidgetPropsSettingModalStateContext = createContext(null);
-export const WidgetPropsSettingModalSetterContext = createContext(null);
 
 type chartPropsKey =
     | "dataSource"
@@ -36,46 +31,6 @@ const WidgetProvider = ({ children }: ProviderPropsType) => {
     // 위젯 삭제
     // 위젯 수정
 
-    // 위젯 설정 모달(추가/수정)
-    // 위젯 차트타입/api 설정
-    const {
-        state: activeWidgetSettingModal,
-        setTrue,
-        setFalse,
-    } = useBoolean(false);
-
-    const [activeWidgetSettingModalValue, setActiveWidgetSettingModalValue] =
-        useState({
-            type: "ADD",
-            chartType: "",
-            apiKeys: {
-                type: "spot",
-                keys: [],
-            },
-            widgetId: 0,
-        });
-
-    const setTrueActiveWidgetSettingModal = useCallback(
-        (
-            type: string,
-            widgetId: number,
-            chartType: string = "",
-            apiKeys: any = {
-                type: "spot",
-                keys: [],
-            }
-        ) => {
-            setActiveWidgetSettingModalValue({
-                type,
-                chartType,
-                apiKeys,
-                widgetId,
-            });
-            setTrue();
-        },
-        []
-    );
-
     const deleteWidgetProps = useCallback((widgetId: number) => {
         setWidgetProps((widgetProps) =>
             widgetProps.filter((filterItem) => filterItem.widgetId !== widgetId)
@@ -83,24 +38,11 @@ const WidgetProvider = ({ children }: ProviderPropsType) => {
     }, []);
 
     return (
-        <WidgetSetterContext.Provider value={{ setWidgetProps }}>
+        <WidgetSetterContext.Provider
+            value={{ setWidgetProps, deleteWidgetProps }}
+        >
             <WidgetStateContext.Provider value={{ widgetProps }}>
-                <WidgetPropsSettingModalStateContext.Provider
-                    value={{
-                        activeWidgetSettingModal,
-                        activeWidgetSettingModalValue,
-                    }}
-                >
-                    <WidgetPropsSettingModalSetterContext.Provider
-                        value={{
-                            setTrueActiveWidgetSettingModal,
-                            setFalse,
-                            deleteWidgetProps,
-                        }}
-                    >
-                        {children}
-                    </WidgetPropsSettingModalSetterContext.Provider>
-                </WidgetPropsSettingModalStateContext.Provider>
+                {children}
             </WidgetStateContext.Provider>
         </WidgetSetterContext.Provider>
     );

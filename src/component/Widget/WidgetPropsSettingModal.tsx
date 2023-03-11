@@ -5,7 +5,7 @@ import { OPEN_API } from "../../common/api";
 import {
     WidgetPropsSettingModalSetterContext,
     WidgetPropsSettingModalStateContext,
-} from "../../store/WidgetProvider";
+} from "../../store/WidgetPropsSettingModalProvider";
 import WidgetPropsButtons from "./WidgetPropsSettingModal/WidgetPropsButtons";
 import WidgetPropsList from "./WidgetPropsSettingModal/WidgetPropsList";
 
@@ -27,7 +27,7 @@ const chartTypeList = [
 const WidgetPropsSettingModal = () => {
     const {
         activeWidgetSettingModal,
-        activeWidgetSettingModalValue: { chartType, apiKeys },
+        activeWidgetSettingModalValue: { chartType, apiKeys, type, widgetId },
     } = useContext(WidgetPropsSettingModalStateContext);
 
     const { setFalse } = useContext(WidgetPropsSettingModalSetterContext);
@@ -98,6 +98,9 @@ const WidgetPropsSettingModal = () => {
                 <WidgetPropsButtons
                     selectedChartType={selectedChartType}
                     selectedApiKeys={selectedApiKeys}
+                    type={type}
+                    widgetId={widgetId}
+                    setFalse={setFalse}
                 />
             </Modal>
         </>

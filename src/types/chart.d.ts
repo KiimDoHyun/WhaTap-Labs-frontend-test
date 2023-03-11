@@ -1,3 +1,4 @@
+// ! 차트컴포넌트들을 위한 타입 정의 파일이지만 useHandleWidgetApi 에서도 사용중이다.
 // 차트에 사용할 dataSource
 export interface dataSourceType {
     key: string;

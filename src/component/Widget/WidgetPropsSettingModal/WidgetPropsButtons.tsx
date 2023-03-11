@@ -1,27 +1,24 @@
 import { useContext } from "react";
 import { Button } from "react-bootstrap";
 import styled from "styled-components";
-import {
-    WidgetPropsSettingModalSetterContext,
-    WidgetPropsSettingModalStateContext,
-    WidgetSetterContext,
-} from "../../../store/WidgetProvider";
+import { WidgetSetterContext } from "../../../store/WidgetProvider";
 
 interface WidgetPropsButtonsTypesProp {
     selectedChartType: string[];
     selectedApiKeys: string[];
+    type: string;
+    widgetId: number;
+    setFalse: () => void;
 }
 
 const WidgetPropsButtons = ({
     selectedChartType,
     selectedApiKeys,
+    type,
+    widgetId,
+    setFalse,
 }: WidgetPropsButtonsTypesProp) => {
-    const { setFalse } = useContext(WidgetPropsSettingModalSetterContext);
     const { setWidgetProps } = useContext(WidgetSetterContext);
-
-    const {
-        activeWidgetSettingModalValue: { type, widgetId },
-    } = useContext(WidgetPropsSettingModalStateContext);
 
     const onClickConfirm = () => {
         if (selectedChartType.length === 0) {
