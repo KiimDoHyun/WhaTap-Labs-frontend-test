@@ -7,91 +7,124 @@ import {
     drawLine,
     drawLineXAxis,
     drawyLineAxis,
+    initLine,
 } from "../../common/chart";
 import useResize from "../../hook/useResize";
-import { ChartPropsType, dataSourceType } from "../../types/chart";
-
-const data: any = [];
+import { dataSourceType } from "../../types/chart";
+import ChartSvg from "./ChartSvg";
 
 const margin = { top: 20, right: 20, bottom: 20, left: 40 };
 
-const yAxis = {
-    transform: `translate(${margin.left}, ${margin.bottom})`,
-};
-
-const lineStyle = {
-    fill: "none",
-    stroke: "blue",
-    strokeWidth: "1px",
-    transform: `translate(${margin.left}, ${margin.bottom})`,
-};
-
-const Chart = React.memo(({ svgRef }: ChartPropsType) => {
-    console.log("차트 리렌더링");
-    return (
-        <svg ref={svgRef}>
-            <g className="y-axis" {...yAxis} />
-            <g className="x-axis" />
-            <path className="line" {...lineStyle} />
-        </svg>
-    );
-});
-
 interface LineChartPropsType {
     dataSource: dataSourceType[];
-    startDate: Date;
-    endDate: Date;
-    dif: number;
-    callCycle: number;
+    apiInfo: {
+        startDate: any;
+        endDate: any;
+        dif: number;
+        callCycle: number;
+    };
 }
 
-const LineChart = ({
-    dataSource,
-    startDate,
-    endDate,
-    dif,
-    callCycle,
-}: LineChartPropsType) => {
+const LineChart = ({ dataSource, apiInfo }: LineChartPropsType) => {
     const svgRef = useRef(null);
     const svgParentBoxRef = useRef(null);
     const size = useResize(svgParentBoxRef);
 
-    const renderChart = (parentWidth: any, parentHeight: any) => {
+    const data: any = useRef<dataSourceType[]>([]);
+    const series: any = useRef<string[]>([]);
+
+    const renderChart = (
+        parentWidth: number,
+        parentHeight: number,
+        type: string
+    ) => {
+        const { startDate, endDate, dif, callCycle } = apiInfo;
         const svg: any = select(svgRef.current);
 
         const width = parentWidth - margin.left - margin.right;
         const height = parentHeight - margin.top - margin.bottom;
 
         const xScale = createLineXScale(startDate, endDate, width);
-        drawLineXAxis(margin, svg, height, xScale);
+        drawLineXAxis(svg, margin, height, xScale);
 
-        const yScale = createLineYScale(data, height);
-        drawyLineAxis(svg, yScale);
+        const yScale = createLineYScale(data.current, height);
+        drawyLineAxis(svg, yScale, margin);
 
-        drawLine(
-            svg,
-            xScale,
-            yScale,
-            width,
-            startDate,
-            endDate,
-            data,
-            dif,
-            callCycle
-        );
+        if (type === "INIT") {
+            initLine(svg, data.current, series.current, margin);
+        } else if (type === "DRAW") {
+            drawLine(
+                svg,
+                xScale,
+                yScale,
+                width,
+                startDate,
+                endDate,
+                data.current,
+                dif,
+                callCycle
+            );
+        }
     };
 
     useEffect(() => {
-        data.push(dataSource[0]);
+        if (dataSource.length < 1) return;
+
+        const names = dataSource.map((item: dataSourceType) => item.name);
+        if (JSON.stringify(series.current) !== JSON.stringify(names)) {
+            // if series !== name
+            // init series / data
+            series.current = names;
+            data.current = [];
+
+            // push data
+            dataSource.forEach((item: dataSourceType) => {
+                const targetIndex = series.current.findIndex(
+                    (seriesItem: string) => seriesItem === item.name
+                );
+
+                if (!data.current[targetIndex]) {
+                    data.current[targetIndex] = [];
+                }
+                if (item.data !== null) {
+                    data.current[targetIndex].push(item);
+                }
+            });
+
+            // init chart
+            const {
+                current: { offsetWidth, offsetHeight },
+            } = svgParentBoxRef;
+
+            renderChart(offsetWidth, offsetHeight, "INIT");
+        } else {
+            // if series === name
+            // push data
+            dataSource.forEach((item) => {
+                const targetIndex = series.current.findIndex(
+                    (seriesItem: string) => seriesItem === item.name
+                );
+
+                if (!data.current[targetIndex]) {
+                    data.current[targetIndex] = [];
+                }
+                if (item.data !== null) {
+                    data.current[targetIndex].push(item);
+                }
+            });
+        }
     }, [dataSource]);
 
     useEffect(() => {
+        const { dif, callCycle } = apiInfo;
         if (dif === 0 || callCycle === 0) return;
 
-        while (data.length >= dif / callCycle) {
-            data.shift();
-        }
-    }, [dataSource, dif, callCycle]);
+        data.current.forEach(<T extends {}>(dataItem: Array<T>) => {
+            while (dataItem.length >= dif / callCycle) {
+                dataItem.shift();
+            }
+        });
+    }, [dataSource, apiInfo]);
 
     // 데이터 바인딩
     useEffect(() => {
@@ -100,12 +133,12 @@ const LineChart = ({
         svgRef.current.style.width = width;
         svgRef.current.style.height = height;
 
-        renderChart(width, height);
-    }, [startDate, endDate, dif, callCycle, size]);
+        renderChart(width, height, "DRAW");
+    }, [apiInfo, size]);
 
     return (
         <LineChartBox ref={svgParentBoxRef}>
-            <Chart svgRef={svgRef} />
+            <ChartSvg svgRef={svgRef} />
         </LineChartBox>
     );
 };

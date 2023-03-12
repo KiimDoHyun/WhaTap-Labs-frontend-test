@@ -1,9 +1,8 @@
-import { dateType } from "./widget";
-
+// ! 차트컴포넌트들을 위한 타입 정의 파일이지만 useHandleWidgetApi 에서도 사용중이다.
 // 차트에 사용할 dataSource
 export interface dataSourceType {
     key: string;
-    data: number;
+    data: number | null;
     name: string;
 }
 
@@ -31,5 +30,5 @@ export interface LineChartPropsType {
 
 // Common
 export interface ChartPropsType {
-    svgRef: React.MutableRefObject<any>;
+    dataSource: dataSourceType[];
 }

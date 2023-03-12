@@ -1,15 +1,22 @@
 import React, { useContext, useState } from "react";
 import styled from "styled-components";
+import {
+    PickerAreaBlock,
+    PickerBoxBlock,
+} from "../../../asset/style/DashboardHeader";
 import { createDateObj } from "../../../common/date";
 import useBoolean from "../../../hook/useBoolean";
 import useOutsideClick from "../../../hook/useOutsideClick";
 import { DashboardContext } from "../../../store/DashboardProvider";
-import { callApiObjectType } from "../../../types/widget";
+// import { callApiObjectType } from "../../../types/widget";
 import DatePicker from "../../common/DatePicker";
-import { PickerAreaBlock, PickerBoxBlock } from "../DashboardHeader";
 import DateBox from "./DateBox";
 
 const DatePickerArea = () => {
+    /*
+start,end Date 설정
+조회 범위 적용 이벤트
+    */
     const [callApiObject, setCallApiObject] = useContext(DashboardContext);
 
     const { state: isActiveDatePicker, setFalse, toggle } = useBoolean(false);
@@ -29,7 +36,7 @@ const DatePickerArea = () => {
     // 선택된 구간 적용 확인 클릭 이벤트
     const onClickConfirm = () => {
         if (window.confirm("조회 범위를 변경하시겠습니까?")) {
-            setCallApiObject((callApiObject: callApiObjectType) => ({
+            setCallApiObject((callApiObject: any) => ({
                 ...callApiObject,
                 status: "PAST",
                 pastBody: {

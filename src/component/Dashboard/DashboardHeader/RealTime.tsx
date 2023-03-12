@@ -1,12 +1,12 @@
 import React from "react";
 import styled from "styled-components";
 
-interface RealTimePropsType {
+interface PropsType {
     selectedRealTime: number;
     onClick: React.MouseEventHandler<HTMLDivElement>;
 }
 
-const RealTime = ({ selectedRealTime, onClick }: RealTimePropsType) => {
+const RealTime = ({ selectedRealTime, onClick }: PropsType) => {
     return (
         <RealTimeBlock onClick={onClick}>{selectedRealTime}분</RealTimeBlock>
     );

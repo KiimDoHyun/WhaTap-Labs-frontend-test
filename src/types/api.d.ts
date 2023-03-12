@@ -2,13 +2,23 @@ interface ObjectKeyType {
     [key: string]: string;
 }
 
-export interface OPEN_APIType {
+interface ObjectType {
+    [key: string]: ObjectKeyType;
+}
+
+export interface OPEN_APIType extends ObjectType {
     "": ObjectKeyType;
     json: ObjectKeyType;
 }
 
-export interface DataType {
+export interface ChartDataSourceType {
     key: string;
     name: string;
-    data: number;
+    data: number | null;
+}
+
+export interface ChartApiReturnType {
+    key: string;
+    name: string;
+    data: number | null;
 }

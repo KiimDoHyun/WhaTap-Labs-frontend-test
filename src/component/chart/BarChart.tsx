@@ -5,109 +5,57 @@ import {
     calcNewSize,
     createBarXScale,
     createBarYScale,
+    drawBarChart,
     drawBarXAxis,
     drawBaryAxis,
+    initBarChart,
 } from "../../common/chart";
 import useResize from "../../hook/useResize";
-import {
-    BarChartPropsType,
-    ChartPropsType,
-    dataSourceType,
-} from "../../types/chart";
+import { dataSourceType } from "../../types/chart";
+import ChartSvg from "./ChartSvg";
 
 const margin = { top: 20, right: 20, bottom: 20, left: 70 };
 
-let data: dataSourceType[] = [];
+interface BarChartPropsType {
+    dataSource: dataSourceType[];
+    apiInfo: {
+        startDate: any;
+        endDate: any;
+        dif: number;
+        callCycle: number;
+    };
+}
 
-const yAxisStyle = {
-    width: "100%",
-    transform: `translate(${margin.left}, 0)`,
-    opacity: 0,
-};
-
-const xAxisStyle = {
-    height: "100%",
-    transform: `translate(${margin.left}, ${margin.bottom})`,
-};
-
-const Chart = React.memo(({ svgRef }: ChartPropsType) => {
-    return (
-        <svg ref={svgRef}>
-            <g className="y-axis" {...yAxisStyle} />
-            <g className="x-axis" {...xAxisStyle} />
-        </svg>
-    );
-});
-
-const BarChart = ({ dataSource }: BarChartPropsType) => {
+const BarChart = ({ dataSource, apiInfo }: BarChartPropsType) => {
     const svgRef = useRef(null);
     const svgParentBoxRef = useRef(null);
     const size = useResize(svgParentBoxRef);
+    const data: any = useRef([]);
 
     // Chart Render
     const renderChart = (width: number, height: number, type: string) => {
         const svg: any = select(svgRef.current);
 
         // name : left
-        const xScale = createBarXScale(data, height);
-        drawBarXAxis(svg, xScale);
+        const xScale = createBarXScale(data.current, height);
+        drawBarXAxis(svg, xScale, margin);
 
         // value : top
-        const yScale = createBarYScale(data, width);
-        drawBaryAxis(svg, yScale);
+        const yScale = createBarYScale(data.current, width);
+        drawBaryAxis(svg, yScale, margin);
 
         if (type === "INIT") {
-            const bar = svg
-                .selectAll(".item")
-                .data(data)
-                .enter()
-                .append("g")
-                .attr("class", "item");
-
-            // 바 생성
-            bar.append("rect")
-                .attr("class", "bar")
-                .attr("height", 20) // 너비는 20로
-                .attr("x", margin.left)
-                .attr("transform", `translate(0, ${margin.bottom})`)
-                .attr("y", function (d: dataSourceType) {
-                    return xScale(d.name) + height / 10 - 10;
-                });
-
-            // 텍스트가 들어갈 요소 생성
-            bar.append("text")
-                .attr("class", "text")
-                .attr("x", margin.left + 10)
-                .attr("fill", "#919191")
-                .attr("transform", `translate(0, ${margin.bottom})`)
-                .attr("y", function (d: dataSourceType) {
-                    return xScale(d.name) + height / 10 + 6;
-                });
+            initBarChart(svg, data.current, margin, xScale, height);
         } else if (type === "DRAW") {
-            svg.selectAll(".bar")
-                .data(data)
-                .transition()
-                .duration(500)
-                .attr("y", function (d: dataSourceType) {
-                    return xScale(d.name) + height / 10 - 10;
-                })
-                .attr("width", function (d: dataSourceType) {
-                    return yScale(d.data);
-                });
-
-            svg.selectAll(".text")
-                .data(data)
-                .transition()
-                .duration(500)
-                .attr("y", function (d: dataSourceType) {
-                    return xScale(d.name) + height / 10 + 6;
-                })
-                .text((d: dataSourceType) => d.data);
+            drawBarChart(svg, data.current, height, xScale, yScale);
         }
     };
 
+    const prevDataSourceLength = useRef(0);
     useEffect(() => {
-        data = [...dataSource];
+        if (dataSource.length === prevDataSourceLength.current) return;
+
+        data.current = [...dataSource];
 
         const {
             current: { offsetWidth, offsetHeight },
@@ -120,11 +68,12 @@ const BarChart = ({ dataSource }: BarChartPropsType) => {
         );
 
         renderChart(newWidth, newHeight, "INIT");
-    }, []);
+        prevDataSourceLength.current = dataSource.length;
+    }, [dataSource]);
 
     useEffect(() => {
         const { width, height } = size;
-        data = [...dataSource];
+        data.current = [...dataSource];
 
         svgRef.current.style.width = width;
         svgRef.current.style.height = height;
@@ -136,7 +85,7 @@ const BarChart = ({ dataSource }: BarChartPropsType) => {
 
     return (
         <BarChartBox ref={svgParentBoxRef}>
-            <Chart svgRef={svgRef} />
+            <ChartSvg svgRef={svgRef} />
         </BarChartBox>
     );
 };
