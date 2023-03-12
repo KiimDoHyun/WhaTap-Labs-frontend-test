@@ -7,6 +7,7 @@ const Dashboard = () => {
     return (
         <DashboardBox>
             <WidgetPropsSettingModal />
+
             <DashboardHeader />
 
             <DashboardBody />

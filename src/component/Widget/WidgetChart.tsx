@@ -1,4 +1,3 @@
-// import { ChartDataSourceType } from "../../types/api";
 import BarChart from "../chart/BarChart";
 import InformaticsChart from "../chart/InformaticsChart";
 import LineChart from "../chart/LineChart";
@@ -14,6 +13,9 @@ interface PropsType {
     };
 }
 
+/*
+추후 차트가 추가될때마다 분기가 계속 늘어난다.
+*/
 const WidgetChart = ({ chartType, dataSource, apiInfo }: PropsType) => {
     switch (chartType) {
         case "BAR":

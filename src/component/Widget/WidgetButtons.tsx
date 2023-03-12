@@ -38,7 +38,7 @@ const WidgetButtons = ({
 
     return (
         <>
-            <Button onClick={onClickShowSetting} size="sm">
+            <Button size="sm" onClick={onClickShowSetting}>
                 showSetting
             </Button>
             <Button size="sm" onClick={onClickEdit}>

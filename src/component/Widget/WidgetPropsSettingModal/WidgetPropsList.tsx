@@ -64,3 +64,25 @@ const ListBox = styled.div`
     overflow-y: auto;
 `;
 export default WidgetPropsList;
+/*
+    ...
+    const listItems = useMemo(() => {
+        if("CHART") {
+            return chartTypeList
+        }
+        else if(API) {
+            return { apiList: useableApiList } = useGetApiList();
+        }
+    }, [listType])
+
+    const [selectedListItems, setSelectedListItems] = useState([]);
+
+    useEffect(() => {
+        if("CHART") {
+            setSelectedListItems([chartType])
+        }
+        else if(API) {
+            setSelectedListItems(apiKeys.keys)
+        }
+    }, [listType])
+    */
