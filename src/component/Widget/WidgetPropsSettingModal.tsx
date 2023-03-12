@@ -37,21 +37,15 @@ const WidgetPropsSettingModal = () => {
     const [selectedChartType, setSelectedChartType] = useState([]);
     const [selectedApiKeys, setSelectedApiKeys] = useState([]);
 
-    // 값 초기화
     useEffect(() => {
-        setSelectedChartType([chartType]);
-    }, [chartType]);
-
-    useEffect(() => {
-        setSelectedApiKeys(apiKeys.keys);
-    }, [apiKeys]);
-
-    useEffect(() => {
-        if (!activeWidgetSettingModal) {
+        if (activeWidgetSettingModal) {
+            setSelectedApiKeys(apiKeys.keys);
+            setSelectedChartType([chartType]);
+        } else {
             setSelectedChartType([]);
             setSelectedApiKeys([]);
         }
-    }, [activeWidgetSettingModal]);
+    }, [chartType, apiKeys, activeWidgetSettingModal]);
 
     return (
         <>

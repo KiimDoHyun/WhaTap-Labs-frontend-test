@@ -206,6 +206,7 @@ export const initLine = (
 ) => {
     const colors = scaleOrdinal(schemeCategory10);
     svg.selectAll(".lineWrapper").remove();
+    svg.selectAll(".text-anchor").remove();
     const lineG = svg
         .append("g")
         .attr("class", "lineWrapper")
@@ -222,6 +223,27 @@ export const initLine = (
         .style("stroke", function (d: any, i: number) {
             return colors(series[i]);
         });
+
+    var legend = svg
+        .append("g")
+        .attr("text-anchor", "end")
+        .attr("class", "text-anchor")
+        .selectAll("g")
+        .data(series)
+        .enter()
+        .append("g")
+        .attr("transform", function (d: string, i: number) {
+            return "translate(0," + i * 15 + ")";
+        });
+
+    legend
+        .append("rect")
+        .attr("x", 0)
+        .attr("width", 10)
+        .attr("height", 10)
+        .attr("fill", colors)
+        .append("title")
+        .text((d: string) => d);
 };
 
 export const drawLine = (
@@ -236,7 +258,7 @@ export const drawLine = (
     dif: number,
     callCycle: number
 ) => {
-    if(data.length === 0) return;
+    if (data.length === 0) return;
 
     const myLine: any = line()
         .x((d, i: number) => {
