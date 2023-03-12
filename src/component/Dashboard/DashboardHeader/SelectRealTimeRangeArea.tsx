@@ -30,7 +30,12 @@ interface callApiObjectType {
     };
 }
 
-const SelectRealTimeRangeArea = ({ range, setCallApiObject }: any) => {
+interface PropsType {
+    range: number;
+    setCallApiObject: React.Dispatch<React.SetStateAction<callApiObjectType>>;
+}
+
+const SelectRealTimeRangeArea = ({ range, setCallApiObject }: PropsType) => {
     const { state: isActiveRealTimeList, setFalse, toggle } = useBoolean(false);
 
     const RealTimeBlockRef = useOutsideClick(setFalse);

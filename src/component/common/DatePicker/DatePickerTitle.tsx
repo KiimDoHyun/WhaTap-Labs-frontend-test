@@ -2,12 +2,12 @@ import React from "react";
 import styled from "styled-components";
 import { dateType } from "../../../types/common";
 
-interface DatePickerTitlePropsType {
+interface PropsType {
     type: string;
     date: dateType;
 }
 
-const DatePickerTitle = ({ type, date }: DatePickerTitlePropsType) => {
+const DatePickerTitle = ({ type, date }: PropsType) => {
     return (
         <DatePickerTitleBlock>
             <div>{type === "start" ? "조회 시작" : "조회 종료"}</div>

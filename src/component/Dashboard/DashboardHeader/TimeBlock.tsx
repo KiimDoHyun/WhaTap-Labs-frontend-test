@@ -1,12 +1,12 @@
 import CurrentTime from "./CurrentTime";
 import DatePickerArea from "./DatePickerArea";
 
-interface TimeBlockPropsType {
+interface PropsType {
     onClick: React.MouseEventHandler<HTMLDivElement>;
     status: string;
 }
 
-const TimeBlock = ({ onClick, status }: TimeBlockPropsType) => {
+const TimeBlock = ({ onClick, status }: PropsType) => {
     return (
         <>
             {status === "NOW" ? (

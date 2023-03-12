@@ -1,7 +1,20 @@
 import React from "react";
 import styled from "styled-components";
 
-const DateBox = ({ dateInfo }: any) => {
+interface dateType {
+    year: number;
+    month: string;
+    date: string;
+    hour: string;
+    min: string;
+    sec: string;
+}
+
+interface PropsType {
+    dateInfo: dateType;
+}
+
+const DateBox = ({ dateInfo }: PropsType) => {
     return (
         <DateBoxBlock>
             <div className="area1">{`${dateInfo.year}/${dateInfo.month}/${dateInfo.date}`}</div>

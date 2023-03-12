@@ -1,12 +1,12 @@
 import React from "react";
 import styled from "styled-components";
 
-interface CycleInputPropsType {
+interface PropsType {
     value: number;
     onChange: React.ChangeEventHandler<HTMLInputElement>;
 }
 
-const CycleInput = ({ value, onChange }: CycleInputPropsType) => {
+const CycleInput = ({ value, onChange }: PropsType) => {
     return (
         <CycleInputBlock>
             <label htmlFor="cycleInput">호출 주기 (초)</label>

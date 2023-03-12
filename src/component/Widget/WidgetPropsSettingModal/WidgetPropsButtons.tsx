@@ -3,7 +3,7 @@ import { Button } from "react-bootstrap";
 import styled from "styled-components";
 import { WidgetSetterContext } from "../../../store/WidgetProvider";
 
-interface WidgetPropsButtonsTypesProp {
+interface TypesProp {
     selectedChartType: string[];
     selectedApiKeys: string[];
     type: string;
@@ -17,7 +17,7 @@ const WidgetPropsButtons = ({
     type,
     widgetId,
     setFalse,
-}: WidgetPropsButtonsTypesProp) => {
+}: TypesProp) => {
     const { setWidgetProps } = useContext(WidgetSetterContext);
 
     const onClickConfirm = () => {

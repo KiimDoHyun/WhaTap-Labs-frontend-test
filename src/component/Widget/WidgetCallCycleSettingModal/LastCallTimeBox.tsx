@@ -1,10 +1,10 @@
 import styled from "styled-components";
 
-interface LastCallTimeBoxPropsType {
+interface PropsType {
     lastCallTime: Date;
 }
 
-const LastCallTimeBox = ({ lastCallTime }: LastCallTimeBoxPropsType) => {
+const LastCallTimeBox = ({ lastCallTime }: PropsType) => {
     return (
         <LastCallTimeBoxBlock>
             마지막호출 시점:{" "}

@@ -6,7 +6,7 @@ interface listItemType {
     name: string;
 }
 
-interface WidgetPropsListPropsType {
+interface PropsType {
     title: string;
     listItem: listItemType[];
     selectedListItem: string[];
@@ -20,7 +20,7 @@ const WidgetPropsList = ({
     selectedListItem,
     setSelectedListItem,
     isMultiSelect = false,
-}: WidgetPropsListPropsType) => {
+}: PropsType) => {
     const onClickList = (clickItem: string) => {
         setSelectedListItem((prevState: any) => {
             if (isMultiSelect) {

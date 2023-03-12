@@ -3,7 +3,7 @@ import BarChart from "../chart/BarChart";
 import InformaticsChart from "../chart/InformaticsChart";
 import LineChart from "../chart/LineChart";
 
-interface WidgetChartPropsType {
+interface PropsType {
     chartType: string;
     dataSource: { key: string; name: string; data: number | null }[];
     apiInfo: {
@@ -14,11 +14,7 @@ interface WidgetChartPropsType {
     };
 }
 
-const WidgetChart = ({
-    chartType,
-    dataSource,
-    apiInfo,
-}: WidgetChartPropsType) => {
+const WidgetChart = ({ chartType, dataSource, apiInfo }: PropsType) => {
     switch (chartType) {
         case "BAR":
             return <BarChart dataSource={dataSource} apiInfo={apiInfo} />;

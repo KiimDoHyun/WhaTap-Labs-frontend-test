@@ -5,13 +5,13 @@ import { dateType } from "../../types/common";
 import DatePickerTitle from "./DatePicker/DatePickerTitle";
 import ListPicker from "./DatePicker/ListPicker";
 
-interface DatePickerPropsType {
+interface PropsType {
     date: dateType;
     setDate: React.Dispatch<React.SetStateAction<dateType>>;
     type: string;
 }
 
-const DatePicker = ({ date, setDate, type }: DatePickerPropsType) => {
+const DatePicker = ({ date, setDate, type }: PropsType) => {
     const value = useMemo(
         () => new Date(`${date.year}-${date.month}-${date.date}`),
         [date]

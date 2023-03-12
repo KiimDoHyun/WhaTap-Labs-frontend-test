@@ -3,12 +3,19 @@ import { Button } from "react-bootstrap";
 import { WidgetPropsSettingModalSetterContext } from "../../store/WidgetPropsSettingModalProvider";
 import { WidgetSetterContext } from "../../store/WidgetProvider";
 
+interface PropsType {
+    setTrueActiveWidgetModal: () => void;
+    chartType: string;
+    apiKey: { type: string; keys: string[] };
+    widgetId: number;
+}
+
 const WidgetButtons = ({
     setTrueActiveWidgetModal,
     widgetId,
     chartType,
     apiKey,
-}: any) => {
+}: PropsType) => {
     const { setTrueActiveWidgetSettingModal } = useContext(
         WidgetPropsSettingModalSetterContext
     );

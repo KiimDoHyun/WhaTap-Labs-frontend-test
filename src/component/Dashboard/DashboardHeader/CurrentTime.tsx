@@ -2,11 +2,11 @@ import React from "react";
 import styled from "styled-components";
 import useCurrentTime from "../../../hook/useCurrentTime";
 
-interface CurrentTimePropsType {
+interface PropsType {
     onClick?: React.MouseEventHandler<HTMLDivElement>;
 }
 
-const CurrentTime = ({ onClick }: CurrentTimePropsType) => {
+const CurrentTime = ({ onClick }: PropsType) => {
     const { hour, min, sec } = useCurrentTime();
 
     return (

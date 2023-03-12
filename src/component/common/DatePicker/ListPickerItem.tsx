@@ -1,12 +1,12 @@
 import { ListItemBlock } from "../../../asset/style/common";
 
-interface ListPickerItemPropsType {
+interface PropsType {
     onClick: (input: number) => void;
     idx: number;
     value: number;
 }
 
-const ListPickerItem = ({ onClick, idx, value }: ListPickerItemPropsType) => {
+const ListPickerItem = ({ onClick, idx, value }: PropsType) => {
     return (
         <ListItemBlock
             onClick={() => onClick(idx)}

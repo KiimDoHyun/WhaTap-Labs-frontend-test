@@ -5,7 +5,7 @@ import { DEFAULT_CALL_CYCLE } from "../../common/widget";
 import CycleInput from "./WidgetCallCycleSettingModal/CycleInput";
 import LastCallTimeBox from "./WidgetCallCycleSettingModal/LastCallTimeBox";
 
-interface WidgetCallCycleSettingModalPropsType {
+interface PropsType {
     show: boolean;
     onHide: () => void;
     lastCallTime: Date;
@@ -17,7 +17,7 @@ const WidgetCallCycleSettingModal = ({
     onHide,
     lastCallTime,
     onClickApplyCallCycle,
-}: WidgetCallCycleSettingModalPropsType) => {
+}: PropsType) => {
     // 호출 주기 입력값
     const [callCycleValue, setCallCycleValue] = useState(DEFAULT_CALL_CYCLE);
 

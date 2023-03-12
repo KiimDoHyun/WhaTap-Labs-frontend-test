@@ -56,13 +56,13 @@ Presentational container 와 비교
 
 */
 
-interface Props {
-    chartType: "BAR" | "LINE" | "INFO";
+interface PropsType {
+    chartType: string;
     apiKey: { type: string; keys: string[] };
     widgetId: number;
 }
 
-const Widget = ({ chartType, apiKey, widgetId }: Props) => {
+const Widget = ({ chartType, apiKey, widgetId }: PropsType) => {
     // 필요한 데이터만 사용
     const { lastCallTime, dataSource, apiInfo, onClickApplyCallCycle } =
         useHandleWidgetApi({ apiKey: apiKey });

@@ -2,14 +2,14 @@ import styled from "styled-components";
 import { dateType } from "../../../types/common";
 import ListPickerItem from "./ListPickerItem";
 
-interface ListPickerPropsType {
+interface PropsType {
     num: number;
     value: number;
     type: string;
     setValue: React.Dispatch<React.SetStateAction<dateType>>;
 }
 
-const ListPicker = ({ num, value, type, setValue }: ListPickerPropsType) => {
+const ListPicker = ({ num, value, type, setValue }: PropsType) => {
     const onClickList = (input: number) => {
         setValue((prev) => ({
             ...prev,
