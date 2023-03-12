@@ -1,5 +1,12 @@
-import { useMemo } from "react";
-import { OPEN_API } from "../common/api";
+import { useCallback, useMemo } from "react";
+import { OPEN_API, spot } from "../common/api";
+import { ChartApiReturnType } from "../types/api";
+
+interface createApiObjType {
+    key: string;
+    success: (data: ChartApiReturnType) => void;
+    fail: () => void;
+}
 
 const useGetApiList = () => {
     const apiList = useMemo(() => {
@@ -15,7 +22,25 @@ const useGetApiList = () => {
         return array;
     }, []);
 
-    return apiList;
+    const getApiName = useCallback(
+        ({ type, key }: { type: string; key: string }) => {
+            return type === "spot" ? OPEN_API[""][key] : OPEN_API["json"][key];
+        },
+        []
+    );
+
+    const createApiObj = useCallback(
+        ({ key, success, fail }: createApiObjType) => {
+            return {
+                callApi: () => spot(key),
+                success,
+                fail,
+            };
+        },
+        []
+    );
+
+    return { apiList, getApiName, createApiObj };
 };
 
 export default useGetApiList;

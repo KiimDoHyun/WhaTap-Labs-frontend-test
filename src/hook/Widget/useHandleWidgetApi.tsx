@@ -6,11 +6,11 @@ import React, {
     useState,
 } from "react";
 import { enqueueApi } from "../..";
-import { createApiObj, getApiName } from "../../common/api";
 import { getDateRange, parseDate } from "../../common/date";
 import { DEFAULT_CALL_CYCLE } from "../../common/widget";
 import { DashboardContext } from "../../store/DashboardProvider";
 import { ChartApiReturnType } from "../../types/api";
+import useGetApiList from "../useGetApiList";
 
 interface useHandleWidgetApiPropsType {
     apiKey: { type: string; keys: string[] };
@@ -18,6 +18,8 @@ interface useHandleWidgetApiPropsType {
 
 const useHandleWidgetApi = ({ apiKey }: useHandleWidgetApiPropsType) => {
     const [callApiObject] = useContext(DashboardContext);
+
+    const { createApiObj, getApiName } = useGetApiList();
 
     // api 를 마지막으로 호출한 시간 1 (intervalCallback 에서만 사용)
     const [lastCallTime, setLastCallTime] = useState<Date>(null);

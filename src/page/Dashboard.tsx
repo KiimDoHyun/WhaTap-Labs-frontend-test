@@ -1,37 +1,15 @@
-import Widget from "../component/Widget/Widget";
 import styled from "styled-components";
 import DashboardHeader from "../component/Dashboard/DashboardHeader";
-// import DashboardProvider from "../store/DashboardProvider";
-import { Col, Container, Row } from "react-bootstrap";
-import { useContext } from "react";
+import DashboardBody from "../component/Dashboard/DashboardBody";
 import WidgetPropsSettingModal from "../component/Widget/WidgetPropsSettingModal";
-import { WidgetStateContext } from "../store/WidgetProvider";
-
-const WidgetWrapper = () => {
-    const { widgetProps } = useContext(WidgetStateContext);
-
-    return (
-        <>
-            <WidgetPropsSettingModal />
-            <Container>
-                <Row>
-                    {widgetProps.map((item: any, idx: any) => (
-                        <Col sm={12} md={6} lg={4} key={item.widgetId}>
-                            <Widget {...item} />
-                        </Col>
-                    ))}
-                </Row>
-            </Container>
-        </>
-    );
-};
 
 const Dashboard = () => {
     return (
         <DashboardBox>
+            <WidgetPropsSettingModal />
             <DashboardHeader />
 
-            <WidgetWrapper />
+            <DashboardBody />
         </DashboardBox>
     );
 };

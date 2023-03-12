@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useMemo, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Container, Modal, Row, Col } from "react-bootstrap";
 import styled from "styled-components";
 import useGetApiList from "../../hook/useGetApiList";
@@ -32,7 +32,7 @@ const WidgetPropsSettingModal = () => {
 
     const { setFalse } = useContext(WidgetPropsSettingModalSetterContext);
 
-    const useableApiList = useGetApiList();
+    const { apiList: useableApiList } = useGetApiList();
 
     const [selectedChartType, setSelectedChartType] = useState([]);
     const [selectedApiKeys, setSelectedApiKeys] = useState([]);

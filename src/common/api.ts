@@ -54,10 +54,6 @@ export const OPEN_API: OPEN_APIType = {
     },
 };
 
-export const getApiName = ({ type, key }: { type: string; key: string }) => {
-    return type === "spot" ? OPEN_API[""][key] : OPEN_API["json"][key];
-};
-
 const getPath = (url: string, param: any = {}) => {
     let path = url;
     for (let key in param) {
@@ -91,20 +87,5 @@ const getOpenApi = (type: string) => (key: string, param?: any) =>
             }))
     );
 
-const spot = getOpenApi("");
-const series = getOpenApi("json");
-
-interface createApiObjType {
-    key: string;
-    success: (data: ChartApiReturnType) => void;
-    fail: () => void;
-}
-export const createApiObj = ({ key, success, fail }: createApiObjType) => {
-    return {
-        callApi: () => spot(key),
-        success,
-        fail,
-    };
-};
-
-export default { spot, series };
+export const spot = getOpenApi("");
+export const series = getOpenApi("json");
