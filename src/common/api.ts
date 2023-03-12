@@ -1,4 +1,4 @@
-import { DataType, OPEN_APIType } from "../types/api";
+import { ChartApiReturnType, OPEN_APIType } from "../types/api";
 
 const DEMO_PROJECT_API_TOCKEN = "XGJHUSQZTI2AVIENWA27HI5V";
 const DEMO_PROJECT_CODE = "5490";
@@ -84,7 +84,7 @@ const getOpenApi = (type: string) => (key: string, param?: any) =>
             headers: OPEN_API_HEADERS,
         })
             .then((response) => response.json())
-            .then((data: DataType) => ({
+            .then((data: ChartApiReturnType) => ({
                 key,
                 name,
                 data,
@@ -96,7 +96,7 @@ const series = getOpenApi("json");
 
 interface createApiObjType {
     key: string;
-    success: (data: DataType) => void;
+    success: (data: ChartApiReturnType) => void;
     fail: () => void;
 }
 export const createApiObj = ({ key, success, fail }: createApiObjType) => {

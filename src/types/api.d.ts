@@ -11,8 +11,14 @@ export interface OPEN_APIType extends ObjectType {
     json: ObjectKeyType;
 }
 
-export interface DataType {
+export interface ChartDataSourceType {
     key: string;
     name: string;
-    data: number;
+    data: number | null;
+}
+
+export interface ChartApiReturnType {
+    key: string;
+    name: string;
+    data: number | null;
 }

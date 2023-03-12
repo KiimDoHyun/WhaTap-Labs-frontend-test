@@ -1,4 +1,4 @@
-import { SelectRealTimeListItemBlock } from "../../Dashboard/CommonStyle";
+import { ListItemBlock } from "../../../asset/style/common";
 
 interface ListPickerItemPropsType {
     onClick: (input: number) => void;
@@ -8,12 +8,12 @@ interface ListPickerItemPropsType {
 
 const ListPickerItem = ({ onClick, idx, value }: ListPickerItemPropsType) => {
     return (
-        <SelectRealTimeListItemBlock
+        <ListItemBlock
             onClick={() => onClick(idx)}
             isSelcted={Number(idx) === Number(value)}
         >
             {idx}
-        </SelectRealTimeListItemBlock>
+        </ListItemBlock>
     );
 };
 

@@ -1,4 +1,4 @@
-import { SelectRealTimeListItemBlock } from "../CommonStyle";
+import { ListItemBlock } from "../../../asset/style/common";
 
 interface SelectRealTimeListItemPropsType {
     range: number;
@@ -12,12 +12,12 @@ const SelectRealTimeListItem = ({
     prevSelectedRange,
 }: SelectRealTimeListItemPropsType) => {
     return (
-        <SelectRealTimeListItemBlock
+        <ListItemBlock
             onClick={() => onClick(range)}
             isSelcted={range === prevSelectedRange}
         >
             {range} 분
-        </SelectRealTimeListItemBlock>
+        </ListItemBlock>
     );
 };
 

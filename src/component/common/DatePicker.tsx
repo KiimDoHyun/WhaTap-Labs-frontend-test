@@ -1,9 +1,15 @@
 import { useMemo } from "react";
 import { Calendar } from "react-calendar";
 import styled from "styled-components";
-import { DatePickerPropsType } from "../../types/datePicker";
+import { dateType } from "../../types/common";
 import DatePickerTitle from "./DatePicker/DatePickerTitle";
 import ListPicker from "./DatePicker/ListPicker";
+
+interface DatePickerPropsType {
+    date: dateType;
+    setDate: React.Dispatch<React.SetStateAction<dateType>>;
+    type: string;
+}
 
 const DatePicker = ({ date, setDate, type }: DatePickerPropsType) => {
     const value = useMemo(

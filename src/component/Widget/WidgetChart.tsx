@@ -1,11 +1,11 @@
-import { dataSourceType } from "../../types/chart";
+// import { ChartDataSourceType } from "../../types/api";
 import BarChart from "../chart/BarChart";
 import InformaticsChart from "../chart/InformaticsChart";
 import LineChart from "../chart/LineChart";
 
 interface WidgetChartPropsType {
     chartType: string;
-    dataSource: dataSourceType[];
+    dataSource: { key: string; name: string; data: number | null }[];
     apiInfo: {
         startDate: any;
         endDate: any;

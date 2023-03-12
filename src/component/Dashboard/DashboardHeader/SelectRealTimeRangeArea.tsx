@@ -1,9 +1,10 @@
-import { useContext } from "react";
 import styled from "styled-components";
+import {
+    PickerAreaBlock,
+    PickerBoxBlock,
+} from "../../../asset/style/DashboardHeader";
 import useBoolean from "../../../hook/useBoolean";
 import useOutsideClick from "../../../hook/useOutsideClick";
-import { DashboardContext } from "../../../store/DashboardProvider";
-import { PickerAreaBlock, PickerBoxBlock } from "../CommonStyle";
 import RealTime from "./RealTime";
 import SelectRealTimeListItem from "./SelectRealTimeListItem";
 
@@ -29,14 +30,7 @@ interface callApiObjectType {
     };
 }
 
-const SelectRealTimeRangeArea = () => {
-    const [
-        {
-            nowBody: { range },
-        },
-        setCallApiObject,
-    ] = useContext(DashboardContext);
-
+const SelectRealTimeRangeArea = ({ range, setCallApiObject }: any) => {
     const { state: isActiveRealTimeList, setFalse, toggle } = useBoolean(false);
 
     const RealTimeBlockRef = useOutsideClick(setFalse);

@@ -1,10 +1,10 @@
 import styled from "styled-components";
-import useBoolean from "../hook/useBoolean";
-import { WidgetPropsType } from "../types/widget";
-import WidgetButtons from "./Widget/WidgetButtons";
-import WidgetChart from "./Widget/WidgetChart";
-import WidgetCallCycleSettingModal from "./Widget/WidgetCallCycleSettingModal";
-import useHandleWidgetApi from "../hook/Widget/useHandleWidgetApi";
+import useBoolean from "../../hook/useBoolean";
+// import { WidgetPropsType } from "../../types/widget";
+import WidgetButtons from "./WidgetButtons";
+import WidgetChart from "./WidgetChart";
+import WidgetCallCycleSettingModal from "./WidgetCallCycleSettingModal";
+import useHandleWidgetApi from "../../hook/Widget/useHandleWidgetApi";
 
 /*
 
@@ -57,12 +57,12 @@ Presentational container 와 비교
 */
 
 interface Props {
-    chartType: any;
-    apiKey: any;
-    widgetId: any;
+    chartType: "BAR" | "LINE" | "INFO";
+    apiKey: { type: string; keys: string[] };
+    widgetId: number;
 }
 
-const Widget = ({ chartType, apiKey, widgetId }: WidgetPropsType) => {
+const Widget = ({ chartType, apiKey, widgetId }: Props) => {
     // 필요한 데이터만 사용
     const { lastCallTime, dataSource, apiInfo, onClickApplyCallCycle } =
         useHandleWidgetApi({ apiKey: apiKey });

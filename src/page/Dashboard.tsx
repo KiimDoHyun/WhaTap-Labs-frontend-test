@@ -1,4 +1,4 @@
-import Widget from "../component/Widget";
+import Widget from "../component/Widget/Widget";
 import styled from "styled-components";
 import DashboardHeader from "../component/Dashboard/DashboardHeader";
 // import DashboardProvider from "../store/DashboardProvider";

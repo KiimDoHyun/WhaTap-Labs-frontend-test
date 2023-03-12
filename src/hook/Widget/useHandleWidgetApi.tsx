@@ -10,8 +10,7 @@ import { createApiObj, getApiName } from "../../common/api";
 import { getDateRange, parseDate } from "../../common/date";
 import { DEFAULT_CALL_CYCLE } from "../../common/widget";
 import { DashboardContext } from "../../store/DashboardProvider";
-import { dataSourceType } from "../../types/chart";
-import { DataType } from "../../types/widget";
+import { ChartApiReturnType } from "../../types/api";
 
 interface useHandleWidgetApiPropsType {
     apiKey: { type: string; keys: string[] };
@@ -27,7 +26,7 @@ const useHandleWidgetApi = ({ apiKey }: useHandleWidgetApiPropsType) => {
     const callCycleRef = useRef(DEFAULT_CALL_CYCLE);
 
     // 차트에 사용할 데이터 2 (intervalCallback, 최초 useEffect 에서만 사용)
-    const [dataSource, setDataSource] = useState<dataSourceType[]>([]);
+    const [dataSource, setDataSource] = useState<ChartApiReturnType[]>([]);
 
     // api 호출 관련 정보 3 (intervalCallback, Modal 에서 사용)
     const [apiInfo, setApiInfo] = useState({
@@ -57,7 +56,7 @@ const useHandleWidgetApi = ({ apiKey }: useHandleWidgetApiPropsType) => {
             keys.forEach((apiItem: any) => {
                 const body = {
                     key: apiItem,
-                    success: (data: DataType) => {
+                    success: (data: ChartApiReturnType) => {
                         setDataSource((prev) =>
                             prev === null
                                 ? [data]

@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import { dateType } from "../../../types/widget";
+import { dateType } from "../../../types/common";
 
 interface DatePickerTitlePropsType {
     type: string;

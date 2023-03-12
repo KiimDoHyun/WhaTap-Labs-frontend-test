@@ -5,15 +5,39 @@ import SelectRealTimeRangeArea from "./DashboardHeader/SelectRealTimeRangeArea";
 import PlayIcon from "./DashboardHeader/PlayIcon";
 import TimeBlock from "./DashboardHeader/TimeBlock";
 import { Button } from "react-bootstrap";
-import { callApiObjectType } from "../../types/widget";
 import { WidgetPropsSettingModalSetterContext } from "../../store/WidgetPropsSettingModalProvider";
+interface dateType {
+    year: number;
+    month: string;
+    date: string;
+    hour: string;
+    min: string;
+    sec: string;
+}
+
+interface callApiObjectType {
+    status: string;
+    pastBody: {
+        startDate: dateType;
+        endDate: dateType;
+    };
+    nowBody: {
+        range: number;
+    };
+}
 
 const DashboardHeader = () => {
     /*
     토글 이벤트,
     이미지, 시간/데이트피커 토글
     */
-    const [{ status }, setCallApiObject] = useContext(DashboardContext);
+    const [
+        {
+            status,
+            nowBody: { range },
+        },
+        setCallApiObject,
+    ] = useContext(DashboardContext);
     const { setTrueActiveWidgetSettingModal } = useContext(
         WidgetPropsSettingModalSetterContext
     );
@@ -40,7 +64,10 @@ const DashboardHeader = () => {
 
                 <TimeBlock onClick={toggleCallApiObject} status={status} />
 
-                <SelectRealTimeRangeArea />
+                <SelectRealTimeRangeArea
+                    range={range}
+                    setCallApiObject={setCallApiObject}
+                />
             </TitleBlock>
         </DashboardHeaderBlock>
     );

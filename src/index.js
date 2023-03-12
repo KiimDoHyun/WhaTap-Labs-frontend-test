@@ -8,6 +8,8 @@ import GlobalProvider from "./store";
 
 const queue = [];
 
+const failQueue = [];
+
 let interval = null;
 
 let isWorking = false;
@@ -32,6 +34,7 @@ export const enqueueApi = (item) => {
                     console.log("에러 발생", queue);
                     if (queue.length > 0) {
                         queue[0].fail();
+                        failQueue.push(item);
                     }
                 } finally {
                     isWorking = false;

@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useMemo, useState } from "react";
 import { Container, Modal, Row, Col } from "react-bootstrap";
 import styled from "styled-components";
-import { OPEN_API } from "../../common/api";
+import useGetApiList from "../../hook/useGetApiList";
 import {
     WidgetPropsSettingModalSetterContext,
     WidgetPropsSettingModalStateContext,
@@ -32,18 +32,7 @@ const WidgetPropsSettingModal = () => {
 
     const { setFalse } = useContext(WidgetPropsSettingModalSetterContext);
 
-    const useableApiList = useMemo(() => {
-        const array = [];
-
-        for (const key in OPEN_API[""]) {
-            if (Object.prototype.hasOwnProperty.call(OPEN_API[""], key)) {
-                const element = OPEN_API[""][key];
-
-                array.push({ key: key, name: element });
-            }
-        }
-        return array;
-    }, []);
+    const useableApiList = useGetApiList();
 
     const [selectedChartType, setSelectedChartType] = useState([]);
     const [selectedApiKeys, setSelectedApiKeys] = useState([]);
