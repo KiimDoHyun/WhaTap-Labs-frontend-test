@@ -57,7 +57,7 @@ const DashboardHeader = () => {
     return (
         <DashboardHeaderBlock>
             <Button onClick={() => setTrueActiveWidgetSettingModal("ADD")}>
-                모달 활성화
+                위젯 추가
             </Button>
             <TitleBlock>
                 <PlayIcon onClick={toggleCallApiObject} status={status} />

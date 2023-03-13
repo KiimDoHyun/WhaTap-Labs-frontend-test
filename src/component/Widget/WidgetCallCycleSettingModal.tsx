@@ -28,20 +28,32 @@ const WidgetCallCycleSettingModal = ({
     };
     return (
         <Modal show={show} onHide={onHide}>
-            <CycleInput value={callCycleValue} onChange={onChange} />
-            <ApplyButtonBox>
-                <Button onClick={onClickApply}>적용하기</Button>
-            </ApplyButtonBox>
-            <LastCallTimeBox lastCallTime={lastCallTime} />
-            <BottomButtonBox>
-                <Button onClick={onHide}>닫기</Button>
-            </BottomButtonBox>
+            <WidgetCallCycleSettingModalBox>
+                <CycleInput value={callCycleValue} onChange={onChange} />
+                <ApplyButtonBox>
+                    <Button onClick={onClickApply}>적용하기</Button>
+                </ApplyButtonBox>
+                <LastCallTimeBox lastCallTime={lastCallTime} />
+                <BottomButtonBox>
+                    <Button onClick={onHide}>닫기</Button>
+                </BottomButtonBox>
+            </WidgetCallCycleSettingModalBox>
         </Modal>
     );
 };
 
+const WidgetCallCycleSettingModalBox = styled.div`
+    padding: 20px;
+    box-sizing: border-box;
+`;
+
 const ApplyButtonBox = styled.div``;
 
-const BottomButtonBox = styled.div``;
+const BottomButtonBox = styled.div`
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+`;
 
 export default WidgetCallCycleSettingModal;

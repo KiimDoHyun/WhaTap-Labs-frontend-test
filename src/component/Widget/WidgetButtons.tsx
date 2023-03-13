@@ -1,5 +1,6 @@
 import { useContext } from "react";
 import { Button } from "react-bootstrap";
+import styled from "styled-components";
 import { WidgetPropsSettingModalSetterContext } from "../../store/WidgetPropsSettingModalProvider";
 import { WidgetSetterContext } from "../../store/WidgetProvider";
 
@@ -37,18 +38,26 @@ const WidgetButtons = ({
     };
 
     return (
-        <>
+        <WidgetButtonsBox>
             <Button size="sm" onClick={onClickShowSetting}>
-                showSetting
+                호출 주기 변경
             </Button>
             <Button size="sm" onClick={onClickEdit}>
-                EDIT
+                위젯 설정 변경
             </Button>
             <Button size="sm" onClick={onClickDelete}>
-                DELETE
+                위젯 제거
             </Button>
-        </>
+        </WidgetButtonsBox>
     );
 };
+
+const WidgetButtonsBox = styled.div`
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 5px;
+    box-sizing: border-box;
+`;
 
 export default WidgetButtons;

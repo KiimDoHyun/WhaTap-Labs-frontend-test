@@ -80,5 +80,12 @@ const WidgetPropsButtons = ({
     );
 };
 
-const WidgetPropsButtonsBlock = styled.div``;
+const WidgetPropsButtonsBlock = styled.div`
+    padding: 0 20px 20px 20px;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 10px;
+`;
 export default WidgetPropsButtons;
