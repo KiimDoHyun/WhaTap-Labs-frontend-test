@@ -89,6 +89,7 @@ const TitleBlock = styled.div`
     box-sizing: border-box;
     border-radius: 5px;
     font-size: 12px;
+    margin-left: 10px;
 `;
 
 export default DashboardHeader;
